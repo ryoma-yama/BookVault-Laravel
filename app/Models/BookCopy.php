@@ -52,24 +52,50 @@ class BookCopy extends Model
 
     /**
      * Check if the copy is available for loan.
+     * A copy is available when it's not discarded and has no outstanding loan.
      */
     public function isAvailable(): bool
     {
-        // A copy is available if it's not discarded and has no active loan
-        return $this->discarded_date === null &&
-               ! $this->loans()->whereNull('returned_date')->exists();
+        return ! $this->isDiscarded() && ! $this->hasOutstandingLoan();
     }
 
     /**
-     * Check if the copy is discarded.
+     * Check if the copy is discarded (withdrawn from circulation).
      */
     public function isDiscarded(): bool
     {
         return $this->discarded_date !== null;
     }
 
+    /**
+     * Check if the copy currently has an outstanding (unreturned) loan.
+     */
+    public function hasOutstandingLoan(): bool
+    {
+        return $this->loans()->outstanding()->exists();
+    }
+
+    /**
+     * Scope to get only active (non-discarded) copies.
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereNull('discarded_date');
+    }
+
+    /**
+     * Scope to get only discarded copies.
+     */
+    public function scopeDiscarded($query)
+    {
+        return $query->whereNotNull('discarded_date');
+    }
+
+    /**
+     * Get the current outstanding loan for this copy.
+     */
     public function currentLoan(): ?Loan
     {
-        return $this->loans()->whereNull('returned_date')->first();
+        return $this->loans()->outstanding()->first();
     }
 }

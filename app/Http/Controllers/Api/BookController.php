@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Concerns\SyncsRelatedEntities;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
-use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    use SyncsRelatedEntities;
+
     /**
      * Display a listing of books.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Book::with(['tags', 'reviews']);
+        $query = Book::query()
+            ->with('tags:id,name')
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
-        // Filter by tags if provided
         if ($request->has('tags')) {
             $tagNames = is_array($request->tags) ? $request->tags : [$request->tags];
             $query->whereHas('tags', function ($q) use ($tagNames) {
@@ -28,14 +32,6 @@ class BookController extends Controller
         }
 
         $books = $query->paginate(10);
-
-        // Add review statistics to each book
-        $books->getCollection()->transform(function ($book) {
-            $book->average_rating = $book->averageRating();
-            $book->review_count = $book->reviewCount();
-
-            return $book;
-        });
 
         return response()->json($books);
     }
@@ -47,12 +43,16 @@ class BookController extends Controller
     {
         $book = Book::create($request->except('tags'));
 
-        // Handle tags if provided
         if ($request->has('tags')) {
-            $this->syncTags($book, $request->tags);
+            $this->attachTagsByName($book, $request->tags);
         }
 
-        return response()->json($book->load(['tags', 'reviews']), 201);
+        return response()->json(
+            $book->load('tags:id,name')
+                ->loadCount('reviews')
+                ->loadAvg('reviews', 'rating'),
+            201
+        );
     }
 
     /**
@@ -60,9 +60,9 @@ class BookController extends Controller
      */
     public function show(Book $book): JsonResponse
     {
-        $book->load(['tags', 'reviews.user']);
-        $book->average_rating = $book->averageRating();
-        $book->review_count = $book->reviewCount();
+        $book->load(['tags:id,name', 'reviews.user:id,name'])
+            ->loadCount('reviews')
+            ->loadAvg('reviews', 'rating');
 
         return response()->json($book);
     }
@@ -74,12 +74,15 @@ class BookController extends Controller
     {
         $book->update($request->except('tags'));
 
-        // Handle tags if provided
         if ($request->has('tags')) {
-            $this->syncTags($book, $request->tags);
+            $this->attachTagsByName($book, $request->tags);
         }
 
-        return response()->json($book->load(['tags', 'reviews']));
+        return response()->json(
+            $book->load('tags:id,name')
+                ->loadCount('reviews')
+                ->loadAvg('reviews', 'rating')
+        );
     }
 
     /**
@@ -90,20 +93,5 @@ class BookController extends Controller
         $book->delete();
 
         return response()->json(null, 204);
-    }
-
-    /**
-     * Sync tags for a book.
-     */
-    private function syncTags(Book $book, array $tagNames): void
-    {
-        $tagIds = [];
-
-        foreach ($tagNames as $tagName) {
-            $tag = Tag::firstOrCreate(['name' => $tagName]);
-            $tagIds[] = $tag->id;
-        }
-
-        $book->tags()->sync($tagIds);
     }
 }

@@ -22,32 +22,45 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
+type UserRole = 'admin' | 'user';
+
 interface User {
     id: number;
     name: string;
     email: string;
-    role: string;
+    role: UserRole;
     created_at: string;
 }
 
+interface PaginatedResponse<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    total: number;
+}
+
+interface Filters {
+    search?: string;
+    role?: string;
+}
+
 interface Props {
-    users: {
-        data: User[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        role?: string;
-    };
+    users: PaginatedResponse<User>;
+    filters: Filters;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin', href: '/admin' },
     { title: 'Users', href: '/admin/users' },
 ];
+
+function getRoleBadgeVariant(role: UserRole): 'default' | 'secondary' {
+    return role === 'admin' ? 'default' : 'secondary';
+}
+
+function getRoleDisplayName(role: UserRole): string {
+    return role === 'admin' ? 'Admin' : 'User';
+}
 
 export default function AdminUsersIndex({ users, filters }: Props) {
     const { t } = useLaravelReactI18n();
@@ -140,17 +153,11 @@ export default function AdminUsersIndex({ users, filters }: Props) {
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
                                         <Badge
-                                            variant={
-                                                user.role === 'admin'
-                                                    ? 'default'
-                                                    : 'secondary'
-                                            }
-                                        >
-                                            {t(
-                                                user.role === 'admin'
-                                                    ? 'Admin'
-                                                    : 'User',
+                                            variant={getRoleBadgeVariant(
+                                                user.role,
                                             )}
+                                        >
+                                            {t(getRoleDisplayName(user.role))}
                                         </Badge>
                                     </TableCell>
                                     <TableCell>

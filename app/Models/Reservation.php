@@ -22,6 +22,22 @@ class Reservation extends Model
         'fulfilled' => 'boolean',
     ];
 
+    /**
+     * Scope to get only pending (unfulfilled, uncancelled) reservations.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('fulfilled', false);
+    }
+
+    /**
+     * Check if this reservation is still pending.
+     */
+    public function isPending(): bool
+    {
+        return ! $this->fulfilled;
+    }
+
     public function bookCopy(): BelongsTo
     {
         return $this->belongsTo(BookCopy::class);
