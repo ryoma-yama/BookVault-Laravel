@@ -10,10 +10,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('test-admin-route', function () {
-    return response()->json(['message' => 'Admin access granted']);
-})->middleware(['auth', 'role:admin']);
-
 Route::get('dashboard', function () {
     return Inertia::render('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
