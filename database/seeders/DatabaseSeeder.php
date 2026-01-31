@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Book;
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,16 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create test users
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            UserSeeder::class,
+            BookSeeder::class,
         ]);
-
-        // Create additional test users
-        User::factory(5)->create();
-
-        // Create test books
-        Book::factory(40)->create();
     }
 }
