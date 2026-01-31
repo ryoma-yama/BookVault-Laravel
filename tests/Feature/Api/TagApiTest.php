@@ -18,7 +18,7 @@ test('can show a single tag with its books', function () {
     $tag = Tag::factory()->create(['name' => 'Fiction']);
     $book1 = Book::factory()->create();
     $book2 = Book::factory()->create();
-    
+
     $tag->books()->attach([$book1->id, $book2->id]);
 
     $response = $this->getJson("/api/tags/{$tag->id}");

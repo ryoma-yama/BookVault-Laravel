@@ -2,7 +2,6 @@
 
 namespace App\Helpers;
 
-use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension;
@@ -12,9 +11,6 @@ class MarkdownHelper
 {
     /**
      * Convert markdown string to HTML string with sanitization.
-     *
-     * @param string $markdown
-     * @return string
      */
     public static function toHtml(string $markdown): string
     {
@@ -32,8 +28,8 @@ class MarkdownHelper
         ];
 
         $environment = new Environment($config);
-        $environment->addExtension(new CommonMarkCoreExtension());
-        $environment->addExtension(new DisallowedRawHtmlExtension());
+        $environment->addExtension(new CommonMarkCoreExtension);
+        $environment->addExtension(new DisallowedRawHtmlExtension);
 
         $converter = new MarkdownConverter($environment);
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\BookCopy;
 use App\Models\Loan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
@@ -15,7 +14,7 @@ class LoanController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $loans = Loan::with(['bookCopy.book', 'user'])
             ->where('user_id', $user->id)
             ->latest()
@@ -35,7 +34,7 @@ class LoanController extends Controller
 
         $bookCopy = BookCopy::findOrFail($request->book_copy_id);
 
-        if (!$bookCopy->isAvailable()) {
+        if (! $bookCopy->isAvailable()) {
             return response()->json([
                 'message' => 'This book copy is not available for borrowing.',
             ], 422);
@@ -71,7 +70,7 @@ class LoanController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        if (!$loan->isActive()) {
+        if (! $loan->isActive()) {
             return response()->json([
                 'message' => 'This loan has already been returned.',
             ], 422);

@@ -8,7 +8,7 @@ use App\Models\User;
 it('can create a reservation for a loaned book', function () {
     $user = User::factory()->create();
     $bookCopy = BookCopy::factory()->create();
-    
+
     // Book is currently loaned
     Loan::factory()->create(['book_copy_id' => $bookCopy->id]);
 
@@ -77,12 +77,12 @@ it('allows multiple reservations for same book copy', function () {
 
 it('shows active reservations for a book copy', function () {
     $bookCopy = BookCopy::factory()->create();
-    
+
     Reservation::factory()->count(2)->create([
         'book_copy_id' => $bookCopy->id,
         'fulfilled' => false,
     ]);
-    
+
     Reservation::factory()->fulfilled()->create([
         'book_copy_id' => $bookCopy->id,
     ]);
@@ -95,10 +95,10 @@ it('shows active reservations for a book copy', function () {
 it('reservation can be fulfilled when book is returned', function () {
     $bookCopy = BookCopy::factory()->create();
     $user = User::factory()->create();
-    
+
     // Book is loaned
     $loan = Loan::factory()->create(['book_copy_id' => $bookCopy->id]);
-    
+
     // User makes reservation
     $reservation = Reservation::create([
         'user_id' => $user->id,
@@ -111,7 +111,7 @@ it('reservation can be fulfilled when book is returned', function () {
 
     // Book is returned
     $loan->returnBook();
-    
+
     // Reservation can now be fulfilled
     $reservation->fulfill();
 

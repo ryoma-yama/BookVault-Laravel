@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
-use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
@@ -33,6 +33,7 @@ class BookController extends Controller
         $books->getCollection()->transform(function ($book) {
             $book->average_rating = $book->averageRating();
             $book->review_count = $book->reviewCount();
+
             return $book;
         });
 

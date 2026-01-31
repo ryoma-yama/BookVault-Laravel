@@ -138,7 +138,7 @@ test('authenticated user can update book tags', function () {
     ]);
 
     $response->assertOk();
-    
+
     $book->refresh();
     expect($book->tags)->toHaveCount(2);
     expect($book->tags->pluck('name')->toArray())->toContain('NewTag1', 'NewTag2');

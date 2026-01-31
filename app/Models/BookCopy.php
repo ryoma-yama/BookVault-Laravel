@@ -56,8 +56,8 @@ class BookCopy extends Model
     public function isAvailable(): bool
     {
         // A copy is available if it's not discarded and has no active loan
-        return $this->discarded_date === null && 
-               !$this->loans()->whereNull('returned_date')->exists();
+        return $this->discarded_date === null &&
+               ! $this->loans()->whereNull('returned_date')->exists();
     }
 
     /**

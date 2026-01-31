@@ -22,10 +22,10 @@ class UpdateBookRequest extends FormRequest
     public function rules(): array
     {
         $bookId = $this->route('book');
-        
+
         return [
-            'google_id' => ['nullable', 'string', 'max:100', 'unique:books,google_id,' . $bookId],
-            'isbn_13' => ['sometimes', 'required', 'string', 'size:13', 'unique:books,isbn_13,' . $bookId],
+            'google_id' => ['nullable', 'string', 'max:100', 'unique:books,google_id,'.$bookId],
+            'isbn_13' => ['sometimes', 'required', 'string', 'size:13', 'unique:books,isbn_13,'.$bookId],
             'title' => ['sometimes', 'required', 'string', 'max:100'],
             'publisher' => ['sometimes', 'required', 'string', 'max:100'],
             'published_date' => ['sometimes', 'required', 'date'],

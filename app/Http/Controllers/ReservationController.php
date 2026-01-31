@@ -14,7 +14,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        
+
         $reservations = Reservation::with(['bookCopy.book', 'user'])
             ->where('user_id', $user->id)
             ->latest()

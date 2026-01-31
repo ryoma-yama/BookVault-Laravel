@@ -28,6 +28,7 @@ class LoanFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $borrowedDate = $attributes['borrowed_date'];
+
             return [
                 'returned_date' => fake()->dateTimeBetween($borrowedDate, 'now'),
             ];

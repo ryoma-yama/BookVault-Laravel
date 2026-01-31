@@ -12,7 +12,7 @@ test('tag can be created', function () {
 
 test('tag name must be unique', function () {
     Tag::create(['name' => 'Fiction']);
-    
+
     expect(fn () => Tag::create(['name' => 'Fiction']))
         ->toThrow(\Illuminate\Database\QueryException::class);
 });

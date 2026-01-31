@@ -47,15 +47,19 @@ export default function Show({ book, copies }: Props) {
 
             <div className="space-y-6 p-4">
                 <div>
-                    <h1 className="text-2xl font-bold">{book.title} の蔵書管理</h1>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <h1 className="text-2xl font-bold">
+                        {book.title} の蔵書管理
+                    </h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         ISBN: {book.isbn_13} | 出版社: {book.publisher}
                     </p>
                 </div>
 
                 {/* Add new copy form */}
                 <div className="rounded-lg border bg-card p-4">
-                    <h2 className="text-lg font-semibold mb-4">新しい蔵書を追加</h2>
+                    <h2 className="mb-4 text-lg font-semibold">
+                        新しい蔵書を追加
+                    </h2>
                     <Form
                         method="post"
                         action={`/admin/copies/${book.id}`}
@@ -64,7 +68,9 @@ export default function Show({ book, copies }: Props) {
                         {({ processing, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="acquired_date">取得日</Label>
+                                    <Label htmlFor="acquired_date">
+                                        取得日
+                                    </Label>
                                     <Input
                                         id="acquired_date"
                                         name="acquired_date"
@@ -72,7 +78,9 @@ export default function Show({ book, copies }: Props) {
                                         required
                                         className="w-full max-w-xs"
                                     />
-                                    <InputError message={errors.acquired_date} />
+                                    <InputError
+                                        message={errors.acquired_date}
+                                    />
                                 </div>
 
                                 <Button type="submit" disabled={processing}>

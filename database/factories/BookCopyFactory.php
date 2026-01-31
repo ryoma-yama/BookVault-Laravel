@@ -27,6 +27,7 @@ class BookCopyFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             $acquiredDate = $attributes['acquired_date'];
+
             return [
                 'discarded_date' => fake()->dateTimeBetween($acquiredDate, 'now'),
             ];

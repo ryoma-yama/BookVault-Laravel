@@ -40,7 +40,7 @@ it('can create a reservation', function () {
 it('cannot create duplicate active reservation', function () {
     $user = User::factory()->create();
     $bookCopy = BookCopy::factory()->create();
-    
+
     Reservation::factory()->create([
         'user_id' => $user->id,
         'book_copy_id' => $bookCopy->id,
@@ -137,7 +137,7 @@ it('cannot cancel fulfilled reservation', function () {
 
     $response->assertUnprocessable()
         ->assertJsonPath('message', 'Cannot cancel a fulfilled reservation.');
-    
+
     expect(Reservation::find($reservation->id))->not->toBeNull();
 });
 
