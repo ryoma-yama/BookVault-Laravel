@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { BreadcrumbItem } from '@/types';
 import axios from 'axios';
+import { BrowserBarcodeReader } from '@zxing/library';
+
+function isISBN13(code: string): boolean {
+    return (
+        code.length === 13 && (code.startsWith("978") || code.startsWith("979"))
+    );
+}
 
 interface Author {
     id: number;
@@ -33,6 +40,9 @@ export default function AdminBookForm({ book }: Props) {
     const isEditing = !!book;
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const [scanning, setScanning] = useState(false);
+    const [scannerError, setScannerError] = useState<string | null>(null);
+    const scannerRef = useRef<HTMLDivElement>(null);
     
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -60,7 +70,7 @@ export default function AdminBookForm({ book }: Props) {
         authors: book?.authors.map((a) => a.name) || [''],
     });
 
-    const handleSearchByIsbn = async () => {
+    const handleSearchByIsbn = useCallback(async () => {
         if (!data.isbn_13) {
             setSearchError('Please enter an ISBN first');
             return;
@@ -96,7 +106,7 @@ export default function AdminBookForm({ book }: Props) {
         } finally {
             setIsSearching(false);
         }
-    };
+    }, [data.isbn_13, setData]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
@@ -114,6 +124,55 @@ export default function AdminBookForm({ book }: Props) {
         newAuthors[index] = value;
         setData('authors', newAuthors);
     };
+
+    useEffect(() => {
+        if (!scanning || !scannerRef.current) return;
+
+        let scanner: BrowserBarcodeReader | null = null;
+        let isStarted = false;
+
+        const startScanner = async () => {
+            scanner = new BrowserBarcodeReader();
+            setScannerError(null);
+
+            try {
+                await scanner.decodeFromVideoDevice(
+                    null, // デバイスID（nullで背面カメラを優先）
+                    scannerRef.current!.id,
+                    (result, err) => {
+                        if (result) {
+                            const code = result.getText();
+                            if (isISBN13(code)) {
+                                // カメラ停止とISBN処理
+                                scanner?.reset();
+                                setScanning(false);
+                                setData('isbn_13', code);
+                                handleSearchByIsbn();
+                            }
+                        }
+                    }
+                );
+                isStarted = true;
+            } catch (err) {
+                console.error("Scanner error:", err);
+                const errorMsg = err instanceof Error 
+                    ? err.message.includes('Permission') || err.message.includes('NotAllowedError')
+                        ? 'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。'
+                        : 'カメラの起動に失敗しました。' 
+                    : 'カメラの起動に失敗しました。';
+                setScannerError(errorMsg);
+                setScanning(false);
+            }
+        };
+
+        startScanner();
+
+        return () => {
+            if (scanner && isStarted) {
+                scanner.reset();
+            }
+        };
+    }, [scanning, handleSearchByIsbn, setData]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -152,12 +211,22 @@ export default function AdminBookForm({ book }: Props) {
                             >
                                 {isSearching ? 'Searching...' : 'Search ISBN'}
                             </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setScanning(true)}
+                            >
+                                カメラで読み取る
+                            </Button>
                         </div>
                         {errors.isbn_13 && (
                             <p className="text-sm text-red-500">{errors.isbn_13}</p>
                         )}
                         {searchError && (
                             <p className="text-sm text-red-500">{searchError}</p>
+                        )}
+                        {scannerError && (
+                            <p className="text-sm text-red-500">{scannerError}</p>
                         )}
                     </div>
 
@@ -272,6 +341,25 @@ export default function AdminBookForm({ book }: Props) {
                         </Button>
                     </div>
                 </form>
+
+                {scanning && (
+                    <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col items-center justify-center">
+                        <div className="text-white mb-2">
+                            カメラをISBNバーコードに向けてください
+                        </div>
+                        <div
+                            id="isbn-scanner"
+                            ref={scannerRef}
+                            className="w-[300px] h-[300px] bg-white"
+                        />
+                        <button
+                            onClick={() => setScanning(false)}
+                            className="mt-4 text-white underline"
+                        >
+                            閉じる
+                        </button>
+                    </div>
+                )}
             </div>
         </AppLayout>
     );
