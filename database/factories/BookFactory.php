@@ -18,13 +18,11 @@ class BookFactory extends Factory
     {
         return [
             'google_id' => fake()->optional()->regexify('[A-Za-z0-9]{12}'),
-            'isbn' => fake()->optional()->isbn13(),
-            'isbn_13' => fake()->optional()->isbn13(),
+            'isbn_13' => fake()->isbn13(),
             'title' => fake()->sentence(3),
-            'author' => fake()->name(),
             'publisher' => fake()->company(),
-            'published_date' => fake()->optional()->date(),
-            'description' => fake()->optional()->paragraph(),
+            'published_date' => fake()->date(),
+            'description' => fake()->paragraph(),
             'image_url' => fake()->optional()->imageUrl(),
         ];
     }

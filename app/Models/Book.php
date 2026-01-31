@@ -19,10 +19,8 @@ class Book extends Model
      */
     protected $fillable = [
         'google_id',
-        'isbn',
         'isbn_13',
         'title',
-        'author',
         'publisher',
         'published_date',
         'description',
