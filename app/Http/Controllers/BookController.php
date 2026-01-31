@@ -14,43 +14,68 @@ class BookController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = Book::query()->with(['tags', 'authors']);
-
-        // Search by title
+        // Use Scout search when there's a search query
         if ($request->filled('search')) {
-            $query->where('title', 'like', "%{$request->input('search')}%");
+            $books = Book::search($request->input('search'))
+                ->query(function ($builder) use ($request) {
+                    $builder->with(['tags', 'authors']);
+
+                    // Filter by author name through the authors relationship
+                    if ($request->filled('author')) {
+                        $builder->whereHas('authors', function ($q) use ($request) {
+                            $q->where('name', 'like', "%{$request->input('author')}%");
+                        });
+                    }
+
+                    // Filter by publisher
+                    if ($request->filled('publisher')) {
+                        $builder->where('publisher', 'like', "%{$request->input('publisher')}%");
+                    }
+
+                    // Filter by tag
+                    if ($request->filled('tag')) {
+                        $builder->whereHas('tags', function ($q) use ($request) {
+                            $q->where('name', 'like', "%{$request->input('tag')}%");
+                        });
+                    }
+                })
+                ->paginate(15)
+                ->withQueryString();
+        } else {
+            // Use traditional query builder when no search query
+            $query = Book::query()->with(['tags', 'authors']);
+
+            // Filter by author name through the authors relationship
+            if ($request->filled('author')) {
+                $query->whereHas('authors', function ($q) use ($request) {
+                    $q->where('name', 'like', "%{$request->input('author')}%");
+                });
+            }
+
+            // Filter by publisher
+            if ($request->filled('publisher')) {
+                $query->where('publisher', 'like', "%{$request->input('publisher')}%");
+            }
+
+            // Filter by tag
+            if ($request->filled('tag')) {
+                $query->whereHas('tags', function ($q) use ($request) {
+                    $q->where('name', 'like', "%{$request->input('tag')}%");
+                });
+            }
+
+            // Sorting
+            $sortField = $request->input('sort', 'created_at');
+            $sortDirection = $request->input('direction', 'desc');
+
+            $allowedSortFields = ['title', 'created_at'];
+            if (in_array($sortField, $allowedSortFields)) {
+                $query->orderBy($sortField, $sortDirection);
+            }
+
+            // Paginate results
+            $books = $query->paginate(15)->withQueryString();
         }
-
-        // Filter by author name through the authors relationship
-        if ($request->filled('author')) {
-            $query->whereHas('authors', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('author')}%");
-            });
-        }
-
-        // Filter by publisher
-        if ($request->filled('publisher')) {
-            $query->where('publisher', 'like', "%{$request->input('publisher')}%");
-        }
-
-        // Filter by tag
-        if ($request->filled('tag')) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('tag')}%");
-            });
-        }
-
-        // Sorting
-        $sortField = $request->input('sort', 'created_at');
-        $sortDirection = $request->input('direction', 'desc');
-
-        $allowedSortFields = ['title', 'created_at'];
-        if (in_array($sortField, $allowedSortFields)) {
-            $query->orderBy($sortField, $sortDirection);
-        }
-
-        // Paginate results
-        $books = $query->paginate(15)->withQueryString();
 
         return Inertia::render('books/index', [
             'books' => $books,

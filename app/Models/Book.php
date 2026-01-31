@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 class Book extends Model
 {
     /** @use HasFactory<\Database\Factories\BookFactory> */
-    use HasFactory;
+    use HasFactory, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -93,5 +94,20 @@ class Book extends Model
     public function getAvailableCopiesCountAttribute(): int
     {
         return $this->copies()->whereNull('discarded_date')->count();
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'title' => $this->title,
+            'publisher' => $this->publisher,
+            'description' => $this->description,
+            'isbn_13' => $this->isbn_13,
+            'authors' => $this->authors->pluck('name')->implode(', '),
+        ];
     }
 }
