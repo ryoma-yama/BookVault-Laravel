@@ -25,8 +25,11 @@ class BookCopyFactory extends Factory
 
     public function discarded(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'discarded_date' => fake()->dateTimeBetween('now', '+1 year'),
-        ]);
+        return $this->state(function (array $attributes) {
+            $acquiredDate = $attributes['acquired_date'];
+            return [
+                'discarded_date' => fake()->dateTimeBetween($acquiredDate, 'now'),
+            ];
+        });
     }
 }
