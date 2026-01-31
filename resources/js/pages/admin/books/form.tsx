@@ -140,9 +140,9 @@ export default function AdminBookForm({ book }: Props) {
                                 type="text"
                                 value={data.isbn_13}
                                 onChange={(e) => setData('isbn_13', e.target.value)}
-                            maxLength={13}
-                            required
-                        />
+                                maxLength={13}
+                                required
+                            />
                             <Button
                                 type="button"
                                 variant="outline"
