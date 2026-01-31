@@ -70,4 +70,8 @@ test('password cannot be reset with invalid token', function () {
     ]);
 
     $response->assertSessionHasErrors('email');
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main

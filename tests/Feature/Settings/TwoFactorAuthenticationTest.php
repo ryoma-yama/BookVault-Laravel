@@ -76,4 +76,8 @@ test('two factor settings page returns forbidden response when two factor is dis
         ->withSession(['auth.password_confirmed_at' => time()])
         ->get(route('two-factor.show'))
         ->assertForbidden();
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main

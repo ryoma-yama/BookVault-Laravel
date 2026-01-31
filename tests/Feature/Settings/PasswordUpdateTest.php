@@ -47,4 +47,8 @@ test('correct password must be provided to update password', function () {
     $response
         ->assertSessionHasErrors('current_password')
         ->assertRedirect(route('user-password.edit'));
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main

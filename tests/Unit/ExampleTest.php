@@ -2,4 +2,8 @@
 
 test('that true is true', function () {
     expect(true)->toBeTrue();
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> main

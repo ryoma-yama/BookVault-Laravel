@@ -1,5 +1,9 @@
 <?php
 
+<<<<<<< HEAD
+=======
+use App\Http\Middleware\EnsureUserHasRole;
+>>>>>>> main
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -21,6 +25,13 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
+<<<<<<< HEAD
+=======
+
+        $middleware->alias([
+            'role' => EnsureUserHasRole::class,
+        ]);
+>>>>>>> main
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
