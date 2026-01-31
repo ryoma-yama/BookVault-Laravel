@@ -54,6 +54,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the reviews for the user.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Get the loans for the user.
      */
     public function loans(): HasMany

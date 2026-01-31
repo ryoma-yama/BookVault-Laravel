@@ -48,6 +48,14 @@ class Book extends Model
     }
 
     /**
+     * Get the reviews for the book.
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /**
      * Get the copies for the book.
      */
     public function copies(): HasMany
@@ -61,6 +69,22 @@ class Book extends Model
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
+    }
+
+    /**
+     * Get the average rating for the book.
+     */
+    public function averageRating(): ?float
+    {
+        return $this->reviews()->avg('rating');
+    }
+
+    /**
+     * Get the review count for the book.
+     */
+    public function reviewCount(): int
+    {
+        return $this->reviews()->count();
     }
 
     /**
