@@ -17,7 +17,7 @@ class BookFactory extends Factory
     public function definition(): array
     {
         return [
-            'google_id' => fake()->optional()->regexify('[A-Za-z0-9]{12}'),
+            'google_id' => fake()->regexify('[A-Za-z0-9]{12}'),
             'isbn_13' => fake()->isbn13(),
             'title' => fake()->sentence(3),
             'publisher' => fake()->company(),
