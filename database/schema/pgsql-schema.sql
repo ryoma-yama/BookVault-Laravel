@@ -2,8 +2,6 @@
 -- PostgreSQL database dump
 --
 
-\restrict HWzEAZd2RkkAKNEQklNej0Z4uQlUb8bnlxNNUVGQHcF9TFXOtXswfbaAVYPYVrY
-
 -- Dumped from database version 16.11 (Ubuntu 16.11-1.pgdg24.04+1)
 -- Dumped by pg_dump version 16.11 (Ubuntu 16.11-1.pgdg24.04+1)
 
@@ -906,13 +904,9 @@ ALTER TABLE ONLY public.reviews
 -- PostgreSQL database dump complete
 --
 
-\unrestrict HWzEAZd2RkkAKNEQklNej0Z4uQlUb8bnlxNNUVGQHcF9TFXOtXswfbaAVYPYVrY
-
 --
 -- PostgreSQL database dump
 --
-
-\restrict m7mcgcREGUnvWiD5S8NdMOVBFllOCTxASG6jtcgn8ij21WU0gdJ7aA6wlqZbPx5
 
 -- Dumped from database version 16.11 (Ubuntu 16.11-1.pgdg24.04+1)
 -- Dumped by pg_dump version 16.11 (Ubuntu 16.11-1.pgdg24.04+1)
@@ -960,6 +954,4 @@ SELECT pg_catalog.setval('public.migrations_id_seq', 14, true);
 --
 -- PostgreSQL database dump complete
 --
-
-\unrestrict m7mcgcREGUnvWiD5S8NdMOVBFllOCTxASG6jtcgn8ij21WU0gdJ7aA6wlqZbPx5
 
