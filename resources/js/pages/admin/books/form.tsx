@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState, useRef, useEffect } from 'react';
+import { FormEventHandler, useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -41,6 +41,7 @@ export default function AdminBookForm({ book }: Props) {
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
     const [scanning, setScanning] = useState(false);
+    const [scannerError, setScannerError] = useState<string | null>(null);
     const scannerRef = useRef<HTMLDivElement>(null);
     
     const breadcrumbs: BreadcrumbItem[] = [
@@ -69,7 +70,7 @@ export default function AdminBookForm({ book }: Props) {
         authors: book?.authors.map((a) => a.name) || [''],
     });
 
-    const handleSearchByIsbn = async () => {
+    const handleSearchByIsbn = useCallback(async () => {
         if (!data.isbn_13) {
             setSearchError('Please enter an ISBN first');
             return;
@@ -105,7 +106,7 @@ export default function AdminBookForm({ book }: Props) {
         } finally {
             setIsSearching(false);
         }
-    };
+    }, [data.isbn_13, setData]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
@@ -132,10 +133,11 @@ export default function AdminBookForm({ book }: Props) {
 
         const startScanner = async () => {
             scanner = new BrowserBarcodeReader();
+            setScannerError(null);
 
             try {
                 await scanner.decodeFromVideoDevice(
-                    null, // デバイスID（nullで背面カメラ）
+                    null, // デバイスID（nullで背面カメラを優先）
                     scannerRef.current!.id,
                     (result, err) => {
                         if (result) {
@@ -153,6 +155,12 @@ export default function AdminBookForm({ book }: Props) {
                 isStarted = true;
             } catch (err) {
                 console.error("Scanner error:", err);
+                const errorMsg = err instanceof Error 
+                    ? err.message.includes('Permission') || err.message.includes('NotAllowedError')
+                        ? 'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。'
+                        : 'カメラの起動に失敗しました。' 
+                    : 'カメラの起動に失敗しました。';
+                setScannerError(errorMsg);
                 setScanning(false);
             }
         };
@@ -164,7 +172,7 @@ export default function AdminBookForm({ book }: Props) {
                 scanner.reset();
             }
         };
-    }, [scanning, handleSearchByIsbn]);
+    }, [scanning, handleSearchByIsbn, setData]);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -216,6 +224,9 @@ export default function AdminBookForm({ book }: Props) {
                         )}
                         {searchError && (
                             <p className="text-sm text-red-500">{searchError}</p>
+                        )}
+                        {scannerError && (
+                            <p className="text-sm text-red-500">{scannerError}</p>
                         )}
                     </div>
 
