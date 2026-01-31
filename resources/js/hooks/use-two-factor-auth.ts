@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { TwoFactorSecretKey, TwoFactorSetupData } from '@/types';
 import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
+import type { TwoFactorSecretKey, TwoFactorSetupData } from '@/types';
 
 export type UseTwoFactorAuthReturn = {
     qrCodeSvg: string | null;
@@ -27,7 +27,7 @@ const fetchJson = async <T>(url: string): Promise<T> => {
         throw new Error(`Failed to fetch: ${response.status}`);
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
 };
 
 export const useTwoFactorAuth = (): UseTwoFactorAuthReturn => {

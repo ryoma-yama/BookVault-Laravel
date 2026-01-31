@@ -20,28 +20,19 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, PaginatedResponse, UserFilters } from '@/types';
 
-interface User {
+type UserListItem = {
     id: number;
     name: string;
     email: string;
-    role: string;
+    role: 'admin' | 'user';
     created_at: string;
-}
+};
 
 interface Props {
-    users: {
-        data: User[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        role?: string;
-    };
+    users: PaginatedResponse<UserListItem>;
+    filters: UserFilters;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [

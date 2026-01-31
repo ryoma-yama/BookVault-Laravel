@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BookCopy, BreadcrumbItem } from '@/types';
 
-type Book = {
+type BookSummary = {
     id: number;
     title: string;
     isbn_13: string;
@@ -15,17 +15,8 @@ type Book = {
     published_date: string;
 };
 
-type BookCopy = {
-    id: number;
-    book_id: number;
-    acquired_date: string;
-    discarded_date: string | null;
-    created_at: string;
-    updated_at: string;
-};
-
 type Props = {
-    book: Book;
+    book: BookSummary;
     copies: BookCopy[];
 };
 

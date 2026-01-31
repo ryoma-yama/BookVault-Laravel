@@ -1,4 +1,5 @@
 export type * from './auth';
+export type * from './domain';
 export type * from './navigation';
 export type * from './ui';
 
@@ -8,5 +9,11 @@ export type SharedData = {
     name: string;
     auth: Auth;
     sidebarOpen: boolean;
-    [key: string]: unknown;
+    flash?: {
+        success?: string;
+        error?: string;
+        warning?: string;
+        info?: string;
+    };
+    locale?: string;
 };

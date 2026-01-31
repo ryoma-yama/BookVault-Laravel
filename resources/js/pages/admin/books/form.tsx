@@ -1,5 +1,6 @@
 import { Head, useForm } from '@inertiajs/react';
 import { BrowserBarcodeReader } from '@zxing/library';
+import type { AxiosError } from 'axios';
 import axios from 'axios';
 import type {
     FormEventHandler} from 'react';
@@ -14,29 +15,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { ApiErrorResponse, Book, BookFormData, BreadcrumbItem, GoogleBooksApiResponse } from '@/types';
 
 function isISBN13(code: string): boolean {
     return (
         code.length === 13 && (code.startsWith('978') || code.startsWith('979'))
     );
-}
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Book {
-    id: number;
-    isbn_13: string;
-    title: string;
-    publisher: string;
-    published_date: string;
-    description: string;
-    google_id?: string;
-    image_url?: string;
-    authors: Author[];
 }
 
 interface Props {
@@ -68,7 +52,7 @@ export default function AdminBookForm({ book }: Props) {
         },
     ];
 
-    const { data, setData, post, put, processing, errors } = useForm({
+    const { data, setData, post, put, processing, errors } = useForm<BookFormData>({
         isbn_13: book?.isbn_13 || '',
         title: book?.title || '',
         publisher: book?.publisher || '',
@@ -89,7 +73,7 @@ export default function AdminBookForm({ book }: Props) {
         setSearchError(null);
 
         try {
-            const response = await axios.post(
+            const response = await axios.post<GoogleBooksApiResponse>(
                 '/admin/api/google-books/search',
                 {
                     isbn: data.isbn_13,
@@ -112,17 +96,14 @@ export default function AdminBookForm({ book }: Props) {
                         : data.authors,
             });
         } catch (error) {
+            const axiosError = error as AxiosError<ApiErrorResponse>;
             const errorMessage =
-                error instanceof Error && 'response' in error
-                    ? (error as { response?: { data?: { error?: string } } })
-                          .response?.data?.error ||
-                      'Failed to fetch book information'
-                    : 'Failed to fetch book information';
+                axiosError.response?.data?.error || 'Failed to fetch book information';
             setSearchError(errorMessage);
         } finally {
             setIsSearching(false);
         }
-    }, [data.isbn_13, setData]);
+    }, [data, setData]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);

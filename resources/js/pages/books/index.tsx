@@ -13,39 +13,11 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
-
-interface Tag {
-    id: number;
-    name: string;
-}
-
-interface Book {
-    id: number;
-    title: string;
-    author: string | null;
-    publisher: string | null;
-    isbn: string | null;
-    tags: Tag[];
-    created_at: string;
-}
+import type { BookFilters, BookListItem, BreadcrumbItem, PaginatedResponse } from '@/types';
 
 interface Props {
-    books: {
-        data: Book[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        author?: string;
-        publisher?: string;
-        tag?: string;
-        sort?: string;
-        direction?: string;
-    };
+    books: PaginatedResponse<BookListItem>;
+    filters: BookFilters;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/books' }];
