@@ -19,10 +19,7 @@ test('profile information can be updated', function () {
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-<<<<<<< HEAD
-=======
             'display_name' => 'Test Display',
->>>>>>> main
             'email' => 'test@example.com',
         ]);
 
@@ -33,10 +30,7 @@ test('profile information can be updated', function () {
     $user->refresh();
 
     expect($user->name)->toBe('Test User');
-<<<<<<< HEAD
-=======
     expect($user->display_name)->toBe('Test Display');
->>>>>>> main
     expect($user->email)->toBe('test@example.com');
     expect($user->email_verified_at)->toBeNull();
 });
@@ -48,10 +42,7 @@ test('email verification status is unchanged when the email address is unchanged
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-<<<<<<< HEAD
-=======
             'display_name' => 'Test Display',
->>>>>>> main
             'email' => $user->email,
         ]);
 
@@ -94,8 +85,4 @@ test('correct password must be provided to delete account', function () {
         ->assertRedirect(route('profile.edit'));
 
     expect($user->fresh())->not->toBeNull();
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main

@@ -92,8 +92,4 @@ test('already verified user visiting verification link is redirected without fir
 
     Event::assertNotDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main

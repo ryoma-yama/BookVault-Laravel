@@ -81,8 +81,4 @@ test('users are rate limited', function () {
     ]);
 
     $response->assertTooManyRequests();
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> main
