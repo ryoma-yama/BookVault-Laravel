@@ -48,7 +48,12 @@ This project uses Dev Containers for development.
     php artisan migrate
     ```
 
-5. **Start development server**
+5. **Index books for search (Meilisearch)**
+    ```bash
+    php artisan scout:import "App\Models\Book"
+    ```
+
+6. **Start development server**
     ```bash
     composer run dev
     ```

@@ -398,6 +398,177 @@ php artisan make:middleware EnsureUserIsAdmin
 php artisan route:list
 ```
 
+## 🔍 全文検索機能（Laravel Scout + Meilisearch）
+
+このプロジェクトでは、Laravel ScoutとMeilisearchを使用した高速な全文検索機能を実装しています。
+
+### セットアップ
+
+#### 1. 環境変数の設定
+
+`.env`ファイルに以下を設定：
+
+```env
+SCOUT_DRIVER=meilisearch
+MEILISEARCH_HOST=http://meilisearch:7700
+MEILISEARCH_KEY=
+```
+
+#### 2. インデックスの作成
+
+全ての書籍をMeilisearchにインデックス化：
+
+```bash
+php artisan scout:import "App\Models\Book"
+```
+
+特定のモデルのインデックスを削除：
+
+```bash
+php artisan scout:flush "App\Models\Book"
+```
+
+インデックスを再作成（フラッシュ＋インポート）：
+
+```bash
+php artisan scout:flush "App\Models\Book"
+php artisan scout:import "App\Models\Book"
+```
+
+### 検索可能な項目
+
+Bookモデルでは以下の項目が検索対象です：
+
+- **id**: 書籍ID
+- **title**: タイトル
+- **publisher**: 出版社
+- **description**: 説明文
+- **isbn_13**: ISBN-13コード
+- **authors**: 著者名（リレーションから取得）
+
+### 使用方法
+
+#### コントローラーでの検索
+
+```php
+use App\Models\Book;
+
+// 基本的な検索
+$books = Book::search('Laravel')->get();
+
+// ページネーション付き検索
+$books = Book::search('Laravel')->paginate(15);
+
+// 追加のフィルタリング
+$books = Book::search('Laravel')
+    ->query(function ($builder) {
+        $builder->where('publisher', 'like', '%O\'Reilly%');
+    })
+    ->paginate(15);
+```
+
+#### テスト環境での設定
+
+テストでは`database`ドライバーを使用します（`phpunit.xml`に設定済み）：
+
+```xml
+<env name="SCOUT_DRIVER" value="database"/>
+```
+
+このドライバーは外部サービス不要で、テスト実行時にデータベースを使用した簡易的な検索を提供します。
+
+### インデックス管理のベストプラクティス
+
+#### 自動インデックス化
+
+モデルを保存・更新すると自動的にインデックスが更新されます：
+
+```php
+$book = Book::create([
+    'title' => '新しい書籍',
+    'description' => '説明文',
+]);
+// 自動的にMeilisearchにインデックス化されます
+```
+
+#### 手動でインデックス化を制御
+
+```php
+// インデックス化を一時的に無効化
+Book::withoutSyncingToSearch(function () {
+    Book::factory()->count(100)->create();
+});
+
+// その後まとめてインデックス化
+php artisan scout:import "App\Models\Book"
+```
+
+#### インデックスのカスタマイズ
+
+モデルの`toSearchableArray()`メソッドで検索対象をカスタマイズ：
+
+```php
+public function toSearchableArray(): array
+{
+    return [
+        'id' => $this->id,
+        'title' => $this->title,
+        'publisher' => $this->publisher,
+        'description' => $this->description,
+        'isbn_13' => $this->isbn_13,
+        'authors' => $this->authors->pluck('name')->implode(', '),
+    ];
+}
+```
+
+### Meilisearchダッシュボード
+
+開発環境では、Meilisearchのダッシュボードにアクセスできます：
+
+- **URL**: http://localhost:7700
+- インデックスの状態、検索テスト、設定の確認が可能
+
+### パフォーマンス最適化
+
+#### キューを使用したインデックス化
+
+大量のデータを扱う場合は、キューを使用して非同期でインデックス化：
+
+```env
+SCOUT_QUEUE=true
+```
+
+```bash
+# キューワーカーの起動
+php artisan queue:work
+```
+
+### トラブルシューティング
+
+#### インデックスが更新されない場合
+
+```bash
+# キャッシュをクリア
+php artisan cache:clear
+php artisan config:clear
+
+# インデックスを再作成
+php artisan scout:flush "App\Models\Book"
+php artisan scout:import "App\Models\Book"
+```
+
+#### Meilisearchに接続できない場合
+
+```bash
+# Meilisearchコンテナのステータス確認
+docker ps | grep meilisearch
+
+# ログの確認
+docker compose logs meilisearch
+```
+
+
+
 ### キャッシュクリア
 
 ```bash
