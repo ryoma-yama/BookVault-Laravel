@@ -20,7 +20,7 @@ class BookSeeder extends Seeder
             ->each(function ($book) {
                 // Create 2-5 copies for each book
                 $copyCount = rand(2, 5);
-                
+
                 BookCopy::factory()
                     ->count($copyCount)
                     ->create(['book_id' => $book->id]);

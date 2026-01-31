@@ -59,7 +59,7 @@ class BookCopyController extends Controller
         if (isset($validated['discarded_date']) && $validated['discarded_date']) {
             $acquiredDate = new \DateTime($validated['acquired_date']);
             $discardedDate = new \DateTime($validated['discarded_date']);
-            
+
             if ($discardedDate < $acquiredDate) {
                 return back()->withErrors([
                     'discarded_date' => '廃棄日は取得日以降の日付である必要があります。',

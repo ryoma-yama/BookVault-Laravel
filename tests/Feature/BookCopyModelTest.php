@@ -64,15 +64,15 @@ test('book copy can be discarded', function () {
 
 test('book available copies count excludes discarded copies', function () {
     $book = Book::factory()->create();
-    
+
     // Create 3 available copies
     BookCopy::factory()->count(3)->create(['book_id' => $book->id]);
-    
+
     // Create 2 discarded copies
     BookCopy::factory()->count(2)->discarded()->create(['book_id' => $book->id]);
 
     $book->refresh();
-    
+
     expect($book->available_copies_count)->toBe(3)
         ->and($book->copies)->toHaveCount(5);
 });
