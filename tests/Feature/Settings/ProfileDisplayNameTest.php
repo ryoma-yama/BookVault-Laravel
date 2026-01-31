@@ -70,7 +70,7 @@ test('user can register with display_name', function () {
     ]);
 
     $response->assertRedirect();
-    
+
     $user = User::where('email', 'test@example.com')->first();
     expect($user)->not->toBeNull();
     expect($user->display_name)->toBe('My Display Name');
