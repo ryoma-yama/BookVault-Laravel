@@ -15,15 +15,18 @@ class Book extends Model
     /**
      * The attributes that are mass assignable.
      *
-     * @var list<string>
+     * @var array<int, string>
      */
     protected $fillable = [
+        'google_id',
+        'isbn',
+        'isbn_13',
         'title',
         'author',
         'publisher',
-        'isbn',
-        'google_id',
+        'published_date',
         'description',
+        'image_url',
     ];
 
     /**
@@ -40,5 +43,29 @@ class Book extends Model
     public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
+    }
+
+    /**
+     * Get the copies for the book.
+     */
+    public function copies(): HasMany
+    {
+        return $this->hasMany(BookCopy::class);
+    }
+
+    /**
+     * Get the available (not discarded) copies count.
+     */
+    public function getAvailableCopiesCountAttribute(): int
+    {
+        return $this->copies()->whereNull('discarded_date')->count();
+    }
+
+    /**
+     * Get the authors for the book.
+     */
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'book_authors');
     }
 }

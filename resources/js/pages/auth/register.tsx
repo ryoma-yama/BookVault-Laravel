@@ -44,17 +44,39 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
+                                <Label htmlFor="display_name">
+                                    Display Name
+                                </Label>
+                                <Input
+                                    id="display_name"
+                                    type="text"
+                                    required
+                                    tabIndex={2}
+                                    autoComplete="off"
+                                    name="display_name"
+                                    placeholder="Display name"
+                                />
+                                <InputError
+                                    message={errors.display_name}
+                                    className="mt-2"
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
                                 <Label htmlFor="email">Email address</Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     required
-                                    tabIndex={2}
+                                    tabIndex={3}
                                     autoComplete="email"
                                     name="email"
-                                    placeholder="email@example.com"
+                                    placeholder="Email address"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError
+                                    message={errors.email}
+                                    className="mt-2"
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -63,12 +85,15 @@ export default function Register() {
                                     id="password"
                                     type="password"
                                     required
-                                    tabIndex={3}
+                                    tabIndex={4}
                                     autoComplete="new-password"
                                     name="password"
                                     placeholder="Password"
                                 />
-                                <InputError message={errors.password} />
+                                <InputError
+                                    message={errors.password}
+                                    className="mt-2"
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -79,33 +104,35 @@ export default function Register() {
                                     id="password_confirmation"
                                     type="password"
                                     required
-                                    tabIndex={4}
+                                    tabIndex={5}
                                     autoComplete="new-password"
                                     name="password_confirmation"
                                     placeholder="Confirm password"
                                 />
                                 <InputError
                                     message={errors.password_confirmation}
+                                    className="mt-2"
                                 />
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
+                                disabled={processing}
+                                className="w-full"
+                                tabIndex={6}
                             >
-                                {processing && <Spinner />}
-                                Create account
+                                {processing ? (
+                                    <Spinner className="size-4" />
+                                ) : (
+                                    'Create account'
+                                )}
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <p className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
-                            </TextLink>
-                        </div>
+                            <TextLink href={login().url}>Sign in</TextLink>
+                        </p>
                     </>
                 )}
             </Form>

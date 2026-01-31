@@ -55,4 +55,16 @@ class BookController extends Controller
             'filters' => $request->only(['search', 'author', 'publisher', 'tag', 'sort', 'direction']),
         ]);
     }
+
+    /**
+     * Display the specified book.
+     */
+    public function show(Book $book)
+    {
+        $book->load('authors');
+
+        return Inertia::render('books/show', [
+            'book' => $book,
+        ]);
+    }
 }

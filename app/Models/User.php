@@ -21,6 +21,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'display_name',
         'email',
         'password',
         'role',
@@ -61,7 +62,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is an admin.
+     * Determine if the user has the admin role.
      */
     public function isAdmin(): bool
     {
