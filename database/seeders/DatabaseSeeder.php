@@ -13,14 +13,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
-        // Seed books, authors, and book copies
         $this->call([
+            UserSeeder::class,
             BookSeeder::class,
             LoanSeeder::class,
         ]);

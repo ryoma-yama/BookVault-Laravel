@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -20,8 +21,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'display_name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -50,12 +53,15 @@ class User extends Authenticatable
         ];
     }
 
-    public function loans()
+    /**
+     * Get the loans for the user.
+     */
+    public function loans(): HasMany
     {
         return $this->hasMany(Loan::class);
     }
 
-    public function reservations()
+    public function reservations(): HasMany
     {
         return $this->hasMany(Reservation::class);
     }
@@ -68,5 +74,13 @@ class User extends Authenticatable
     public function loanHistory()
     {
         return $this->loans()->whereNotNull('returned_date');
+    }
+
+    /**
+     * Determine if the user has the admin role.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Loan extends Model
 {
+    /** @use HasFactory<\Database\Factories\LoanFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'book_copy_id',
         'user_id',
@@ -27,6 +33,9 @@ class Loan extends Model
         return $this->belongsTo(BookCopy::class);
     }
 
+    /**
+     * Get the user that owns the loan.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

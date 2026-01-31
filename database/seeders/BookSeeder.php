@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Author;
+use App\Models\Book;
+use App\Models\BookCopy;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
@@ -12,22 +14,61 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $authors = \App\Models\Author::factory()->count(10)->create();
-        
-        $books = \App\Models\Book::factory()->count(20)->create();
+        // Sample books data with authors
+        $books = [
+            [
+                'isbn_13' => '9784798179216',
+                'title' => 'リーダブルコード',
+                'publisher' => 'オライリージャパン',
+                'published_date' => '2012-06-23',
+                'description' => '読みやすいコードを書くための実践的なテクニックを解説した書籍。変数名の付け方、コメントの書き方、関数の分割など、すぐに実践できるノウハウが満載。',
+                'authors' => ['Dustin Boswell', 'Trevor Foucher'],
+            ],
+            [
+                'isbn_13' => '9784873119038',
+                'title' => 'Clean Code',
+                'publisher' => 'アスキー・メディアワークス',
+                'published_date' => '2009-01-01',
+                'description' => 'ソフトウェア開発の名著。保守性の高い美しいコードを書くための原則とパターンを詳しく解説。',
+                'authors' => ['Robert C. Martin'],
+            ],
+            [
+                'isbn_13' => '9784297124021',
+                'title' => 'Laravel入門',
+                'publisher' => '技術評論社',
+                'published_date' => '2021-03-15',
+                'description' => 'PHPフレームワーク「Laravel」の入門書。基礎から実践的な機能まで丁寧に解説。',
+                'authors' => ['掌田津耶乃'],
+            ],
+        ];
 
-        // Attach authors to books
-        $books->each(function ($book) use ($authors) {
-            $book->authors()->attach(
-                $authors->random(rand(1, 3))->pluck('id')->toArray()
-            );
-        });
+        foreach ($books as $bookData) {
+            $authorNames = $bookData['authors'];
+            unset($bookData['authors']);
 
-        // Create book copies
-        $books->each(function ($book) {
-            \App\Models\BookCopy::factory()->count(rand(1, 5))->create([
-                'book_id' => $book->id,
-            ]);
-        });
+            $book = Book::create($bookData);
+
+            // Attach authors
+            foreach ($authorNames as $authorName) {
+                $author = Author::firstOrCreate(['name' => $authorName]);
+                $book->authors()->attach($author);
+            }
+
+            // Create 2-5 copies for each book
+            $copyCount = rand(2, 5);
+
+            BookCopy::factory()
+                ->count($copyCount)
+                ->create(['book_id' => $book->id]);
+
+            // Mark some copies as discarded (20% chance per copy)
+            $book->copies->each(function ($copy) {
+                if (rand(1, 5) === 1) {
+                    $copy->update([
+                        'discarded_date' => now()->subDays(rand(1, 365)),
+                    ]);
+                }
+            });
+        }
     }
 }
