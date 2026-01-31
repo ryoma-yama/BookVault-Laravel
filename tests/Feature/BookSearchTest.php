@@ -39,10 +39,10 @@ test('can search books by title', function () {
 test('can search books by author', function () {
     $author1 = \App\Models\Author::create(['name' => 'John Doe']);
     $author2 = \App\Models\Author::create(['name' => 'Jane Smith']);
-    
+
     $book1 = Book::factory()->create(['title' => 'Book by John']);
     $book1->authors()->attach($author1);
-    
+
     $book2 = Book::factory()->create(['title' => 'Book by Jane']);
     $book2->authors()->attach($author2);
 

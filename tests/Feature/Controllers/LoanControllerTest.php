@@ -40,7 +40,7 @@ it('can create a loan for available book', function () {
 it('cannot create loan for unavailable book', function () {
     $user = User::factory()->create();
     $bookCopy = BookCopy::factory()->create();
-    
+
     // Make book unavailable by creating active loan
     Loan::factory()->create(['book_copy_id' => $bookCopy->id]);
 

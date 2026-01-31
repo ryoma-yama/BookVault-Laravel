@@ -1,5 +1,11 @@
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState, useRef, useEffect, useCallback } from 'react';
+import {
+    FormEventHandler,
+    useState,
+    useRef,
+    useEffect,
+    useCallback,
+} from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +17,7 @@ import { BrowserBarcodeReader } from '@zxing/library';
 
 function isISBN13(code: string): boolean {
     return (
-        code.length === 13 && (code.startsWith("978") || code.startsWith("979"))
+        code.length === 13 && (code.startsWith('978') || code.startsWith('979'))
     );
 }
 
@@ -43,7 +49,7 @@ export default function AdminBookForm({ book }: Props) {
     const [scanning, setScanning] = useState(false);
     const [scannerError, setScannerError] = useState<string | null>(null);
     const scannerRef = useRef<HTMLDivElement>(null);
-    
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Admin',
@@ -55,7 +61,9 @@ export default function AdminBookForm({ book }: Props) {
         },
         {
             title: isEditing ? 'Edit Book' : 'New Book',
-            href: isEditing ? `/admin/books/${book.id}/edit` : '/admin/books/create',
+            href: isEditing
+                ? `/admin/books/${book.id}/edit`
+                : '/admin/books/create',
         },
     ];
 
@@ -80,9 +88,12 @@ export default function AdminBookForm({ book }: Props) {
         setSearchError(null);
 
         try {
-            const response = await axios.post('/admin/api/google-books/search', {
-                isbn: data.isbn_13,
-            });
+            const response = await axios.post(
+                '/admin/api/google-books/search',
+                {
+                    isbn: data.isbn_13,
+                },
+            );
 
             const bookInfo = response.data;
 
@@ -94,14 +105,18 @@ export default function AdminBookForm({ book }: Props) {
                 description: bookInfo.description || data.description,
                 google_id: bookInfo.google_id || data.google_id,
                 image_url: bookInfo.image_url || data.image_url,
-                authors: bookInfo.authors && bookInfo.authors.length > 0 
-                    ? bookInfo.authors 
-                    : data.authors,
+                authors:
+                    bookInfo.authors && bookInfo.authors.length > 0
+                        ? bookInfo.authors
+                        : data.authors,
             });
         } catch (error) {
-            const errorMessage = error instanceof Error && 'response' in error
-                ? (error as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to fetch book information'
-                : 'Failed to fetch book information';
+            const errorMessage =
+                error instanceof Error && 'response' in error
+                    ? (error as { response?: { data?: { error?: string } } })
+                          .response?.data?.error ||
+                      'Failed to fetch book information'
+                    : 'Failed to fetch book information';
             setSearchError(errorMessage);
         } finally {
             setIsSearching(false);
@@ -115,7 +130,7 @@ export default function AdminBookForm({ book }: Props) {
     const handleRemoveAuthor = (index: number) => {
         setData(
             'authors',
-            data.authors.filter((_, i) => i !== index)
+            data.authors.filter((_, i) => i !== index),
         );
     };
 
@@ -150,16 +165,18 @@ export default function AdminBookForm({ book }: Props) {
                                 handleSearchByIsbn();
                             }
                         }
-                    }
+                    },
                 );
                 isStarted = true;
             } catch (err) {
-                console.error("Scanner error:", err);
-                const errorMsg = err instanceof Error 
-                    ? err.message.includes('Permission') || err.message.includes('NotAllowedError')
-                        ? 'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。'
-                        : 'カメラの起動に失敗しました。' 
-                    : 'カメラの起動に失敗しました。';
+                console.error('Scanner error:', err);
+                const errorMsg =
+                    err instanceof Error
+                        ? err.message.includes('Permission') ||
+                          err.message.includes('NotAllowedError')
+                            ? 'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。'
+                            : 'カメラの起動に失敗しました。'
+                        : 'カメラの起動に失敗しました。';
                 setScannerError(errorMsg);
                 setScanning(false);
             }
@@ -199,7 +216,9 @@ export default function AdminBookForm({ book }: Props) {
                                 id="isbn_13"
                                 type="text"
                                 value={data.isbn_13}
-                                onChange={(e) => setData('isbn_13', e.target.value)}
+                                onChange={(e) =>
+                                    setData('isbn_13', e.target.value)
+                                }
                                 maxLength={13}
                                 required
                             />
@@ -220,13 +239,19 @@ export default function AdminBookForm({ book }: Props) {
                             </Button>
                         </div>
                         {errors.isbn_13 && (
-                            <p className="text-sm text-red-500">{errors.isbn_13}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.isbn_13}
+                            </p>
                         )}
                         {searchError && (
-                            <p className="text-sm text-red-500">{searchError}</p>
+                            <p className="text-sm text-red-500">
+                                {searchError}
+                            </p>
                         )}
                         {scannerError && (
-                            <p className="text-sm text-red-500">{scannerError}</p>
+                            <p className="text-sm text-red-500">
+                                {scannerError}
+                            </p>
                         )}
                     </div>
 
@@ -240,7 +265,9 @@ export default function AdminBookForm({ book }: Props) {
                             required
                         />
                         {errors.title && (
-                            <p className="text-sm text-red-500">{errors.title}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.title}
+                            </p>
                         )}
                     </div>
 
@@ -250,11 +277,15 @@ export default function AdminBookForm({ book }: Props) {
                             id="publisher"
                             type="text"
                             value={data.publisher}
-                            onChange={(e) => setData('publisher', e.target.value)}
+                            onChange={(e) =>
+                                setData('publisher', e.target.value)
+                            }
                             required
                         />
                         {errors.publisher && (
-                            <p className="text-sm text-red-500">{errors.publisher}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.publisher}
+                            </p>
                         )}
                     </div>
 
@@ -264,12 +295,16 @@ export default function AdminBookForm({ book }: Props) {
                             id="published_date"
                             type="text"
                             value={data.published_date}
-                            onChange={(e) => setData('published_date', e.target.value)}
+                            onChange={(e) =>
+                                setData('published_date', e.target.value)
+                            }
                             placeholder="YYYY-MM-DD"
                             required
                         />
                         {errors.published_date && (
-                            <p className="text-sm text-red-500">{errors.published_date}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.published_date}
+                            </p>
                         )}
                     </div>
 
@@ -278,12 +313,16 @@ export default function AdminBookForm({ book }: Props) {
                         <Textarea
                             id="description"
                             value={data.description}
-                            onChange={(e) => setData('description', e.target.value)}
+                            onChange={(e) =>
+                                setData('description', e.target.value)
+                            }
                             rows={5}
                             required
                         />
                         {errors.description && (
-                            <p className="text-sm text-red-500">{errors.description}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.description}
+                            </p>
                         )}
                     </div>
 
@@ -293,33 +332,48 @@ export default function AdminBookForm({ book }: Props) {
                             id="image_url"
                             type="text"
                             value={data.image_url}
-                            onChange={(e) => setData('image_url', e.target.value)}
+                            onChange={(e) =>
+                                setData('image_url', e.target.value)
+                            }
                         />
                         {errors.image_url && (
-                            <p className="text-sm text-red-500">{errors.image_url}</p>
+                            <p className="text-sm text-red-500">
+                                {errors.image_url}
+                            </p>
                         )}
                     </div>
 
                     <div>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="mb-2 flex items-center justify-between">
                             <Label>Authors</Label>
-                            <Button type="button" variant="outline" onClick={handleAddAuthor}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleAddAuthor}
+                            >
                                 Add Author
                             </Button>
                         </div>
                         {data.authors.map((author, index) => (
-                            <div key={index} className="flex gap-2 mb-2">
+                            <div key={index} className="mb-2 flex gap-2">
                                 <Input
                                     type="text"
                                     value={author}
-                                    onChange={(e) => handleAuthorChange(index, e.target.value)}
+                                    onChange={(e) =>
+                                        handleAuthorChange(
+                                            index,
+                                            e.target.value,
+                                        )
+                                    }
                                     placeholder="Author name"
                                 />
                                 {data.authors.length > 1 && (
                                     <Button
                                         type="button"
                                         variant="destructive"
-                                        onClick={() => handleRemoveAuthor(index)}
+                                        onClick={() =>
+                                            handleRemoveAuthor(index)
+                                        }
                                     >
                                         Remove
                                     </Button>
@@ -343,14 +397,14 @@ export default function AdminBookForm({ book }: Props) {
                 </form>
 
                 {scanning && (
-                    <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col items-center justify-center">
-                        <div className="text-white mb-2">
+                    <div className="bg-opacity-80 fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
+                        <div className="mb-2 text-white">
                             カメラをISBNバーコードに向けてください
                         </div>
                         <div
                             id="isbn-scanner"
                             ref={scannerRef}
-                            className="w-[300px] h-[300px] bg-white"
+                            className="h-[300px] w-[300px] bg-white"
                         />
                         <button
                             onClick={() => setScanning(false)}

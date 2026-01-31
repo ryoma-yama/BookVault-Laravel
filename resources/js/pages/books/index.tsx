@@ -48,9 +48,7 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Books', href: '/books' },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/books' }];
 
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
@@ -59,26 +57,37 @@ export default function BooksIndex({ books, filters }: Props) {
     const [publisher, setPublisher] = useState(filters.publisher || '');
 
     const handleSearch = () => {
-        router.get('/books', {
-            search: search || undefined,
-            author: author || undefined,
-            publisher: publisher || undefined,
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        router.get(
+            '/books',
+            {
+                search: search || undefined,
+                author: author || undefined,
+                publisher: publisher || undefined,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
     };
 
     const handleSort = (field: string) => {
-        const direction = filters.sort === field && filters.direction === 'asc' ? 'desc' : 'asc';
-        router.get('/books', {
-            ...filters,
-            sort: field,
-            direction,
-        }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        const direction =
+            filters.sort === field && filters.direction === 'asc'
+                ? 'desc'
+                : 'asc';
+        router.get(
+            '/books',
+            {
+                ...filters,
+                sort: field,
+                direction,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            },
+        );
     };
 
     return (
@@ -87,8 +96,10 @@ export default function BooksIndex({ books, filters }: Props) {
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold">{t('Book Collection')}</h1>
-                    <p className="text-muted-foreground mt-2">
+                    <h1 className="text-3xl font-bold">
+                        {t('Book Collection')}
+                    </h1>
+                    <p className="mt-2 text-muted-foreground">
                         {t('Search and browse through our book collection')}
                     </p>
                 </div>
@@ -130,7 +141,11 @@ export default function BooksIndex({ books, filters }: Props) {
                                         onClick={() => handleSort('title')}
                                         className="font-medium hover:underline"
                                     >
-                                        {t('Title')} {filters.sort === 'title' && (filters.direction === 'asc' ? '↑' : '↓')}
+                                        {t('Title')}{' '}
+                                        {filters.sort === 'title' &&
+                                            (filters.direction === 'asc'
+                                                ? '↑'
+                                                : '↓')}
                                     </button>
                                 </TableHead>
                                 <TableHead>{t('Author')}</TableHead>
@@ -141,7 +156,11 @@ export default function BooksIndex({ books, filters }: Props) {
                                         onClick={() => handleSort('created_at')}
                                         className="font-medium hover:underline"
                                     >
-                                        {t('Added')} {filters.sort === 'created_at' && (filters.direction === 'asc' ? '↑' : '↓')}
+                                        {t('Added')}{' '}
+                                        {filters.sort === 'created_at' &&
+                                            (filters.direction === 'asc'
+                                                ? '↑'
+                                                : '↓')}
                                     </button>
                                 </TableHead>
                             </TableRow>
@@ -149,26 +168,42 @@ export default function BooksIndex({ books, filters }: Props) {
                         <TableBody>
                             {books.data.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                                    <TableCell
+                                        colSpan={5}
+                                        className="text-center text-muted-foreground"
+                                    >
                                         {t('No books found')}
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 books.data.map((book) => (
                                     <TableRow key={book.id}>
-                                        <TableCell className="font-medium">{book.title}</TableCell>
-                                        <TableCell>{book.author || '—'}</TableCell>
-                                        <TableCell>{book.publisher || '—'}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {book.title}
+                                        </TableCell>
+                                        <TableCell>
+                                            {book.author || '—'}
+                                        </TableCell>
+                                        <TableCell>
+                                            {book.publisher || '—'}
+                                        </TableCell>
                                         <TableCell>
                                             <div className="flex flex-wrap gap-1">
                                                 {book.tags.map((tag) => (
-                                                    <Badge key={tag.id} variant="outline">
+                                                    <Badge
+                                                        key={tag.id}
+                                                        variant="outline"
+                                                    >
                                                         {tag.name}
                                                     </Badge>
                                                 ))}
                                             </div>
                                         </TableCell>
-                                        <TableCell>{new Date(book.created_at).toLocaleDateString()}</TableCell>
+                                        <TableCell>
+                                            {new Date(
+                                                book.created_at,
+                                            ).toLocaleDateString()}
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             )}
@@ -179,9 +214,9 @@ export default function BooksIndex({ books, filters }: Props) {
                 {books.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">
-                            {t('Showing :count of :total books', { 
-                                count: books.data.length.toString(), 
-                                total: books.total.toString() 
+                            {t('Showing :count of :total books', {
+                                count: books.data.length.toString(),
+                                total: books.total.toString(),
                             })}
                         </p>
                         <div className="flex gap-2">
@@ -191,7 +226,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                     preserveState
                                     preserveScroll
                                 >
-                                    <Button variant="outline">{t('Previous')}</Button>
+                                    <Button variant="outline">
+                                        {t('Previous')}
+                                    </Button>
                                 </Link>
                             )}
                             {books.current_page < books.last_page && (
@@ -200,7 +237,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                     preserveState
                                     preserveScroll
                                 >
-                                    <Button variant="outline">{t('Next')}</Button>
+                                    <Button variant="outline">
+                                        {t('Next')}
+                                    </Button>
                                 </Link>
                             )}
                         </div>

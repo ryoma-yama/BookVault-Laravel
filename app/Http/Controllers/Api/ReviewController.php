@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReviewRequest;
 use App\Http\Requests\UpdateReviewRequest;
-use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Review;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 class ReviewController extends Controller
 {
     use AuthorizesRequests;
+
     /**
      * Display a listing of reviews for a specific book.
      */

@@ -16,7 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Appearance() {
     const { t } = useLaravelReactI18n();
-    
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Appearance settings')} />
@@ -28,7 +28,9 @@ export default function Appearance() {
                     <Heading
                         variant="small"
                         title={t('Appearance settings')}
-                        description={t("Update your account's appearance settings")}
+                        description={t(
+                            "Update your account's appearance settings",
+                        )}
                     />
                     <AppearanceTabs />
                 </div>

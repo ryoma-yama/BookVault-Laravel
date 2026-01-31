@@ -76,21 +76,30 @@ export default function AdminBooksIndex({ books }: Props) {
                                 <tr key={book.id} className="border-b">
                                     <td className="p-2">{book.title}</td>
                                     <td className="p-2">
-                                        {book.authors.map((a) => a.name).join(', ')}
+                                        {book.authors
+                                            .map((a) => a.name)
+                                            .join(', ')}
                                     </td>
                                     <td className="p-2">{book.publisher}</td>
                                     <td className="p-2">{book.isbn_13}</td>
                                     <td className="p-2">
                                         <div className="flex gap-2">
-                                            <Link href={`/admin/books/${book.id}/edit`}>
-                                                <Button variant="outline" size="sm">
+                                            <Link
+                                                href={`/admin/books/${book.id}/edit`}
+                                            >
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
                                                     Edit
                                                 </Button>
                                             </Link>
                                             <Button
                                                 variant="destructive"
                                                 size="sm"
-                                                onClick={() => handleDelete(book.id)}
+                                                onClick={() =>
+                                                    handleDelete(book.id)
+                                                }
                                             >
                                                 Delete
                                             </Button>

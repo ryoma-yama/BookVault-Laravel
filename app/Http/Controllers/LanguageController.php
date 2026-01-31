@@ -10,12 +10,13 @@ class LanguageController extends Controller
     {
         $locale = app()->getLocale();
         $langPath = lang_path("{$locale}.json");
-        
+
         if (File::exists($langPath)) {
             $translations = json_decode(File::get($langPath), true);
+
             return response()->json($translations);
         }
-        
+
         return response()->json([]);
     }
 }

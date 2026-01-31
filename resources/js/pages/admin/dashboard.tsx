@@ -1,5 +1,11 @@
 import { Head, Link } from '@inertiajs/react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
@@ -20,15 +26,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function AdminDashboard({ stats }: Props) {
     const { t } = useLaravelReactI18n();
-    
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Admin Dashboard')} />
 
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold">{t('Admin Dashboard')}</h1>
-                    <p className="text-muted-foreground mt-2">
+                    <h1 className="text-3xl font-bold">
+                        {t('Admin Dashboard')}
+                    </h1>
+                    <p className="mt-2 text-muted-foreground">
                         {t('Overview of your library management system')}
                     </p>
                 </div>
@@ -36,7 +44,9 @@ export default function AdminDashboard({ stats }: Props) {
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('Total Books')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                {t('Total Books')}
+                            </CardTitle>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -52,7 +62,9 @@ export default function AdminDashboard({ stats }: Props) {
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_books}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total_books}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                                 {t('books in the library')}
                             </p>
@@ -61,7 +73,9 @@ export default function AdminDashboard({ stats }: Props) {
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('Total Users')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                {t('Total Users')}
+                            </CardTitle>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -78,7 +92,9 @@ export default function AdminDashboard({ stats }: Props) {
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_users}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total_users}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                                 {t('registered users')}
                             </p>
@@ -87,7 +103,9 @@ export default function AdminDashboard({ stats }: Props) {
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('Active Loans')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                {t('Active Loans')}
+                            </CardTitle>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -103,7 +121,9 @@ export default function AdminDashboard({ stats }: Props) {
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.active_loans}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.active_loans}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                                 {t('books currently on loan')}
                             </p>
@@ -112,7 +132,9 @@ export default function AdminDashboard({ stats }: Props) {
 
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">{t('Total Loans')}</CardTitle>
+                            <CardTitle className="text-sm font-medium">
+                                {t('Total Loans')}
+                            </CardTitle>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
@@ -123,12 +145,20 @@ export default function AdminDashboard({ stats }: Props) {
                                 strokeWidth="2"
                                 className="h-4 w-4 text-muted-foreground"
                             >
-                                <rect width="20" height="14" x="2" y="5" rx="2" />
+                                <rect
+                                    width="20"
+                                    height="14"
+                                    x="2"
+                                    y="5"
+                                    rx="2"
+                                />
                                 <path d="M2 10h20" />
                             </svg>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{stats.total_loans}</div>
+                            <div className="text-2xl font-bold">
+                                {stats.total_loans}
+                            </div>
                             <p className="text-xs text-muted-foreground">
                                 {t('all-time loans')}
                             </p>
@@ -140,23 +170,29 @@ export default function AdminDashboard({ stats }: Props) {
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('Quick Actions')}</CardTitle>
-                            <CardDescription>{t('Manage your library')}</CardDescription>
+                            <CardDescription>
+                                {t('Manage your library')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-2">
                             <Link
                                 href="/admin/users"
-                                className="block p-3 rounded-lg border hover:bg-accent transition-colors"
+                                className="block rounded-lg border p-3 transition-colors hover:bg-accent"
                             >
-                                <div className="font-medium">{t('User Management')}</div>
+                                <div className="font-medium">
+                                    {t('User Management')}
+                                </div>
                                 <div className="text-sm text-muted-foreground">
                                     {t('Manage user accounts and roles')}
                                 </div>
                             </Link>
                             <Link
                                 href="/books"
-                                className="block p-3 rounded-lg border hover:bg-accent transition-colors"
+                                className="block rounded-lg border p-3 transition-colors hover:bg-accent"
                             >
-                                <div className="font-medium">{t('Book Collection')}</div>
+                                <div className="font-medium">
+                                    {t('Book Collection')}
+                                </div>
                                 <div className="text-sm text-muted-foreground">
                                     {t('Browse and search books')}
                                 </div>
@@ -167,23 +203,36 @@ export default function AdminDashboard({ stats }: Props) {
                     <Card>
                         <CardHeader>
                             <CardTitle>{t('System Overview')}</CardTitle>
-                            <CardDescription>{t('Library statistics')}</CardDescription>
+                            <CardDescription>
+                                {t('Library statistics')}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-muted-foreground">{t('Books per user')}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        {t('Books per user')}
+                                    </span>
                                     <span className="font-medium">
                                         {stats.total_users > 0
-                                            ? (stats.total_books / stats.total_users).toFixed(2)
+                                            ? (
+                                                  stats.total_books /
+                                                  stats.total_users
+                                              ).toFixed(2)
                                             : '0'}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-sm text-muted-foreground">{t('Active loan rate')}</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        {t('Active loan rate')}
+                                    </span>
                                     <span className="font-medium">
                                         {stats.total_loans > 0
-                                            ? ((stats.active_loans / stats.total_loans) * 100).toFixed(1)
+                                            ? (
+                                                  (stats.active_loans /
+                                                      stats.total_loans) *
+                                                  100
+                                              ).toFixed(1)
                                             : '0'}
                                         %
                                     </span>

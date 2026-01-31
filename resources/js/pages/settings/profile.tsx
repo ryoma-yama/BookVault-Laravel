@@ -42,7 +42,9 @@ export default function Profile({
                     <Heading
                         variant="small"
                         title={t('Profile information')}
-                        description={t('Update your name, display name, and email address')}
+                        description={t(
+                            'Update your name, display name, and email address',
+                        )}
                     />
 
                     <Form
@@ -95,7 +97,9 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">{t('Email address')}</Label>
+                                    <Label htmlFor="email">
+                                        {t('Email address')}
+                                    </Label>
 
                                     <Input
                                         id="email"
@@ -118,20 +122,26 @@ export default function Profile({
                                     auth.user.email_verified_at === null && (
                                         <div>
                                             <p className="-mt-4 text-sm text-muted-foreground">
-                                                {t('Your email address is unverified.')}{' '}
+                                                {t(
+                                                    'Your email address is unverified.',
+                                                )}{' '}
                                                 <Link
                                                     href={send()}
                                                     as="button"
                                                     className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                                 >
-                                                    {t('Click here to resend the verification email.')}
+                                                    {t(
+                                                        'Click here to resend the verification email.',
+                                                    )}
                                                 </Link>
                                             </p>
 
                                             {status ===
                                                 'verification-link-sent' && (
                                                 <div className="mt-2 text-sm font-medium text-green-600">
-                                                    {t('A new verification link has been sent to your email address.')}
+                                                    {t(
+                                                        'A new verification link has been sent to your email address.',
+                                                    )}
                                                 </div>
                                             )}
                                         </div>

@@ -7,7 +7,7 @@ use App\Models\User;
 test('can list all reviews', function () {
     $book = Book::factory()->create();
     $user = User::factory()->create();
-    
+
     Review::factory()->count(3)->create([
         'book_id' => $book->id,
         'user_id' => $user->id,

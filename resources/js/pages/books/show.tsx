@@ -44,12 +44,14 @@ export default function BookShow({ book }: Props) {
                             <img
                                 src={book.image_url}
                                 alt={book.title}
-                                className="h-64 w-48 object-cover rounded-lg"
+                                className="h-64 w-48 rounded-lg object-cover"
                             />
                         </div>
                     )}
                     <div className="flex-1">
-                        <h1 className="text-3xl font-bold mb-2">{book.title}</h1>
+                        <h1 className="mb-2 text-3xl font-bold">
+                            {book.title}
+                        </h1>
                         <div className="space-y-2 text-muted-foreground">
                             <p>
                                 <strong>Authors:</strong>{' '}
@@ -59,14 +61,17 @@ export default function BookShow({ book }: Props) {
                                 <strong>Publisher:</strong> {book.publisher}
                             </p>
                             <p>
-                                <strong>Published:</strong> {book.published_date}
+                                <strong>Published:</strong>{' '}
+                                {book.published_date}
                             </p>
                             <p>
                                 <strong>ISBN-13:</strong> {book.isbn_13}
                             </p>
                         </div>
                         <div className="mt-6">
-                            <h2 className="text-xl font-semibold mb-2">Description</h2>
+                            <h2 className="mb-2 text-xl font-semibold">
+                                Description
+                            </h2>
                             <div className="prose dark:prose-invert max-w-none">
                                 <p>{book.description}</p>
                             </div>
