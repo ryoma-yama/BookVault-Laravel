@@ -7,7 +7,7 @@ use App\Models\User;
 use function Pest\Laravel\actingAs;
 
 beforeEach(function () {
-    $this->user = User::factory()->create();
+    $this->user = User::factory()->create(['role' => 'admin']);
 });
 
 test('admin books index page can be rendered', function () {

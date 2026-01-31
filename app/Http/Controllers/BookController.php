@@ -14,16 +14,18 @@ class BookController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = Book::query()->with('tags');
+        $query = Book::query()->with(['tags', 'authors']);
 
         // Search by title
         if ($request->filled('search')) {
             $query->where('title', 'like', "%{$request->input('search')}%");
         }
 
-        // Filter by author
+        // Filter by author name through the authors relationship
         if ($request->filled('author')) {
-            $query->where('author', 'like', "%{$request->input('author')}%");
+            $query->whereHas('authors', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->input('author')}%");
+            });
         }
 
         // Filter by publisher
@@ -42,7 +44,7 @@ class BookController extends Controller
         $sortField = $request->input('sort', 'created_at');
         $sortDirection = $request->input('direction', 'desc');
 
-        $allowedSortFields = ['title', 'author', 'created_at'];
+        $allowedSortFields = ['title', 'created_at'];
         if (in_array($sortField, $allowedSortFields)) {
             $query->orderBy($sortField, $sortDirection);
         }

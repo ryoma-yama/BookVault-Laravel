@@ -37,15 +37,21 @@ test('can search books by title', function () {
 });
 
 test('can search books by author', function () {
-    $book1 = Book::factory()->create(['author' => 'John Doe']);
-    $book2 = Book::factory()->create(['author' => 'Jane Smith']);
+    $author1 = \App\Models\Author::create(['name' => 'John Doe']);
+    $author2 = \App\Models\Author::create(['name' => 'Jane Smith']);
+    
+    $book1 = Book::factory()->create(['title' => 'Book by John']);
+    $book1->authors()->attach($author1);
+    
+    $book2 = Book::factory()->create(['title' => 'Book by Jane']);
+    $book2->authors()->attach($author2);
 
     get(route('books.index', ['author' => 'John']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
             ->has('books.data', 1)
-            ->where('books.data.0.author', 'John Doe')
+            ->where('books.data.0.id', $book1->id)
         );
 });
 
