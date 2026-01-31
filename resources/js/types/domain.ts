@@ -131,3 +131,27 @@ export type UserFilters = {
     search?: string;
     role?: 'admin' | 'user';
 };
+
+/**
+ * User list item for admin user management
+ * Used in admin user index page
+ */
+export type UserListItem = {
+    id: number;
+    name: string;
+    email: string;
+    role: 'admin' | 'user';
+    created_at: string;
+};
+
+/**
+ * Book summary for inventory management
+ * Used in book copies management page
+ */
+export type BookSummary = {
+    id: number;
+    title: string;
+    isbn_13: string;
+    publisher: string;
+    published_date: string;
+};

@@ -20,15 +20,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, PaginatedResponse, UserFilters } from '@/types';
-
-type UserListItem = {
-    id: number;
-    name: string;
-    email: string;
-    role: 'admin' | 'user';
-    created_at: string;
-};
+import type { BreadcrumbItem, PaginatedResponse, UserFilters, UserListItem } from '@/types';
 
 interface Props {
     users: PaginatedResponse<UserListItem>;
