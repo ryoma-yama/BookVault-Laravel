@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('publisher', 100);
             $table->date('published_date');
             $table->text('description');
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
