@@ -88,10 +88,11 @@ export default function AdminBookForm({ book }: Props) {
                     ? bookInfo.authors 
                     : data.authors,
             });
-        } catch (error: any) {
-            setSearchError(
-                error.response?.data?.error || 'Failed to fetch book information'
-            );
+        } catch (error) {
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { error?: string } } }).response?.data?.error || 'Failed to fetch book information'
+                : 'Failed to fetch book information';
+            setSearchError(errorMessage);
         } finally {
             setIsSearching(false);
         }
