@@ -16,7 +16,7 @@ class BookController extends Controller
             ->latest()
             ->paginate(12);
 
-        return Inertia::render('Books/Index', [
+        return Inertia::render('books/index', [
             'books' => $books,
         ]);
     }
@@ -28,7 +28,7 @@ class BookController extends Controller
     {
         $book->load('authors');
 
-        return Inertia::render('Books/Show', [
+        return Inertia::render('books/show', [
             'book' => $book,
         ]);
     }

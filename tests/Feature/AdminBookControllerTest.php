@@ -35,7 +35,7 @@ test('admin books index displays list of books', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Admin/Books/Index')
+        ->component('admin/books/index')
         ->has('books.data', 1)
     );
 });
@@ -45,7 +45,7 @@ test('admin books create page can be rendered', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Admin/Books/Form')
+        ->component('admin/books/form')
     );
 });
 
@@ -114,7 +114,7 @@ test('admin books edit page can be rendered', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Admin/Books/Form')
+        ->component('admin/books/form')
         ->where('book.title', 'Test Book')
     );
 });

@@ -26,7 +26,7 @@ test('books index displays list of books', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Books/Index')
+        ->component('books/index')
         ->has('books.data', 1)
         ->where('books.data.0.title', 'Test Book')
     );
@@ -47,7 +47,7 @@ test('book show page can be rendered', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Books/Show')
+        ->component('books/show')
         ->where('book.title', 'Test Book')
         ->has('book.authors', 1)
     );

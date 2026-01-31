@@ -19,7 +19,7 @@ class BookController extends Controller
             ->latest()
             ->paginate(12);
 
-        return Inertia::render('Admin/Books/Index', [
+        return Inertia::render('admin/books/index', [
             'books' => $books,
         ]);
     }
@@ -29,7 +29,7 @@ class BookController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Admin/Books/Form');
+        return Inertia::render('admin/books/form');
     }
 
     /**
@@ -74,7 +74,7 @@ class BookController extends Controller
     {
         $book->load('authors');
 
-        return Inertia::render('Admin/Books/Form', [
+        return Inertia::render('admin/books/form', [
             'book' => $book,
         ]);
     }
