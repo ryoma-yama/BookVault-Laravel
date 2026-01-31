@@ -2,7 +2,7 @@
 
 ## Tech Stack
 
-- **Backend**: Laravel 12 with PHP 8.3
+- **Backend**: Laravel 12 with PHP 8.5
 - **Frontend**: Inertia.js v2 with TypeScript
 - **Authentication**: Laravel Fortify
 - **Testing**: Pest v4
@@ -43,28 +43,23 @@ This project uses Dev Containers for development.
     php artisan key:generate
     ```
 
-4. **Start Sail**
+4. **Run database migrations**
     ```bash
-    ./vendor/bin/sail up -d
+    php artisan migrate
     ```
 
-5. **Run database migrations**
-    ```bash
-    ./vendor/bin/sail artisan migrate
-    ```
-
-6. **Start development server**
+5. **Start development server**
     ```bash
     composer run dev
     ```
     or
     ```bash
-    ./vendor/bin/sail npm run dev
+    npm run dev
     ```
 
-7. **Run tests**
+6. **Run tests**
     ```bash
-    ./vendor/bin/sail artisan test --compact
+    php artisan test --compact
     ```
 
 ### Access
