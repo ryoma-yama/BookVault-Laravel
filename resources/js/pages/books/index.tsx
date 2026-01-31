@@ -20,35 +20,57 @@ interface Tag {
     name: string;
 }
 
+interface Author {
+    id: number;
+    name: string;
+}
+
 interface Book {
     id: number;
     title: string;
-    author: string | null;
     publisher: string | null;
     isbn: string | null;
     tags: Tag[];
+    authors: Author[];
     created_at: string;
 }
 
+interface PaginatedResponse<T> {
+    data: T[];
+    current_page: number;
+    last_page: number;
+    total: number;
+}
+
+interface Filters {
+    search?: string;
+    author?: string;
+    publisher?: string;
+    tag?: string;
+    sort?: string;
+    direction?: 'asc' | 'desc';
+}
+
 interface Props {
-    books: {
-        data: Book[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        author?: string;
-        publisher?: string;
-        tag?: string;
-        sort?: string;
-        direction?: string;
-    };
+    books: PaginatedResponse<Book>;
+    filters: Filters;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/books' }];
+
+function getSortIndicator(
+    currentSort: string | undefined,
+    currentDirection: string | undefined,
+    field: string,
+): string {
+    if (currentSort !== field) return '';
+    return currentDirection === 'asc' ? '↑' : '↓';
+}
+
+function formatAuthors(authors: Author[]): string {
+    if (authors.length === 0) return '—';
+    return authors.map((author) => author.name).join(', ');
+}
 
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
@@ -72,10 +94,10 @@ export default function BooksIndex({ books, filters }: Props) {
     };
 
     const handleSort = (field: string) => {
-        const direction =
-            filters.sort === field && filters.direction === 'asc'
-                ? 'desc'
-                : 'asc';
+        const isAscending =
+            filters.sort === field && filters.direction === 'asc';
+        const direction = isAscending ? 'desc' : 'asc';
+
         router.get(
             '/books',
             {
@@ -88,6 +110,10 @@ export default function BooksIndex({ books, filters }: Props) {
                 preserveScroll: true,
             },
         );
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleSearch();
     };
 
     return (
@@ -110,7 +136,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         placeholder={t('Search by title...')}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        onKeyDown={handleKeyDown}
                     />
 
                     <Input
@@ -118,7 +144,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         placeholder={t('Filter by author...')}
                         value={author}
                         onChange={(e) => setAuthor(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        onKeyDown={handleKeyDown}
                     />
 
                     <Input
@@ -126,7 +152,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         placeholder={t('Filter by publisher...')}
                         value={publisher}
                         onChange={(e) => setPublisher(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        onKeyDown={handleKeyDown}
                     />
                 </div>
 
@@ -142,10 +168,11 @@ export default function BooksIndex({ books, filters }: Props) {
                                         className="font-medium hover:underline"
                                     >
                                         {t('Title')}{' '}
-                                        {filters.sort === 'title' &&
-                                            (filters.direction === 'asc'
-                                                ? '↑'
-                                                : '↓')}
+                                        {getSortIndicator(
+                                            filters.sort,
+                                            filters.direction,
+                                            'title',
+                                        )}
                                     </button>
                                 </TableHead>
                                 <TableHead>{t('Author')}</TableHead>
@@ -157,10 +184,11 @@ export default function BooksIndex({ books, filters }: Props) {
                                         className="font-medium hover:underline"
                                     >
                                         {t('Added')}{' '}
-                                        {filters.sort === 'created_at' &&
-                                            (filters.direction === 'asc'
-                                                ? '↑'
-                                                : '↓')}
+                                        {getSortIndicator(
+                                            filters.sort,
+                                            filters.direction,
+                                            'created_at',
+                                        )}
                                     </button>
                                 </TableHead>
                             </TableRow>
@@ -182,7 +210,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                             {book.title}
                                         </TableCell>
                                         <TableCell>
-                                            {book.author || '—'}
+                                            {formatAuthors(book.authors)}
                                         </TableCell>
                                         <TableCell>
                                             {book.publisher || '—'}
