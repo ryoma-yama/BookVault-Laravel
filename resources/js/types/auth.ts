@@ -1,13 +1,9 @@
 export type User = {
     id: number;
     name: string;
-<<<<<<< HEAD
-    email: string;
-=======
     display_name: string;
     email: string;
     role: 'admin' | 'user';
->>>>>>> main
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

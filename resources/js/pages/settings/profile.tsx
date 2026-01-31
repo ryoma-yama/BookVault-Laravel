@@ -40,11 +40,7 @@ export default function Profile({
                     <Heading
                         variant="small"
                         title="Profile information"
-<<<<<<< HEAD
-                        description="Update your name and email address"
-=======
                         description="Update your name, display name, and email address"
->>>>>>> main
                     />
 
                     <Form
@@ -76,8 +72,6 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
-<<<<<<< HEAD
-=======
                                     <Label htmlFor="display_name">
                                         Display Name
                                     </Label>
@@ -99,7 +93,6 @@ export default function Profile({
                                 </div>
 
                                 <div className="grid gap-2">
->>>>>>> main
                                     <Label htmlFor="email">Email address</Label>
 
                                     <Input
