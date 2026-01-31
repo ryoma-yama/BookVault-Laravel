@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -77,16 +78,22 @@ class BookCopy extends Model
 
     /**
      * Scope to get only active (non-discarded) copies.
+     *
+     * @param  Builder<BookCopy>  $query
+     * @return Builder<BookCopy>
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->whereNull('discarded_date');
     }
 
     /**
      * Scope to get only discarded copies.
+     *
+     * @param  Builder<BookCopy>  $query
+     * @return Builder<BookCopy>
      */
-    public function scopeDiscarded($query)
+    public function scopeDiscarded(Builder $query): Builder
     {
         return $query->whereNotNull('discarded_date');
     }

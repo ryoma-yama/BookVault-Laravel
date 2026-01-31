@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,8 +25,11 @@ class Reservation extends Model
 
     /**
      * Scope to get only pending (unfulfilled, uncancelled) reservations.
+     *
+     * @param  Builder<Reservation>  $query
+     * @return Builder<Reservation>
      */
-    public function scopePending($query)
+    public function scopePending(Builder $query): Builder
     {
         return $query->where('fulfilled', false);
     }

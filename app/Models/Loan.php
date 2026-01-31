@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -59,16 +60,22 @@ class Loan extends Model
 
     /**
      * Scope to get only outstanding (unreturned) loans.
+     *
+     * @param  Builder<Loan>  $query
+     * @return Builder<Loan>
      */
-    public function scopeOutstanding($query)
+    public function scopeOutstanding(Builder $query): Builder
     {
         return $query->whereNull('returned_date');
     }
 
     /**
      * Scope to get only returned loans.
+     *
+     * @param  Builder<Loan>  $query
+     * @return Builder<Loan>
      */
-    public function scopeReturned($query)
+    public function scopeReturned(Builder $query): Builder
     {
         return $query->whereNotNull('returned_date');
     }
