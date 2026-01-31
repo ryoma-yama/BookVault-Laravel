@@ -9,9 +9,7 @@ use Illuminate\Http\Request;
 
 class GoogleBooksController extends Controller
 {
-    public function __construct(private GoogleBooksService $googleBooksService)
-    {
-    }
+    public function __construct(private GoogleBooksService $googleBooksService) {}
 
     /**
      * Search for a book by ISBN

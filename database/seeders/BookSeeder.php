@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\BookCopy;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
@@ -13,7 +14,7 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        // Sample books data
+        // Sample books data with authors
         $books = [
             [
                 'isbn_13' => '9784798179216',
@@ -52,6 +53,22 @@ class BookSeeder extends Seeder
                 $author = Author::firstOrCreate(['name' => $authorName]);
                 $book->authors()->attach($author);
             }
+
+            // Create 2-5 copies for each book
+            $copyCount = rand(2, 5);
+
+            BookCopy::factory()
+                ->count($copyCount)
+                ->create(['book_id' => $book->id]);
+
+            // Mark some copies as discarded (20% chance per copy)
+            $book->copies->each(function ($copy) {
+                if (rand(1, 5) === 1) {
+                    $copy->update([
+                        'discarded_date' => now()->subDays(rand(1, 365)),
+                    ]);
+                }
+            });
         }
     }
 }

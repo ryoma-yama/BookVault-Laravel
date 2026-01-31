@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'google_id',
         'isbn_13',
@@ -16,6 +25,22 @@ class Book extends Model
         'description',
         'image_url',
     ];
+
+    /**
+     * Get the copies for the book.
+     */
+    public function copies(): HasMany
+    {
+        return $this->hasMany(BookCopy::class);
+    }
+
+    /**
+     * Get the available (not discarded) copies count.
+     */
+    public function getAvailableCopiesCountAttribute(): int
+    {
+        return $this->copies()->whereNull('discarded_date')->count();
+    }
 
     /**
      * Get the authors for the book.

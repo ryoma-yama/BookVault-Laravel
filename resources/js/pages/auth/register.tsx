@@ -71,9 +71,12 @@ export default function Register() {
                                     tabIndex={3}
                                     autoComplete="email"
                                     name="email"
-                                    placeholder="email@example.com"
+                                    placeholder="Email address"
                                 />
-                                <InputError message={errors.email} />
+                                <InputError
+                                    message={errors.email}
+                                    className="mt-2"
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -87,7 +90,10 @@ export default function Register() {
                                     name="password"
                                     placeholder="Password"
                                 />
-                                <InputError message={errors.password} />
+                                <InputError
+                                    message={errors.password}
+                                    className="mt-2"
+                                />
                             </div>
 
                             <div className="grid gap-2">
@@ -105,26 +111,28 @@ export default function Register() {
                                 />
                                 <InputError
                                     message={errors.password_confirmation}
+                                    className="mt-2"
                                 />
                             </div>
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full"
+                                disabled={processing}
+                                className="w-full"
                                 tabIndex={6}
-                                data-test="register-user-button"
                             >
-                                {processing && <Spinner />}
-                                Create account
+                                {processing ? (
+                                    <Spinner className="size-4" />
+                                ) : (
+                                    'Create account'
+                                )}
                             </Button>
                         </div>
 
-                        <div className="text-center text-sm text-muted-foreground">
+                        <p className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={7}>
-                                Log in
-                            </TextLink>
-                        </div>
+                            <TextLink href={login().url}>Sign in</TextLink>
+                        </p>
                     </>
                 )}
             </Form>
