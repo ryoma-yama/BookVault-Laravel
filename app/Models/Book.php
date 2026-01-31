@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
+    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -22,7 +24,20 @@ class Book extends Model
         'publisher',
         'published_date',
         'description',
+        'image_url',
     ];
+
+    protected $casts = [
+        'published_date' => 'date',
+    ];
+
+    /**
+     * Get the authors for the book.
+     */
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'book_authors');
+    }
 
     /**
      * Get the tags for the book.
@@ -41,6 +56,22 @@ class Book extends Model
     }
 
     /**
+     * Get the copies for the book.
+     */
+    public function copies(): HasMany
+    {
+        return $this->hasMany(BookCopy::class);
+    }
+
+    /**
+     * Get the loans for the book.
+     */
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /**
      * Get the average rating for the book.
      */
     public function averageRating(): ?float
@@ -54,5 +85,13 @@ class Book extends Model
     public function reviewCount(): int
     {
         return $this->reviews()->count();
+    }
+
+    /**
+     * Get the available (not discarded) copies count.
+     */
+    public function getAvailableCopiesCountAttribute(): int
+    {
+        return $this->copies()->whereNull('discarded_date')->count();
     }
 }

@@ -8,18 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Tag extends Model
 {
+    /** @use HasFactory<\Database\Factories\TagFactory> */
     use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
     ];
 
     /**
-     * Get the books that have this tag.
+     * Get the books for the tag.
      */
     public function books(): BelongsToMany
     {

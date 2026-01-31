@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\TagController;
+use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\TagController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
