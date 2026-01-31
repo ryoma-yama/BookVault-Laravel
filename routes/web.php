@@ -22,6 +22,10 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 // Admin book routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
+    
+    // Google Books API
+    Route::post('/api/google-books/search', [\App\Http\Controllers\Api\GoogleBooksController::class, 'searchByIsbn'])
+        ->name('api.google-books.search');
 });
 
 require __DIR__.'/settings.php';

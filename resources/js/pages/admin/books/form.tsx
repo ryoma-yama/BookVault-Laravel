@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { BreadcrumbItem } from '@/types';
+import axios from 'axios';
 
 interface Author {
     id: number;
@@ -30,6 +31,9 @@ interface Props {
 
 export default function AdminBookForm({ book }: Props) {
     const isEditing = !!book;
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchError, setSearchError] = useState<string | null>(null);
+    
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Admin',
@@ -55,6 +59,43 @@ export default function AdminBookForm({ book }: Props) {
         image_url: book?.image_url || '',
         authors: book?.authors.map((a) => a.name) || [''],
     });
+
+    const handleSearchByIsbn = async () => {
+        if (!data.isbn_13) {
+            setSearchError('Please enter an ISBN first');
+            return;
+        }
+
+        setIsSearching(true);
+        setSearchError(null);
+
+        try {
+            const response = await axios.post('/admin/api/google-books/search', {
+                isbn: data.isbn_13,
+            });
+
+            const bookInfo = response.data;
+
+            setData({
+                isbn_13: bookInfo.isbn_13 || data.isbn_13,
+                title: bookInfo.title || data.title,
+                publisher: bookInfo.publisher || data.publisher,
+                published_date: bookInfo.published_date || data.published_date,
+                description: bookInfo.description || data.description,
+                google_id: bookInfo.google_id || data.google_id,
+                image_url: bookInfo.image_url || data.image_url,
+                authors: bookInfo.authors && bookInfo.authors.length > 0 
+                    ? bookInfo.authors 
+                    : data.authors,
+            });
+        } catch (error: any) {
+            setSearchError(
+                error.response?.data?.error || 'Failed to fetch book information'
+            );
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
@@ -93,16 +134,29 @@ export default function AdminBookForm({ book }: Props) {
                 <form onSubmit={submit} className="max-w-2xl space-y-4">
                     <div>
                         <Label htmlFor="isbn_13">ISBN-13</Label>
-                        <Input
-                            id="isbn_13"
-                            type="text"
-                            value={data.isbn_13}
-                            onChange={(e) => setData('isbn_13', e.target.value)}
+                        <div className="flex gap-2">
+                            <Input
+                                id="isbn_13"
+                                type="text"
+                                value={data.isbn_13}
+                                onChange={(e) => setData('isbn_13', e.target.value)}
                             maxLength={13}
                             required
                         />
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleSearchByIsbn}
+                                disabled={isSearching || !data.isbn_13}
+                            >
+                                {isSearching ? 'Searching...' : 'Search ISBN'}
+                            </Button>
+                        </div>
                         {errors.isbn_13 && (
                             <p className="text-sm text-red-500">{errors.isbn_13}</p>
+                        )}
+                        {searchError && (
+                            <p className="text-sm text-red-500">{searchError}</p>
                         )}
                     </div>
 
