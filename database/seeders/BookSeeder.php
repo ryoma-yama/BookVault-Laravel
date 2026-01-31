@@ -25,8 +25,8 @@ class BookSeeder extends Seeder
                     ->count($copyCount)
                     ->create(['book_id' => $book->id]);
 
-                // Mark some copies as discarded (20% chance)
-                $book->copies->random(min(1, $copyCount))->each(function ($copy) {
+                // Mark some copies as discarded (20% chance per copy)
+                $book->copies->each(function ($copy) {
                     if (rand(1, 5) === 1) {
                         $copy->update([
                             'discarded_date' => now()->subDays(rand(1, 365)),
