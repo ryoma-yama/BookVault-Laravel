@@ -1,19 +1,20 @@
 import { Head, useForm } from '@inertiajs/react';
+import { BrowserBarcodeReader } from '@zxing/library';
+import axios from 'axios';
+import type {
+    FormEventHandler} from 'react';
 import {
-    FormEventHandler,
     useState,
     useRef,
     useEffect,
     useCallback,
 } from 'react';
-import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import axios from 'axios';
-import { BrowserBarcodeReader } from '@zxing/library';
 
 function isISBN13(code: string): boolean {
     return (
@@ -154,7 +155,7 @@ export default function AdminBookForm({ book }: Props) {
                 await scanner.decodeFromVideoDevice(
                     null, // デバイスID（nullで背面カメラを優先）
                     scannerRef.current!.id,
-                    (result, err) => {
+                    (result) => {
                         if (result) {
                             const code = result.getText();
                             if (isISBN13(code)) {

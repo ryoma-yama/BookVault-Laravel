@@ -1,4 +1,5 @@
 import { Form, Head } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
@@ -9,9 +10,8 @@ import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { disable, enable, show } from '@/routes/two-factor';
 import type { BreadcrumbItem } from '@/types';
-import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { disable, enable, show } from '@/routes/two-factor';
 
 type Props = {
     requiresConfirmation?: boolean;

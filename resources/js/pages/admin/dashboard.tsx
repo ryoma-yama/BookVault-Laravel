@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 import {
     Card,
     CardContent,
@@ -8,7 +9,6 @@ import {
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 interface Props {
     stats: {
