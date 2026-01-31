@@ -37,7 +37,7 @@ BookVault-Laravelは、図書館管理システムを実装したモダンなWeb
 
 1. **リポジトリのクローン**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ryoma-yama/BookVault-Laravel.git
    cd BookVault-Laravel
    ```
 
