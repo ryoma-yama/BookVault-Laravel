@@ -6,26 +6,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Loan extends Model
+class Reservation extends Model
 {
-    /** @use HasFactory<\Database\Factories\LoanFactory> */
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'book_copy_id',
         'user_id',
-        'borrowed_date',
-        'returned_date',
+        'reserved_at',
+        'fulfilled',
     ];
 
     protected $casts = [
-        'borrowed_date' => 'date',
-        'returned_date' => 'date',
+        'reserved_at' => 'datetime',
+        'fulfilled' => 'boolean',
     ];
 
     public function bookCopy(): BelongsTo
@@ -33,22 +27,19 @@ class Loan extends Model
         return $this->belongsTo(BookCopy::class);
     }
 
-    /**
-     * Get the user that owns the loan.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function isActive(): bool
+    public function cancel(): void
     {
-        return $this->returned_date === null;
+        $this->delete();
     }
 
-    public function returnBook(): void
+    public function fulfill(): void
     {
-        $this->returned_date = now();
+        $this->fulfilled = true;
         $this->save();
     }
 }

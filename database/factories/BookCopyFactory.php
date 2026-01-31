@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Book;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,19 +17,19 @@ class BookCopyFactory extends Factory
     public function definition(): array
     {
         return [
-            'book_id' => Book::factory(),
+            'book_id' => \App\Models\Book::factory(),
             'acquired_date' => fake()->dateTimeBetween('-2 years', 'now'),
             'discarded_date' => null,
         ];
     }
 
-    /**
-     * Indicate that the copy is discarded.
-     */
     public function discarded(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'discarded_date' => fake()->dateTimeBetween($attributes['acquired_date'], 'now'),
-        ]);
+        return $this->state(function (array $attributes) {
+            $acquiredDate = $attributes['acquired_date'];
+            return [
+                'discarded_date' => fake()->dateTimeBetween($acquiredDate, 'now'),
+            ];
+        });
     }
 }

@@ -61,6 +61,21 @@ class User extends Authenticatable
         return $this->hasMany(Loan::class);
     }
 
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
+    public function activeLoans()
+    {
+        return $this->loans()->whereNull('returned_date');
+    }
+
+    public function loanHistory()
+    {
+        return $this->loans()->whereNotNull('returned_date');
+    }
+
     /**
      * Determine if the user has the admin role.
      */

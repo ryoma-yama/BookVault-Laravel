@@ -19,7 +19,7 @@ class DashboardController extends Controller
         $stats = [
             'total_books' => Book::count(),
             'total_users' => User::count(),
-            'active_loans' => Loan::whereNull('returned_at')->count(),
+            'active_loans' => Loan::whereNull('returned_date')->count(),
             'total_loans' => Loan::count(),
         ];
 

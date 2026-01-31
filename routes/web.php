@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LoanController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Admin\BookCopyController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
@@ -21,6 +23,12 @@ Route::get('dashboard', function () {
 // Public book routes
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+// Loan and reservation routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::apiResource('loans', LoanController::class);
+    Route::apiResource('reservations', ReservationController::class);
+});
 
 // Admin routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {

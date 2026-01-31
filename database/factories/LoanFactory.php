@@ -2,8 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Book;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,24 +16,21 @@ class LoanFactory extends Factory
      */
     public function definition(): array
     {
-        $borrowedAt = fake()->dateTimeBetween('-30 days', 'now');
-
         return [
-            'user_id' => User::factory(),
-            'book_id' => Book::factory(),
-            'borrowed_at' => $borrowedAt,
-            'due_date' => fake()->dateTimeBetween($borrowedAt, '+30 days'),
-            'returned_at' => null,
+            'book_copy_id' => \App\Models\BookCopy::factory(),
+            'user_id' => \App\Models\User::factory(),
+            'borrowed_date' => fake()->dateTimeBetween('-30 days', 'now'),
+            'returned_date' => null,
         ];
     }
 
-    /**
-     * Indicate that the loan has been returned.
-     */
     public function returned(): static
     {
-        return $this->state(fn (array $attributes) => [
-            'returned_at' => fake()->dateTimeBetween($attributes['borrowed_at'], 'now'),
-        ]);
+        return $this->state(function (array $attributes) {
+            $borrowedDate = $attributes['borrowed_date'];
+            return [
+                'returned_date' => fake()->dateTimeBetween($borrowedDate, 'now'),
+            ];
+        });
     }
 }

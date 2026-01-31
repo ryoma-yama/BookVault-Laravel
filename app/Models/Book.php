@@ -27,20 +27,24 @@ class Book extends Model
         'image_url',
     ];
 
+    protected $casts = [
+        'published_date' => 'date',
+    ];
+
+    /**
+     * Get the authors for the book.
+     */
+    public function authors(): BelongsToMany
+    {
+        return $this->belongsToMany(Author::class, 'book_authors');
+    }
+
     /**
      * Get the tags for the book.
      */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
-    }
-
-    /**
-     * Get the loans for the book.
-     */
-    public function loans(): HasMany
-    {
-        return $this->hasMany(Loan::class);
     }
 
     /**
@@ -52,18 +56,18 @@ class Book extends Model
     }
 
     /**
+     * Get the loans for the book.
+     */
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
+
+    /**
      * Get the available (not discarded) copies count.
      */
     public function getAvailableCopiesCountAttribute(): int
     {
         return $this->copies()->whereNull('discarded_date')->count();
-    }
-
-    /**
-     * Get the authors for the book.
-     */
-    public function authors(): BelongsToMany
-    {
-        return $this->belongsToMany(Author::class, 'book_authors');
     }
 }
