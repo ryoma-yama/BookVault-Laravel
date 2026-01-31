@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,12 +20,17 @@ interface Tag {
     name: string;
 }
 
+interface Author {
+    id: number;
+    name: string;
+}
+
 interface Book {
     id: number;
     title: string;
-    author: string | null;
+    authors: Author[];
     publisher: string | null;
-    isbn: string | null;
+    isbn_13: string | null;
     tags: Tag[];
     created_at: string;
 }
@@ -55,21 +60,35 @@ export default function BooksIndex({ books, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [author, setAuthor] = useState(filters.author || '');
     const [publisher, setPublisher] = useState(filters.publisher || '');
+    const [isSearching, setIsSearching] = useState(false);
 
-    const handleSearch = () => {
-        router.get(
-            '/books',
-            {
-                search: search || undefined,
-                author: author || undefined,
-                publisher: publisher || undefined,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            },
-        );
-    };
+    // Debounce search to avoid too many requests
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (
+                search !== filters.search ||
+                author !== filters.author ||
+                publisher !== filters.publisher
+            ) {
+                setIsSearching(true);
+                router.get(
+                    '/books',
+                    {
+                        search: search || undefined,
+                        author: author || undefined,
+                        publisher: publisher || undefined,
+                    },
+                    {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onFinish: () => setIsSearching(false),
+                    },
+                );
+            }
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timeout);
+    }, [search, author, publisher]);
 
     const handleSort = (field: string) => {
         const direction =
@@ -90,6 +109,8 @@ export default function BooksIndex({ books, filters }: Props) {
         );
     };
 
+    const hasActiveFilters = search || author || publisher;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Books')} />
@@ -104,33 +125,79 @@ export default function BooksIndex({ books, filters }: Props) {
                     </p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
-                    <Input
-                        type="text"
-                        placeholder={t('Search by title...')}
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    />
+                <div className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-3">
+                        <Input
+                            type="text"
+                            placeholder={t(
+                                'Search by title, author, description...',
+                            )}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
 
-                    <Input
-                        type="text"
-                        placeholder={t('Filter by author...')}
-                        value={author}
-                        onChange={(e) => setAuthor(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    />
+                        <Input
+                            type="text"
+                            placeholder={t('Filter by author...')}
+                            value={author}
+                            onChange={(e) => setAuthor(e.target.value)}
+                        />
 
-                    <Input
-                        type="text"
-                        placeholder={t('Filter by publisher...')}
-                        value={publisher}
-                        onChange={(e) => setPublisher(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    />
+                        <Input
+                            type="text"
+                            placeholder={t('Filter by publisher...')}
+                            value={publisher}
+                            onChange={(e) => setPublisher(e.target.value)}
+                        />
+                    </div>
+
+                    {hasActiveFilters && (
+                        <div className="flex items-center justify-between text-sm">
+                            <p className="text-muted-foreground">
+                                {isSearching ? (
+                                    <span className="flex items-center gap-2">
+                                        <svg
+                                            className="h-4 w-4 animate-spin"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                            ></circle>
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            ></path>
+                                        </svg>
+                                        {t('Searching...')}
+                                    </span>
+                                ) : (
+                                    t('Showing :count results', {
+                                        count: books.total.toString(),
+                                    })
+                                )}
+                            </p>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                    setSearch('');
+                                    setAuthor('');
+                                    setPublisher('');
+                                }}
+                            >
+                                {t('Clear filters')}
+                            </Button>
+                        </div>
+                    )}
                 </div>
-
-                <Button onClick={handleSearch}>{t('Search')}</Button>
 
                 <div className="rounded-md border">
                     <Table>
@@ -170,9 +237,37 @@ export default function BooksIndex({ books, filters }: Props) {
                                 <TableRow>
                                     <TableCell
                                         colSpan={5}
-                                        className="text-center text-muted-foreground"
+                                        className="text-center"
                                     >
-                                        {t('No books found')}
+                                        <div className="py-12">
+                                            <svg
+                                                className="mx-auto h-12 w-12 text-muted-foreground/50"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                />
+                                            </svg>
+                                            <p className="mt-4 text-lg font-medium text-muted-foreground">
+                                                {hasActiveFilters
+                                                    ? t(
+                                                          'No books found matching your search',
+                                                      )
+                                                    : t('No books found')}
+                                            </p>
+                                            {hasActiveFilters && (
+                                                <p className="mt-2 text-sm text-muted-foreground">
+                                                    {t(
+                                                        'Try adjusting your filters or search terms',
+                                                    )}
+                                                </p>
+                                            )}
+                                        </div>
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -182,7 +277,11 @@ export default function BooksIndex({ books, filters }: Props) {
                                             {book.title}
                                         </TableCell>
                                         <TableCell>
-                                            {book.author || '—'}
+                                            {book.authors.length > 0
+                                                ? book.authors
+                                                      .map((a) => a.name)
+                                                      .join(', ')
+                                                : '—'}
                                         </TableCell>
                                         <TableCell>
                                             {book.publisher || '—'}
@@ -214,8 +313,16 @@ export default function BooksIndex({ books, filters }: Props) {
                 {books.last_page > 1 && (
                     <div className="flex items-center justify-between">
                         <p className="text-sm text-muted-foreground">
-                            {t('Showing :count of :total books', {
-                                count: books.data.length.toString(),
+                            {t('Showing :from-:to of :total books', {
+                                from: (
+                                    (books.current_page - 1) *
+                                        books.per_page +
+                                    1
+                                ).toString(),
+                                to: Math.min(
+                                    books.current_page * books.per_page,
+                                    books.total,
+                                ).toString(),
                                 total: books.total.toString(),
                             })}
                         </p>
