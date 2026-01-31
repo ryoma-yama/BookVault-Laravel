@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LoanController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -13,5 +15,11 @@ Route::get('/', function () {
 Route::get('dashboard', function () {
     return Inertia::render('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Loan routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::apiResource('loans', LoanController::class);
+    Route::apiResource('reservations', ReservationController::class);
+});
 
 require __DIR__.'/settings.php';
