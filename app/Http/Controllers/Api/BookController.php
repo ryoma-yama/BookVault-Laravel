@@ -20,7 +20,7 @@ class BookController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Book::query()
-            ->with('tags:id,name')
+            ->with(['tags:id,name', 'reviews'])
             ->withCount('reviews')
             ->withAvg('reviews', 'rating');
 
@@ -32,6 +32,14 @@ class BookController extends Controller
         }
 
         $books = $query->paginate(10);
+
+        // Map aggregated columns to expected response format
+        $books->getCollection()->transform(function ($book) {
+            $book->average_rating = $book->reviews_avg_rating;
+            $book->review_count = $book->reviews_count;
+
+            return $book;
+        });
 
         return response()->json($books);
     }
@@ -47,12 +55,9 @@ class BookController extends Controller
             $this->attachTagsByName($book, $request->tags);
         }
 
-        return response()->json(
-            $book->load('tags:id,name')
-                ->loadCount('reviews')
-                ->loadAvg('reviews', 'rating'),
-            201
-        );
+        $book->load(['tags:id,name', 'reviews']);
+
+        return response()->json($book, 201);
     }
 
     /**
@@ -63,6 +68,10 @@ class BookController extends Controller
         $book->load(['tags:id,name', 'reviews.user:id,name'])
             ->loadCount('reviews')
             ->loadAvg('reviews', 'rating');
+
+        // Map aggregated columns to expected response format
+        $book->average_rating = $book->reviews_avg_rating;
+        $book->review_count = $book->reviews_count;
 
         return response()->json($book);
     }
@@ -78,11 +87,9 @@ class BookController extends Controller
             $this->attachTagsByName($book, $request->tags);
         }
 
-        return response()->json(
-            $book->load('tags:id,name')
-                ->loadCount('reviews')
-                ->loadAvg('reviews', 'rating')
-        );
+        $book->load(['tags:id,name', 'reviews']);
+
+        return response()->json($book);
     }
 
     /**
