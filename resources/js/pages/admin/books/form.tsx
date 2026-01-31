@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState } from 'react';
+import { FormEventHandler, useState, useRef, useEffect } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { BreadcrumbItem } from '@/types';
 import axios from 'axios';
+import { BrowserBarcodeReader } from '@zxing/library';
+
+function isISBN13(code: string): boolean {
+    return (
+        code.length === 13 && (code.startsWith("978") || code.startsWith("979"))
+    );
+}
 
 interface Author {
     id: number;
@@ -33,6 +40,8 @@ export default function AdminBookForm({ book }: Props) {
     const isEditing = !!book;
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const [scanning, setScanning] = useState(false);
+    const scannerRef = useRef<HTMLDivElement>(null);
     
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -115,6 +124,48 @@ export default function AdminBookForm({ book }: Props) {
         setData('authors', newAuthors);
     };
 
+    useEffect(() => {
+        if (!scanning || !scannerRef.current) return;
+
+        let scanner: BrowserBarcodeReader | null = null;
+        let isStarted = false;
+
+        const startScanner = async () => {
+            scanner = new BrowserBarcodeReader();
+
+            try {
+                await scanner.decodeFromVideoDevice(
+                    null, // デバイスID（nullで背面カメラ）
+                    scannerRef.current!.id,
+                    (result, err) => {
+                        if (result) {
+                            const code = result.getText();
+                            if (isISBN13(code)) {
+                                // カメラ停止とISBN処理
+                                scanner?.reset();
+                                setScanning(false);
+                                setData('isbn_13', code);
+                                handleSearchByIsbn();
+                            }
+                        }
+                    }
+                );
+                isStarted = true;
+            } catch (err) {
+                console.error("Scanner error:", err);
+                setScanning(false);
+            }
+        };
+
+        startScanner();
+
+        return () => {
+            if (scanner && isStarted) {
+                scanner.reset();
+            }
+        };
+    }, [scanning, handleSearchByIsbn]);
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
@@ -151,6 +202,13 @@ export default function AdminBookForm({ book }: Props) {
                                 disabled={isSearching || !data.isbn_13}
                             >
                                 {isSearching ? 'Searching...' : 'Search ISBN'}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setScanning(true)}
+                            >
+                                カメラで読み取る
                             </Button>
                         </div>
                         {errors.isbn_13 && (
@@ -272,6 +330,25 @@ export default function AdminBookForm({ book }: Props) {
                         </Button>
                     </div>
                 </form>
+
+                {scanning && (
+                    <div className="fixed inset-0 z-50 bg-black bg-opacity-80 flex flex-col items-center justify-center">
+                        <div className="text-white mb-2">
+                            カメラをISBNバーコードに向けてください
+                        </div>
+                        <div
+                            id="isbn-scanner"
+                            ref={scannerRef}
+                            className="w-[300px] h-[300px] bg-white"
+                        />
+                        <button
+                            onClick={() => setScanning(false)}
+                            className="mt-4 text-white underline"
+                        >
+                            閉じる
+                        </button>
+                    </div>
+                )}
             </div>
         </AppLayout>
     );
