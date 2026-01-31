@@ -23,11 +23,11 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 // Admin book routes
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
-    
+
     // Google Books API
     Route::post('/api/google-books/search', [\App\Http\Controllers\Api\GoogleBooksController::class, 'searchByIsbn'])
         ->name('api.google-books.search');
-    
+
     // Book copy management
     Route::get('copies/{book}', [BookCopyController::class, 'show'])->name('copies.show');
     Route::post('copies/{book}', [BookCopyController::class, 'store'])->name('copies.store');

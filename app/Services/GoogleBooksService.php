@@ -10,9 +10,6 @@ class GoogleBooksService
 
     /**
      * Fetch book information from Google Books API by ISBN
-     *
-     * @param  string  $isbn
-     * @return array|null
      */
     public function fetchBookInfoByISBN(string $isbn): ?array
     {
@@ -80,9 +77,6 @@ class GoogleBooksService
 
     /**
      * Get Google Books cover image URL
-     *
-     * @param  string|null  $googleId
-     * @return string
      */
     public function getCoverUrl(?string $googleId): string
     {

@@ -5,10 +5,6 @@ use App\Models\Book;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\delete;
-use function Pest\Laravel\get;
-use function Pest\Laravel\post;
-use function Pest\Laravel\put;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
