@@ -40,7 +40,7 @@ export default function Profile({
                     <Heading
                         variant="small"
                         title="Profile information"
-                        description="Update your name and email address"
+                        description="Update your name, display name, and email address"
                     />
 
                     <Form
@@ -68,6 +68,27 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.name}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="display_name">
+                                        Display Name
+                                    </Label>
+
+                                    <Input
+                                        id="display_name"
+                                        className="mt-1 block w-full"
+                                        defaultValue={auth.user.display_name}
+                                        name="display_name"
+                                        required
+                                        autoComplete="off"
+                                        placeholder="Display name"
+                                    />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.display_name}
                                     />
                                 </div>
 
