@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Book extends Model
 {
+    /** @use HasFactory<\Database\Factories\BookFactory> */
     use HasFactory;
 
     /**
@@ -25,6 +26,22 @@ class Book extends Model
         'description',
         'image_url',
     ];
+
+    /**
+     * Get the tags for the book.
+     */
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    /**
+     * Get the loans for the book.
+     */
+    public function loans(): HasMany
+    {
+        return $this->hasMany(Loan::class);
+    }
 
     /**
      * Get the copies for the book.

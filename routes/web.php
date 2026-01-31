@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\BookCopyController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,8 +22,12 @@ Route::get('dashboard', function () {
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
-// Admin book routes
-Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
+// Admin routes
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
 
     // Google Books API
