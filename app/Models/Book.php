@@ -101,13 +101,20 @@ class Book extends Model
      */
     public function toSearchableArray(): array
     {
-        return [
+        $array = [
             'id' => $this->id,
             'title' => $this->title,
             'publisher' => $this->publisher,
             'description' => $this->description,
             'isbn_13' => $this->isbn_13,
-            'authors' => $this->authors->pluck('name')->implode(', '),
         ];
+
+        // Only include authors for non-database drivers (e.g., Meilisearch)
+        // Database driver can't search on relationship fields
+        if (config('scout.driver') !== 'database') {
+            $array['authors'] = $this->authors->pluck('name')->implode(', ');
+        }
+
+        return $array;
     }
 }

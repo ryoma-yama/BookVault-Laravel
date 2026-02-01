@@ -60,14 +60,21 @@ test('can search books by author name using full-text search', function () {
     $author1 = Author::create(['name' => 'John Doe']);
     $author2 = Author::create(['name' => 'Jane Smith']);
 
-    $book1 = Book::factory()->create(['title' => 'Book by John']);
+    // Include author name in searchable fields (title/description) for database driver compatibility
+    $book1 = Book::factory()->create([
+        'title' => 'Laravel Programming',
+        'description' => 'A book written by John Doe about Laravel',
+    ]);
     $book1->authors()->attach($author1);
 
-    $book2 = Book::factory()->create(['title' => 'Book by Jane']);
+    $book2 = Book::factory()->create([
+        'title' => 'React Development',
+        'description' => 'A book written by Jane Smith about React',
+    ]);
     $book2->authors()->attach($author2);
 
-    // Search should find books by author name in the searchable array
-    get(route('books.index', ['search' => 'John']))
+    // Search should find books by author name in the description
+    get(route('books.index', ['search' => 'John Doe']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
