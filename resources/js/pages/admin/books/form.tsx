@@ -1,26 +1,58 @@
 import { Head, useForm } from '@inertiajs/react';
 import { BrowserBarcodeReader } from '@zxing/library';
-import type { AxiosError } from 'axios';
-import axios from 'axios';
-import type {
-    FormEventHandler} from 'react';
-import {
-    useState,
-    useRef,
-    useEffect,
-    useCallback,
-} from 'react';
+import axios, { AxiosError } from 'axios';
+import type { FormEventHandler } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import type { ApiErrorResponse, Book, BookFormData, BreadcrumbItem, GoogleBooksApiResponse } from '@/types';
+import type { BreadcrumbItem } from '@/types';
+
+const DEFAULT_ERROR_MESSAGE = 'Failed to fetch book information';
+const CAMERA_PERMISSION_ERROR =
+    'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。';
+const CAMERA_GENERIC_ERROR = 'カメラの起動に失敗しました。';
 
 function isISBN13(code: string): boolean {
     return (
         code.length === 13 && (code.startsWith('978') || code.startsWith('979'))
     );
+}
+
+function extractErrorMessage(error: unknown): string {
+    if (error instanceof AxiosError && error.response?.data?.error) {
+        return error.response.data.error;
+    }
+    return DEFAULT_ERROR_MESSAGE;
+}
+
+function extractCameraError(error: unknown): string {
+    if (error instanceof Error) {
+        const isPermissionError =
+            error.message.includes('Permission') ||
+            error.message.includes('NotAllowedError');
+        return isPermissionError ? CAMERA_PERMISSION_ERROR : CAMERA_GENERIC_ERROR;
+    }
+    return CAMERA_GENERIC_ERROR;
+}
+
+interface Author {
+    id: number;
+    name: string;
+}
+
+interface Book {
+    id: number;
+    isbn_13: string;
+    title: string;
+    publisher: string;
+    published_date: string;
+    description: string;
+    google_id?: string;
+    image_url?: string;
+    authors: Author[];
 }
 
 interface Props {
@@ -52,7 +84,7 @@ export default function AdminBookForm({ book }: Props) {
         },
     ];
 
-    const { data, setData, post, put, processing, errors } = useForm<BookFormData>({
+    const { data, setData, post, put, processing, errors } = useForm({
         isbn_13: book?.isbn_13 || '',
         title: book?.title || '',
         publisher: book?.publisher || '',
@@ -73,7 +105,7 @@ export default function AdminBookForm({ book }: Props) {
         setSearchError(null);
 
         try {
-            const response = await axios.post<GoogleBooksApiResponse>(
+            const response = await axios.post(
                 '/admin/api/google-books/search',
                 {
                     isbn: data.isbn_13,
@@ -96,14 +128,11 @@ export default function AdminBookForm({ book }: Props) {
                         : data.authors,
             });
         } catch (error) {
-            const axiosError = error as AxiosError<ApiErrorResponse>;
-            const errorMessage =
-                axiosError.response?.data?.error || 'Failed to fetch book information';
-            setSearchError(errorMessage);
+            setSearchError(extractErrorMessage(error));
         } finally {
             setIsSearching(false);
         }
-    }, [data, setData]);
+    }, [data.isbn_13, setData]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
@@ -152,14 +181,7 @@ export default function AdminBookForm({ book }: Props) {
                 isStarted = true;
             } catch (err) {
                 console.error('Scanner error:', err);
-                const errorMsg =
-                    err instanceof Error
-                        ? err.message.includes('Permission') ||
-                          err.message.includes('NotAllowedError')
-                            ? 'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。'
-                            : 'カメラの起動に失敗しました。'
-                        : 'カメラの起動に失敗しました。';
-                setScannerError(errorMsg);
+                setScannerError(extractCameraError(err));
                 setScanning(false);
             }
         };

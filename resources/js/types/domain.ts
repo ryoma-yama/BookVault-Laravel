@@ -40,14 +40,14 @@ export type Book = {
 
 /**
  * Book listing item for public book index
- * Contains summarized author info and tags
+ * Contains authors array and tags
  */
 export type BookListItem = {
     id: number;
     title: string;
-    author: string | null;
+    authors: Author[];
     publisher: string | null;
-    isbn: string | null;
+    isbn_13: string | null;
     tags: Tag[];
     created_at: string;
 };

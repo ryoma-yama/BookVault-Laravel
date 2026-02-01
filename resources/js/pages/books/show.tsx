@@ -1,6 +1,22 @@
 import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
-import type { Book, BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem } from '@/types';
+
+interface Author {
+    id: number;
+    name: string;
+}
+
+interface Book {
+    id: number;
+    isbn_13: string;
+    title: string;
+    publisher: string;
+    published_date: string;
+    description: string;
+    image_url?: string;
+    authors: Author[];
+}
 
 interface Props {
     book: Book;

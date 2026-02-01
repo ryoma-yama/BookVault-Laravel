@@ -13,10 +13,8 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-
         $loans = Loan::with(['bookCopy.book', 'user'])
-            ->where('user_id', $user->id)
+            ->where('user_id', $request->user()->id)
             ->latest()
             ->paginate(15);
 
@@ -54,8 +52,8 @@ class LoanController extends Controller
      */
     public function show(Request $request, Loan $loan)
     {
-        if ($loan->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (! $this->isOwnedByUser($loan, $request)) {
+            return $this->unauthorizedResponse();
         }
 
         return response()->json($loan->load(['bookCopy.book', 'user']));
@@ -66,11 +64,11 @@ class LoanController extends Controller
      */
     public function update(Request $request, Loan $loan)
     {
-        if ($loan->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (! $this->isOwnedByUser($loan, $request)) {
+            return $this->unauthorizedResponse();
         }
 
-        if (! $loan->isActive()) {
+        if (! $loan->isOutstanding()) {
             return response()->json([
                 'message' => 'This loan has already been returned.',
             ], 422);
@@ -86,7 +84,22 @@ class LoanController extends Controller
      */
     public function destroy(string $id)
     {
-        // Typically, we don't delete loan records as they're historical data
         return response()->json(['message' => 'Loan records cannot be deleted'], 403);
+    }
+
+    /**
+     * Check if the loan belongs to the authenticated user.
+     */
+    private function isOwnedByUser(Loan $loan, Request $request): bool
+    {
+        return $loan->user_id === $request->user()->id;
+    }
+
+    /**
+     * Return a standardized unauthorized response.
+     */
+    private function unauthorizedResponse()
+    {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
 }

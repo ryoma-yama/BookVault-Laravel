@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Concerns\SyncsRelatedEntities;
 use App\Http\Controllers\Controller;
-use App\Models\Author;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BookController extends Controller
 {
+    use SyncsRelatedEntities;
+
     /**
      * Display a listing of books.
      */
     public function index()
     {
-        $books = Book::with('authors')
+        $books = Book::with('authors:id,name')
             ->latest()
             ->paginate(12);
 
@@ -59,9 +61,8 @@ class BookController extends Controller
             'image_url' => $validated['image_url'] ?? null,
         ]);
 
-        // Attach authors
         if (! empty($validated['authors'])) {
-            $this->syncAuthors($book, $validated['authors']);
+            $this->attachAuthorsByName($book, $validated['authors']);
         }
 
         return redirect('/admin/books');
@@ -72,7 +73,7 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        $book->load('authors');
+        $book->load('authors:id,name');
 
         return Inertia::render('admin/books/form', [
             'book' => $book,
@@ -106,9 +107,8 @@ class BookController extends Controller
             'image_url' => $validated['image_url'] ?? null,
         ]);
 
-        // Sync authors
         if (isset($validated['authors'])) {
-            $this->syncAuthors($book, $validated['authors']);
+            $this->attachAuthorsByName($book, $validated['authors']);
         }
 
         return redirect('/admin/books');
@@ -122,20 +122,5 @@ class BookController extends Controller
         $book->delete();
 
         return redirect('/admin/books');
-    }
-
-    /**
-     * Sync authors for a book.
-     */
-    private function syncAuthors(Book $book, array $authorNames): void
-    {
-        $authorIds = [];
-
-        foreach ($authorNames as $name) {
-            $author = Author::firstOrCreate(['name' => $name]);
-            $authorIds[] = $author->id;
-        }
-
-        $book->authors()->sync($authorIds);
     }
 }
