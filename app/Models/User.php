@@ -74,14 +74,28 @@ class User extends Authenticatable
         return $this->hasMany(Reservation::class);
     }
 
-    public function activeLoans()
+    /**
+     * Get outstanding (unreturned) loans for the user.
+     */
+    public function outstandingLoans()
     {
-        return $this->loans()->whereNull('returned_date');
+        return $this->loans()->outstanding();
     }
 
+    /**
+     * Get returned loans for the user.
+     */
     public function loanHistory()
     {
-        return $this->loans()->whereNotNull('returned_date');
+        return $this->loans()->returned();
+    }
+
+    /**
+     * Legacy alias for outstandingLoans() - maintained for backward compatibility.
+     */
+    public function activeLoans()
+    {
+        return $this->outstandingLoans();
     }
 
     /**

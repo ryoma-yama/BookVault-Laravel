@@ -93,7 +93,7 @@ class Book extends Model
      */
     public function getAvailableCopiesCountAttribute(): int
     {
-        return $this->copies()->whereNull('discarded_date')->count();
+        return $this->copies()->active()->count();
     }
 
     /**

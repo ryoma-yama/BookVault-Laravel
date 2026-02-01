@@ -18,21 +18,22 @@ class BookController extends Controller
         if ($request->filled('search')) {
             $books = Book::search($request->input('search'))
                 ->query(function ($builder) use ($request) {
-                    $builder->with(['tags', 'authors']);
+                    $builder->with([
+                        'tags:id,name',
+                        'authors:id,name',
+                    ]);
 
-                    // Filter by author name through the authors relationship
+                    // Apply additional filters
                     if ($request->filled('author')) {
                         $builder->whereHas('authors', function ($q) use ($request) {
                             $q->where('name', 'like', "%{$request->input('author')}%");
                         });
                     }
 
-                    // Filter by publisher
                     if ($request->filled('publisher')) {
                         $builder->where('publisher', 'like', "%{$request->input('publisher')}%");
                     }
 
-                    // Filter by tag
                     if ($request->filled('tag')) {
                         $builder->whereHas('tags', function ($q) use ($request) {
                             $q->where('name', 'like', "%{$request->input('tag')}%");
@@ -43,37 +44,14 @@ class BookController extends Controller
                 ->withQueryString();
         } else {
             // Use traditional query builder when no search query
-            $query = Book::query()->with(['tags', 'authors']);
+            $query = Book::query()->with([
+                'tags:id,name',
+                'authors:id,name',
+            ]);
 
-            // Filter by author name through the authors relationship
-            if ($request->filled('author')) {
-                $query->whereHas('authors', function ($q) use ($request) {
-                    $q->where('name', 'like', "%{$request->input('author')}%");
-                });
-            }
+            $this->applySearchFilters($query, $request);
+            $this->applySorting($query, $request);
 
-            // Filter by publisher
-            if ($request->filled('publisher')) {
-                $query->where('publisher', 'like', "%{$request->input('publisher')}%");
-            }
-
-            // Filter by tag
-            if ($request->filled('tag')) {
-                $query->whereHas('tags', function ($q) use ($request) {
-                    $q->where('name', 'like', "%{$request->input('tag')}%");
-                });
-            }
-
-            // Sorting
-            $sortField = $request->input('sort', 'created_at');
-            $sortDirection = $request->input('direction', 'desc');
-
-            $allowedSortFields = ['title', 'created_at'];
-            if (in_array($sortField, $allowedSortFields)) {
-                $query->orderBy($sortField, $sortDirection);
-            }
-
-            // Paginate results
             $books = $query->paginate(15)->withQueryString();
         }
 
@@ -86,12 +64,52 @@ class BookController extends Controller
     /**
      * Display the specified book.
      */
-    public function show(Book $book)
+    public function show(Book $book): Response
     {
-        $book->load('authors');
+        $book->load('authors:id,name');
 
         return Inertia::render('books/show', [
             'book' => $book,
         ]);
+    }
+
+    /**
+     * Apply search and filter conditions to the query.
+     */
+    private function applySearchFilters($query, Request $request): void
+    {
+        if ($request->filled('search')) {
+            $query->where('title', 'like', "%{$request->input('search')}%");
+        }
+
+        if ($request->filled('author')) {
+            $query->whereHas('authors', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->input('author')}%");
+            });
+        }
+
+        if ($request->filled('publisher')) {
+            $query->where('publisher', 'like', "%{$request->input('publisher')}%");
+        }
+
+        if ($request->filled('tag')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->input('tag')}%");
+            });
+        }
+    }
+
+    /**
+     * Apply sorting to the query.
+     */
+    private function applySorting($query, Request $request): void
+    {
+        $sortField = $request->input('sort', 'created_at');
+        $sortDirection = $request->input('direction', 'desc');
+
+        $allowedSortFields = ['title', 'created_at'];
+        if (in_array($sortField, $allowedSortFields, true)) {
+            $query->orderBy($sortField, $sortDirection);
+        }
     }
 }

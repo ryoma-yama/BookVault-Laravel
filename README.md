@@ -62,7 +62,7 @@ This project uses Dev Containers for development.
     npm run dev
     ```
 
-6. **Run tests**
+7. **Run tests**
     ```bash
     php artisan test --compact
     ```

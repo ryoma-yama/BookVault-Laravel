@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,9 +42,42 @@ class Loan extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function isActive(): bool
+    /**
+     * Check if this loan is still outstanding (book not yet returned).
+     */
+    public function isOutstanding(): bool
     {
         return $this->returned_date === null;
+    }
+
+    /**
+     * Legacy alias for isOutstanding() - maintained for backward compatibility.
+     */
+    public function isActive(): bool
+    {
+        return $this->isOutstanding();
+    }
+
+    /**
+     * Scope to get only outstanding (unreturned) loans.
+     *
+     * @param  Builder<Loan>  $query
+     * @return Builder<Loan>
+     */
+    public function scopeOutstanding(Builder $query): Builder
+    {
+        return $query->whereNull('returned_date');
+    }
+
+    /**
+     * Scope to get only returned loans.
+     *
+     * @param  Builder<Loan>  $query
+     * @return Builder<Loan>
+     */
+    public function scopeReturned(Builder $query): Builder
+    {
+        return $query->whereNotNull('returned_date');
     }
 
     public function returnBook(): void
