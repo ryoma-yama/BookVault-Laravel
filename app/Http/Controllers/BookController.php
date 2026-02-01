@@ -14,15 +14,46 @@ class BookController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = Book::query()->with([
-            'tags:id,name',
-            'authors:id,name',
-        ]);
+        // Use Scout search when there's a search query
+        if ($request->filled('search')) {
+            $books = Book::search($request->input('search'))
+                ->query(function ($builder) use ($request) {
+                    $builder->with([
+                        'tags:id,name',
+                        'authors:id,name',
+                    ]);
 
-        $this->applySearchFilters($query, $request);
-        $this->applySorting($query, $request);
+                    // Apply additional filters
+                    if ($request->filled('author')) {
+                        $builder->whereHas('authors', function ($q) use ($request) {
+                            $q->where('name', 'like', "%{$request->input('author')}%");
+                        });
+                    }
 
-        $books = $query->paginate(15)->withQueryString();
+                    if ($request->filled('publisher')) {
+                        $builder->where('publisher', 'like', "%{$request->input('publisher')}%");
+                    }
+
+                    if ($request->filled('tag')) {
+                        $builder->whereHas('tags', function ($q) use ($request) {
+                            $q->where('name', 'like', "%{$request->input('tag')}%");
+                        });
+                    }
+                })
+                ->paginate(15)
+                ->withQueryString();
+        } else {
+            // Use traditional query builder when no search query
+            $query = Book::query()->with([
+                'tags:id,name',
+                'authors:id,name',
+            ]);
+
+            $this->applySearchFilters($query, $request);
+            $this->applySorting($query, $request);
+
+            $books = $query->paginate(15)->withQueryString();
+        }
 
         return Inertia::render('books/index', [
             'books' => $books,

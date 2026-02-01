@@ -41,7 +41,10 @@ test('admin user list displays all users', function () {
 });
 
 test('admin can search users by email', function () {
-    $admin = User::factory()->admin()->create();
+    $admin = User::factory()->admin()->create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+    ]);
     $user1 = User::factory()->create(['email' => 'john@example.com']);
     $user2 = User::factory()->create(['email' => 'jane@example.com']);
     $user3 = User::factory()->create(['email' => 'bob@example.com']);
@@ -57,7 +60,10 @@ test('admin can search users by email', function () {
 });
 
 test('admin can search users by name', function () {
-    $admin = User::factory()->admin()->create();
+    $admin = User::factory()->admin()->create([
+        'name' => 'Admin User',
+        'email' => 'admin@example.com',
+    ]);
     $user1 = User::factory()->create(['name' => 'John Doe']);
     $user2 = User::factory()->create(['name' => 'Jane Smith']);
 
