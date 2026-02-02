@@ -17,11 +17,12 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
+        const locale = props.initialPage.props.locale || 'ja';
 
         root.render(
             <StrictMode>
                 <LaravelReactI18nProvider
-                    locale={'ja'}
+                    locale={locale}
                     fallbackLocale={'en'}
                     files={import.meta.glob('/lang/*.json')}
                 >

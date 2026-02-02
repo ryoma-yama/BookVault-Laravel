@@ -323,5 +323,15 @@
     "Profile": "プロフィール",
     "Two-Factor Auth": "二要素認証",
     "Appearance": "外観",
-    "Manage your profile and account settings": "プロフィールとアカウント設定を管理"
+    "Manage your profile and account settings": "プロフィールとアカウント設定を管理",
+    "Dashboard": "ダッシュボード",
+    "Language": "言語",
+    "Log out": "ログアウト",
+    "Welcome to BookVault": "蔵書管理アプリへようこそ",
+    "Library management app built with Laravel/Inertia.": "Laravel/Inertia による蔵書管理アプリです。",
+    "This app is designed for small-scale library management and supports fetching book information using the Google Books API.": "本アプリは、小規模向けの蔵書管理を目的としており、Google Books API を用いた書籍情報の取得に対応しています。",
+    "Login is required to borrow books.": "書籍の貸出にはログインが必要です。",
+    "Logged in as": "ログイン中",
+    "Go to Dashboard": "ダッシュボードへ",
+    "Platform": "プラットフォーム"
 }
