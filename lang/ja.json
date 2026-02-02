@@ -332,5 +332,6 @@
     "This app is designed for small-scale library management and supports fetching book information using the Google Books API.": "本アプリは、小規模向けの蔵書管理を目的としており、Google Books API を用いた書籍情報の取得に対応しています。",
     "Login is required to borrow books.": "書籍の貸出にはログインが必要です。",
     "Logged in as": "ログイン中",
-    "Go to Dashboard": "ダッシュボードへ"
+    "Go to Dashboard": "ダッシュボードへ",
+    "Platform": "プラットフォーム"
 }
