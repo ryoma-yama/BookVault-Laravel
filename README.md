@@ -42,9 +42,13 @@ This project uses Dev Containers for development.
     ```bash
     composer run setup
     ```
-    and on dev
+    and once complete, seed the database with
     ```bash
     php artisan db:seed
+    ```
+    if needed, reset the database with
+    ```
+    php artisan migrate:fresh
     ```
 
 4. **Index books for search (Meilisearch)**
