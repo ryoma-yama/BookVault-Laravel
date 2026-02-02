@@ -21,21 +21,6 @@ jobs:
       matrix:
         php-version: ['8.5']
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: testing
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -46,7 +31,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: composer:v2
           coverage: xdebug
-          extensions: pdo, pdo_pgsql, pgsql
+          extensions: pdo, pdo_sqlite, sqlite3
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -65,14 +50,8 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
-      - name: Set database environment variables
-        run: |
-          echo "DB_CONNECTION=pgsql" >> $GITHUB_ENV
-          echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
-          echo "DB_PORT=5432" >> $GITHUB_ENV
-          echo "DB_DATABASE=testing" >> $GITHUB_ENV
-          echo "DB_USERNAME=postgres" >> $GITHUB_ENV
-          echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
+      - name: Create SQLite Database
+        run: touch database/database.sqlite
 
       - name: Build Assets
         run: npm run build

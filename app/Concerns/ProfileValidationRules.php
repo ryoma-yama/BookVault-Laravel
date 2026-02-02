@@ -18,6 +18,7 @@ trait ProfileValidationRules
             'name' => $this->nameRules(),
             'display_name' => $this->displayNameRules(),
             'email' => $this->emailRules($userId),
+            'role' => $this->roleRules(),
         ];
     }
 
@@ -57,5 +58,15 @@ trait ProfileValidationRules
                 ? Rule::unique(User::class)
                 : Rule::unique(User::class)->ignore($userId),
         ];
+    }
+
+    /**
+     * Get the validation rules used to validate user roles.
+     *
+     * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
+     */
+    protected function roleRules(): array
+    {
+        return ['sometimes', 'required', Rule::in(['admin', 'user'])];
     }
 }
