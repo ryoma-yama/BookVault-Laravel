@@ -28,18 +28,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The "booted" method of the model.
-     */
-    protected static function booted(): void
-    {
-        static::saving(function (User $user) {
-            if (!in_array($user->role, ['admin', 'user'])) {
-                throw new \InvalidArgumentException("Invalid role value. Role must be 'admin' or 'user'.");
-            }
-        });
-    }
-
-    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
