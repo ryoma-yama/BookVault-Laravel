@@ -37,32 +37,23 @@ This project uses Dev Containers for development.
     - Select "Dev Containers: Reopen in Container"
     - Wait for the container to build and start
 
-3. **Set up environment**
+
+3. **Setup the project**
     ```bash
-    cp .env.example .env
-    php artisan key:generate
+    composer run setup
     ```
 
-4. **Run database migrations**
-    ```bash
-    php artisan migrate
-    ```
-
-5. **Index books for search (Meilisearch)**
+4. **Index books for search (Meilisearch)**
     ```bash
     php artisan scout:import "App\Models\Book"
     ```
 
-6. **Start development server**
+5. **Start development server**
     ```bash
     composer run dev
     ```
-    or
-    ```bash
-    npm run dev
-    ```
 
-7. **Run tests**
+6. **Run tests**
     ```bash
     php artisan test --compact
     ```
