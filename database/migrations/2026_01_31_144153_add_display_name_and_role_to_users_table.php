@@ -18,7 +18,30 @@ return new class extends Migration
         });
 
         // Add check constraint for role validation
-        if (DB::getDriverName() === 'pgsql') {
+        $this->createRoleValidationTriggers();
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        // Drop triggers first
+        $this->dropRoleValidationTriggers();
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['display_name', 'role']);
+        });
+    }
+
+    /**
+     * Create role validation triggers for the current database driver.
+     */
+    private function createRoleValidationTriggers(): void
+    {
+        $driver = DB::getDriverName();
+
+        if ($driver === 'pgsql') {
             // PostgreSQL: Create function and triggers
             DB::statement("
                 CREATE OR REPLACE FUNCTION check_users_role()
@@ -45,7 +68,7 @@ return new class extends Migration
                 FOR EACH ROW
                 EXECUTE FUNCTION check_users_role();
             ");
-        } else {
+        } elseif ($driver === 'sqlite') {
             // SQLite: Use SQLite-specific trigger syntax
             DB::statement("CREATE TRIGGER users_role_check_insert BEFORE INSERT ON users
                 BEGIN
@@ -62,26 +85,26 @@ return new class extends Migration
                             RAISE (ABORT, 'Invalid role value')
                     END;
                 END;");
+        } else {
+            throw new \RuntimeException("Unsupported database driver: {$driver}. Only PostgreSQL and SQLite are supported.");
         }
     }
 
     /**
-     * Reverse the migrations.
+     * Drop role validation triggers for the current database driver.
      */
-    public function down(): void
+    private function dropRoleValidationTriggers(): void
     {
-        // Drop triggers first
-        if (DB::getDriverName() === 'pgsql') {
+        $driver = DB::getDriverName();
+
+        if ($driver === 'pgsql') {
             DB::statement("DROP TRIGGER IF EXISTS users_role_check_insert ON users");
             DB::statement("DROP TRIGGER IF EXISTS users_role_check_update ON users");
             DB::statement("DROP FUNCTION IF EXISTS check_users_role()");
-        } else {
+        } elseif ($driver === 'sqlite') {
             DB::statement("DROP TRIGGER IF EXISTS users_role_check_insert");
             DB::statement("DROP TRIGGER IF EXISTS users_role_check_update");
         }
-
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['display_name', 'role']);
-        });
+        // No error thrown on down() to allow rollback even on unsupported drivers
     }
 };
