@@ -15,7 +15,7 @@ test('user can be created with admin role', function () {
 });
 
 test('user role can only be admin or user', function () {
-    $this->expectException(\Illuminate\Database\QueryException::class);
+    $this->expectException(\InvalidArgumentException::class);
 
     User::factory()->create(['role' => 'invalid_role']);
 });
