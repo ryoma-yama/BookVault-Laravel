@@ -42,6 +42,10 @@ This project uses Dev Containers for development.
     ```bash
     composer run setup
     ```
+    and on dev
+    ```bash
+    php artisan db:seed
+    ```
 
 4. **Index books for search (Meilisearch)**
     ```bash
@@ -69,3 +73,11 @@ This project uses Dev Containers for development.
 - PostgreSQL (Port: 5432)
 - Redis (Port: 6379)
 - Meilisearch (Port: 7700)
+
+### Scripts memo
+
+List all registered routes in the application:
+
+```bash
+php artisan route:list --except-vendor
+```
