@@ -77,8 +77,5 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Run migrations
-        run: php artisan migrate:fresh --seed
-
       - name: Tests
         run: ./vendor/bin/pest
