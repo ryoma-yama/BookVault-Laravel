@@ -1,16 +1,20 @@
-import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { Globe, LogOut, Settings } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';
-import type { User } from '@/types';
+import type { SharedData, User } from '@/types';
 
 type Props = {
     user: User;
@@ -18,10 +22,17 @@ type Props = {
 
 export function UserMenuContent({ user }: Props) {
     const cleanup = useMobileNavigation();
+    const { locale } = usePage<SharedData>().props;
+    const { t } = useLaravelReactI18n();
 
     const handleLogout = () => {
         cleanup();
         router.flushAll();
+    };
+
+    const handleLanguageSwitch = (newLocale: string) => {
+        cleanup();
+        router.get(`/locale/${newLocale}`);
     };
 
     return (
@@ -41,9 +52,29 @@ export function UserMenuContent({ user }: Props) {
                         onClick={cleanup}
                     >
                         <Settings className="mr-2" />
-                        Settings
+                        {t('Settings')}
                     </Link>
                 </DropdownMenuItem>
+                <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>
+                        <Globe className="mr-2" />
+                        {t('Language')}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                            onClick={() => handleLanguageSwitch('ja')}
+                            className={locale === 'ja' ? 'bg-accent' : ''}
+                        >
+                            日本語
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => handleLanguageSwitch('en')}
+                            className={locale === 'en' ? 'bg-accent' : ''}
+                        >
+                            English
+                        </DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                </DropdownMenuSub>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -55,7 +86,7 @@ export function UserMenuContent({ user }: Props) {
                     data-test="logout-button"
                 >
                     <LogOut className="mr-2" />
-                    Log out
+                    {t('Log Out')}
                 </Link>
             </DropdownMenuItem>
         </>
