@@ -17,22 +17,52 @@ return new class extends Migration
             $table->string('role')->default('user')->after('display_name');
         });
 
-        // Add check constraint for role validation (SQLite 3.37.0+ supports CHECK constraints)
-        DB::statement("CREATE TRIGGER users_role_check_insert BEFORE INSERT ON users
-            BEGIN
-                SELECT CASE
-                    WHEN NEW.role NOT IN ('admin', 'user') THEN
-                        RAISE (ABORT, 'Invalid role value')
+        // Add check constraint for role validation
+        if (DB::getDriverName() === 'pgsql') {
+            // PostgreSQL: Create function and triggers
+            DB::statement("
+                CREATE OR REPLACE FUNCTION check_users_role()
+                RETURNS TRIGGER AS $$
+                BEGIN
+                    IF NEW.role NOT IN ('admin', 'user') THEN
+                        RAISE EXCEPTION 'Invalid role value';
+                    END IF;
+                    RETURN NEW;
                 END;
-            END;");
+                $$ LANGUAGE plpgsql;
+            ");
 
-        DB::statement("CREATE TRIGGER users_role_check_update BEFORE UPDATE ON users
-            BEGIN
-                SELECT CASE
-                    WHEN NEW.role NOT IN ('admin', 'user') THEN
-                        RAISE (ABORT, 'Invalid role value')
-                END;
-            END;");
+            DB::statement("
+                CREATE TRIGGER users_role_check_insert
+                BEFORE INSERT ON users
+                FOR EACH ROW
+                EXECUTE FUNCTION check_users_role();
+            ");
+
+            DB::statement("
+                CREATE TRIGGER users_role_check_update
+                BEFORE UPDATE ON users
+                FOR EACH ROW
+                EXECUTE FUNCTION check_users_role();
+            ");
+        } else {
+            // SQLite: Use SQLite-specific trigger syntax
+            DB::statement("CREATE TRIGGER users_role_check_insert BEFORE INSERT ON users
+                BEGIN
+                    SELECT CASE
+                        WHEN NEW.role NOT IN ('admin', 'user') THEN
+                            RAISE (ABORT, 'Invalid role value')
+                    END;
+                END;");
+
+            DB::statement("CREATE TRIGGER users_role_check_update BEFORE UPDATE ON users
+                BEGIN
+                    SELECT CASE
+                        WHEN NEW.role NOT IN ('admin', 'user') THEN
+                            RAISE (ABORT, 'Invalid role value')
+                    END;
+                END;");
+        }
     }
 
     /**
@@ -41,8 +71,14 @@ return new class extends Migration
     public function down(): void
     {
         // Drop triggers first
-        DB::statement("DROP TRIGGER IF EXISTS users_role_check_insert");
-        DB::statement("DROP TRIGGER IF EXISTS users_role_check_update");
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("DROP TRIGGER IF EXISTS users_role_check_insert ON users");
+            DB::statement("DROP TRIGGER IF EXISTS users_role_check_update ON users");
+            DB::statement("DROP FUNCTION IF EXISTS check_users_role()");
+        } else {
+            DB::statement("DROP TRIGGER IF EXISTS users_role_check_insert");
+            DB::statement("DROP TRIGGER IF EXISTS users_role_check_update");
+        }
 
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn(['display_name', 'role']);
