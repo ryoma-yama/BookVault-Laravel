@@ -16,12 +16,15 @@ import type { SharedData } from '@/types';
 
 export function LanguageSwitcher() {
     const { locale } = usePage<SharedData>().props;
-    const { t } = useLaravelReactI18n();
+    const { t, setLocale } = useLaravelReactI18n();
 
     const handleLanguageSwitch = (newLocale: string) => {
         router.get(`/locale/${newLocale}`, {}, {
             preserveState: false,
             preserveScroll: true,
+            onSuccess: () => {
+                setLocale(newLocale);
+            },
         });
     };
 
