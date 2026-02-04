@@ -64,7 +64,7 @@ test('user can delete their account', function () {
 
     $response
         ->assertSessionHasNoErrors()
-        ->assertRedirect(route('home'));
+        ->assertRedirect(route('books.index'));
 
     $this->assertGuest();
     expect($user->fresh())->toBeNull();
