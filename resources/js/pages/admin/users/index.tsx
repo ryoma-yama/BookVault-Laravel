@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import Heading from '@/components/heading';
 
 type UserRole = 'admin' | 'user';
 
@@ -97,16 +98,10 @@ export default function AdminUsersIndex({ users, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('User Management')} />
 
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-3xl font-bold">
-                        {t('User Management')}
-                    </h1>
-                    <p className="mt-2 text-muted-foreground">
-                        {t('Manage users and their roles')}
-                    </p>
-                </div>
-
+            <div className="px-4 py-6 space-y-6">
+                <Heading
+                    title={t('User Management')}
+                />
                 <div className="flex gap-4">
                     <Input
                         type="text"

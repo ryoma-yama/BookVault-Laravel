@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 interface Author {
     id: number;
@@ -44,6 +45,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AdminBooksIndex({ books }: Props) {
+    const { t } = useLaravelReactI18n();
     const handleDelete = (id: number) => {
         if (confirm('Are you sure you want to delete this book?')) {
             router.delete(`/admin/books/${id}`);
@@ -52,23 +54,34 @@ export default function AdminBooksIndex({ books }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Books Management" />
+            <Head title={t('Books Management')} />
+            
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Books Management</h1>
+                    <h1 className="text-2xl font-bold">
+                        {t('Books Management')}
+                    </h1>
                     <Link href="/admin/books/create">
-                        <Button>Add New Book</Button>
+                        <Button>{t('Add New Book')}</Button>
                     </Link>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
                             <tr className="border-b">
-                                <th className="p-2 text-left">Title</th>
-                                <th className="p-2 text-left">Authors</th>
-                                <th className="p-2 text-left">Publisher</th>
-                                <th className="p-2 text-left">ISBN-13</th>
-                                <th className="p-2 text-left">Actions</th>
+                                <th className="p-2 text-left">{t('Title')}</th>
+                                <th className="p-2 text-left">
+                                    {t('Authors')}
+                                </th>
+                                <th className="p-2 text-left">
+                                    {t('Publisher')}
+                                </th>
+                                <th className="p-2 text-left">
+                                    {t('ISBN-13')}
+                                </th>
+                                <th className="p-2 text-left">
+                                    {t('Actions')}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,7 +104,7 @@ export default function AdminBooksIndex({ books }: Props) {
                                                     variant="outline"
                                                     size="sm"
                                                 >
-                                                    Edit
+                                                    {t('Edit')}
                                                 </Button>
                                             </Link>
                                             <Button
@@ -101,7 +114,7 @@ export default function AdminBooksIndex({ books }: Props) {
                                                     handleDelete(book.id)
                                                 }
                                             >
-                                                Delete
+                                                {t('Delete')}
                                             </Button>
                                         </div>
                                     </td>

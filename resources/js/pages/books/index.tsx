@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import Heading from '@/components/heading';
 
 interface Tag {
     id: number;
@@ -122,15 +123,10 @@ export default function BooksIndex({ books, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Books')} />
 
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-3xl font-bold">
-                        {t('Book Collection')}
-                    </h1>
-                    <p className="mt-2 text-muted-foreground">
-                        {t('Search and browse through our book collection')}
-                    </p>
-                </div>
+            <div className="px-4 py-6 space-y-6">
+                <Heading
+                    title={t('Books Collection')}
+                />
 
                 <div className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-3">

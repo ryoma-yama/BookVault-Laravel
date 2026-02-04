@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import Heading from '@/components/heading';
 
 interface Props {
     stats: {
@@ -31,15 +32,10 @@ export default function AdminDashboard({ stats }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Admin Dashboard')} />
 
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-3xl font-bold">
-                        {t('Admin Dashboard')}
-                    </h1>
-                    <p className="mt-2 text-muted-foreground">
-                        {t('Overview of your library management system')}
-                    </p>
-                </div>
+            <div className="px-4 py-6 space-y-6">
+                <Heading
+                    title={t('Admin Dashboard')}
+                />
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
