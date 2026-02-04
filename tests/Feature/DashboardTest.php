@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('guests can access books index page (public)', function () {
-    $response = $this->get(route('books.index'));
+    $response = $this->get(route('home'));
     $response->assertOk();
 });
 
@@ -11,7 +11,7 @@ test('authenticated users can access books index page', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->get(route('books.index'));
+    $response = $this->get(route('home'));
     $response->assertOk();
 });
 
@@ -24,5 +24,5 @@ test('authenticated users are redirected to books index after login', function (
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('books.index', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 });

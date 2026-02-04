@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import Heading from '@/components/heading';
 import {
     Card,
     CardContent,
@@ -9,7 +10,6 @@ import {
 } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import Heading from '@/components/heading';
 
 interface Props {
     stats: {
@@ -32,10 +32,8 @@ export default function AdminDashboard({ stats }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Admin Dashboard')} />
 
-            <div className="px-4 py-6 space-y-6">
-                <Heading
-                    title={t('Admin Dashboard')}
-                />
+            <div className="space-y-6 px-4 py-6">
+                <Heading title={t('Admin Dashboard')} />
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <Card>
@@ -183,7 +181,7 @@ export default function AdminDashboard({ stats }: Props) {
                                 </div>
                             </Link>
                             <Link
-                                href="/books"
+                                href="/"
                                 className="block rounded-lg border p-3 transition-colors hover:bg-accent"
                             >
                                 <div className="font-medium">

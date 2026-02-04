@@ -26,7 +26,7 @@ export default function BookShow({ book }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: 'Books',
-            href: '/books',
+            href: '/',
         },
         {
             title: book.title,

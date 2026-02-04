@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { useEffect, useState } from 'react';
+import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,6 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import Heading from '@/components/heading';
 
 interface Tag {
     id: number;
@@ -54,7 +54,7 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/books' }];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
 
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
@@ -73,7 +73,7 @@ export default function BooksIndex({ books, filters }: Props) {
             ) {
                 setIsSearching(true);
                 router.get(
-                    '/books',
+                    '/',
                     {
                         search: search || undefined,
                         author: author || undefined,
@@ -104,7 +104,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 ? 'desc'
                 : 'asc';
         router.get(
-            '/books',
+            '/',
             {
                 ...filters,
                 sort: field,
@@ -123,10 +123,8 @@ export default function BooksIndex({ books, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Books')} />
 
-            <div className="px-4 py-6 space-y-6">
-                <Heading
-                    title={t('Books')}
-                />
+            <div className="space-y-6 px-4 py-6">
+                <Heading title={t('Books')} />
 
                 <div className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-3">
@@ -331,7 +329,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         <div className="flex gap-2">
                             {books.current_page > 1 && (
                                 <Link
-                                    href={`/books?page=${books.current_page - 1}`}
+                                    href={`/?page=${books.current_page - 1}`}
                                     preserveState
                                     preserveScroll
                                 >
@@ -342,7 +340,7 @@ export default function BooksIndex({ books, filters }: Props) {
                             )}
                             {books.current_page < books.last_page && (
                                 <Link
-                                    href={`/books?page=${books.current_page + 1}`}
+                                    href={`/?page=${books.current_page + 1}`}
                                     preserveState
                                     preserveScroll
                                 >

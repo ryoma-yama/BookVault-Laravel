@@ -13,8 +13,8 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
+import { home } from '@/routes';
 import admin from '@/routes/admin';
-import books from '@/routes/books';
 import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 
@@ -27,9 +27,9 @@ export function AppSidebar() {
     const generalNavItems: NavItem[] = [
         {
             title: t('Books'),
-            href: books.index(),
+            href: home(),
             icon: Library,
-            isActive: isCurrentUrl(books.index()),
+            isActive: isCurrentUrl(home()),
         },
     ];
 
@@ -61,7 +61,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={books.index()} prefetch>
+                            <Link href={home()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

@@ -18,16 +18,9 @@ Route::get('/languages', [LanguageController::class, 'index'])->name('languages.
 // Locale switching route
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
-
-
-
-// Public book routes (accessible to everyone)
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
+// Books index route at root (accessible to everyone)
+// Named 'home' - reverted from 'home' as requested
+Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 // Loan and reservation routes (require authentication)
