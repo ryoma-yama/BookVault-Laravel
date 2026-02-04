@@ -54,7 +54,7 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/books' }];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
 
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
@@ -73,7 +73,7 @@ export default function BooksIndex({ books, filters }: Props) {
             ) {
                 setIsSearching(true);
                 router.get(
-                    '/books',
+                    '/',
                     {
                         search: search || undefined,
                         author: author || undefined,
@@ -104,7 +104,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 ? 'desc'
                 : 'asc';
         router.get(
-            '/books',
+            '/',
             {
                 ...filters,
                 sort: field,
@@ -331,7 +331,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         <div className="flex gap-2">
                             {books.current_page > 1 && (
                                 <Link
-                                    href={`/books?page=${books.current_page - 1}`}
+                                    href={`/?page=${books.current_page - 1}`}
                                     preserveState
                                     preserveScroll
                                 >
@@ -342,7 +342,7 @@ export default function BooksIndex({ books, filters }: Props) {
                             )}
                             {books.current_page < books.last_page && (
                                 <Link
-                                    href={`/books?page=${books.current_page + 1}`}
+                                    href={`/?page=${books.current_page + 1}`}
                                     preserveState
                                     preserveScroll
                                 >

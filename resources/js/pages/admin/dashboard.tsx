@@ -183,7 +183,7 @@ export default function AdminDashboard({ stats }: Props) {
                                 </div>
                             </Link>
                             <Link
-                                href="/books"
+                                href="/"
                                 className="block rounded-lg border p-3 transition-colors hover:bg-accent"
                             >
                                 <div className="font-medium">
