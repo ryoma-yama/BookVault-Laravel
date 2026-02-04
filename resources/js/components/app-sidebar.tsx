@@ -15,7 +15,8 @@ import {
     SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import { admin, books } from '@/routes';
+import admin from '@/routes/admin';
+import books from '@/routes/books';
 import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 

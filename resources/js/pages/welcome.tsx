@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { books, login, register } from '@/routes';
+import books from '@/routes/books';
+import { login, register } from '@/routes';
 import type { SharedData } from '@/types';
 
 export default function Welcome({
