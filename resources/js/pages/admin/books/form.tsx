@@ -67,7 +67,7 @@ export default function AdminBookForm({ book }: Props) {
     const [searchError, setSearchError] = useState<string | null>(null);
     const [scanning, setScanning] = useState(false);
     const [scannerError, setScannerError] = useState<string | null>(null);
-    const scannerRef = useRef<HTMLDivElement>(null);
+    const scannerRef = useRef<HTMLVideoElement>(null);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -408,7 +408,7 @@ export default function AdminBookForm({ book }: Props) {
                         <div className="mb-2 text-white">
                             カメラをISBNバーコードに向けてください
                         </div>
-                        <div
+                        <video
                             id="isbn-scanner"
                             ref={scannerRef}
                             className="h-[300px] w-[300px] bg-white"
