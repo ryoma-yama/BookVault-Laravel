@@ -19,7 +19,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('books.index', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
@@ -67,7 +67,7 @@ test('users can logout', function () {
     $response = $this->actingAs($user)->post(route('logout'));
 
     $this->assertGuest();
-    $response->assertRedirect(route('books.index'));
+    $response->assertRedirect(route('home'));
 });
 
 test('users are rate limited', function () {
@@ -88,5 +88,5 @@ test('authenticated users are redirected from login page', function () {
     
     $response = $this->actingAs($user)->get(route('login'));
     
-    $response->assertRedirect(route('books.index'));
+    $response->assertRedirect(route('home'));
 });

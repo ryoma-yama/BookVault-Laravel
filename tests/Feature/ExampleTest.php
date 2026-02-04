@@ -1,7 +1,7 @@
 <?php
 
 test('returns a successful response', function () {
-    $response = $this->get(route('books.index'));
+    $response = $this->get(route('home'));
 
     $response->assertOk();
 });

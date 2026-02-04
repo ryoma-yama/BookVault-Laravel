@@ -7,7 +7,7 @@ use App\Models\Tag;
 use function Pest\Laravel\get;
 
 test('guest can access book list', function () {
-    get(route('books.index'))
+    get(route('home'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page->component('books/index'));
 });
@@ -15,7 +15,7 @@ test('guest can access book list', function () {
 test('book list displays all books', function () {
     $books = Book::factory()->count(3)->create();
 
-    get(route('books.index'))
+    get(route('home'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -28,7 +28,7 @@ test('can search books by title using full-text search', function () {
     $book2 = Book::factory()->create(['title' => 'React Development']);
     $book3 = Book::factory()->create(['title' => 'PHP Basics']);
 
-    get(route('books.index', ['search' => 'Laravel']))
+    get(route('home', ['search' => 'Laravel']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -47,7 +47,7 @@ test('can search books by description using full-text search', function () {
         'description' => 'Learn React from scratch',
     ]);
 
-    get(route('books.index', ['search' => 'Laravel framework']))
+    get(route('home', ['search' => 'Laravel framework']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -74,7 +74,7 @@ test('can search books by author name using full-text search', function () {
     $book2->authors()->attach($author2);
 
     // Search should find books by author name in the description
-    get(route('books.index', ['search' => 'John Doe']))
+    get(route('home', ['search' => 'John Doe']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -93,7 +93,7 @@ test('can search books by ISBN using full-text search', function () {
         'isbn_13' => '9780987654321',
     ]);
 
-    get(route('books.index', ['search' => '9781234567890']))
+    get(route('home', ['search' => '9781234567890']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -112,7 +112,7 @@ test('can search books with multiple keywords', function () {
         'description' => 'Introduction to PHP',
     ]);
 
-    get(route('books.index', ['search' => 'Laravel Programming']))
+    get(route('home', ['search' => 'Laravel Programming']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -131,7 +131,7 @@ test('can search books with Japanese text', function () {
         'description' => 'Reactの基本',
     ]);
 
-    get(route('books.index', ['search' => 'Laravel']))
+    get(route('home', ['search' => 'Laravel']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -150,7 +150,7 @@ test('can filter by author without search query', function () {
     $book2 = Book::factory()->create(['title' => 'Book by Jane']);
     $book2->authors()->attach($author2);
 
-    get(route('books.index', ['author' => 'John']))
+    get(route('home', ['author' => 'John']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -163,7 +163,7 @@ test('can search books by publisher', function () {
     $book1 = Book::factory()->create(['publisher' => 'O\'Reilly Media']);
     $book2 = Book::factory()->create(['publisher' => 'Packt Publishing']);
 
-    get(route('books.index', ['publisher' => 'O\'Reilly']))
+    get(route('home', ['publisher' => 'O\'Reilly']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -182,7 +182,7 @@ test('can search books by tag', function () {
     $book2 = Book::factory()->create();
     $book2->tags()->attach($tag2);
 
-    get(route('books.index', ['tag' => 'programming']))
+    get(route('home', ['tag' => 'programming']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -194,7 +194,7 @@ test('can search books by tag', function () {
 test('book list is paginated', function () {
     Book::factory()->count(25)->create();
 
-    get(route('books.index'))
+    get(route('home'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -207,7 +207,7 @@ test('can sort books by title ascending', function () {
     Book::factory()->create(['title' => 'Zebra Book']);
     Book::factory()->create(['title' => 'Alpha Book']);
 
-    get(route('books.index', ['sort' => 'title', 'direction' => 'asc']))
+    get(route('home', ['sort' => 'title', 'direction' => 'asc']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -219,7 +219,7 @@ test('can sort books by title descending', function () {
     Book::factory()->create(['title' => 'Zebra Book']);
     Book::factory()->create(['title' => 'Alpha Book']);
 
-    get(route('books.index', ['sort' => 'title', 'direction' => 'desc']))
+    get(route('home', ['sort' => 'title', 'direction' => 'desc']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -231,7 +231,7 @@ test('can sort books by created_at', function () {
     $old = Book::factory()->create(['created_at' => now()->subDays(2)]);
     $new = Book::factory()->create(['created_at' => now()]);
 
-    get(route('books.index', ['sort' => 'created_at', 'direction' => 'desc']))
+    get(route('home', ['sort' => 'created_at', 'direction' => 'desc']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
@@ -242,7 +242,7 @@ test('can sort books by created_at', function () {
 test('search returns empty result when no matches', function () {
     Book::factory()->create(['title' => 'Laravel Programming']);
 
-    get(route('books.index', ['search' => 'NonExistentBook']))
+    get(route('home', ['search' => 'NonExistentBook']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
