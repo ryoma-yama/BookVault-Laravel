@@ -6,7 +6,7 @@ use App\Models\Book;
 use function Pest\Laravel\get;
 
 test('books index page can be rendered', function () {
-    $response = get('/books');
+    $response = get('/');
 
     $response->assertOk();
 });
@@ -22,7 +22,7 @@ test('books index displays list of books', function () {
     ]);
     $book->authors()->attach($author);
 
-    $response = get('/books');
+    $response = get('/');
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
