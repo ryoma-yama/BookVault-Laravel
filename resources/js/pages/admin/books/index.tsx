@@ -54,12 +54,12 @@ export default function AdminBooksIndex({ books }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Books Management')} />
+            <Head title={t('Book Management')} />
             
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">
-                        {t('Books Management')}
+                        {t('Book Management')}
                     </h1>
                     <Link href="/admin/books/create">
                         <Button>{t('Add New Book')}</Button>

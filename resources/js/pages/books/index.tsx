@@ -125,7 +125,7 @@ export default function BooksIndex({ books, filters }: Props) {
 
             <div className="px-4 py-6 space-y-6">
                 <Heading
-                    title={t('Books Collection')}
+                    title={t('Books')}
                 />
 
                 <div className="space-y-4">

@@ -42,7 +42,7 @@ export function AppSidebar() {
             isActive: isCurrentUrl(admin.dashboard()),
         },
         {
-            title: t('Book Collection'),
+            title: t('Book Management'),
             href: admin.books.index(),
             icon: BookOpen,
             isActive: isCurrentUrl(admin.books.index()),
