@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { useEffect, useState } from 'react';
+import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,6 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import Heading from '@/components/heading';
 
 interface Tag {
     id: number;
@@ -123,10 +123,8 @@ export default function BooksIndex({ books, filters }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Books')} />
 
-            <div className="px-4 py-6 space-y-6">
-                <Heading
-                    title={t('Books')}
-                />
+            <div className="space-y-6 px-4 py-6">
+                <Heading title={t('Books')} />
 
                 <div className="space-y-4">
                     <div className="grid gap-4 md:grid-cols-3">

@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 interface Author {
     id: number;
@@ -55,7 +55,7 @@ export default function AdminBooksIndex({ books }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Book Management')} />
-            
+
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">

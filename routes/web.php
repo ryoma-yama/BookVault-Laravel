@@ -19,7 +19,7 @@ Route::get('/languages', [LanguageController::class, 'index'])->name('languages.
 Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('locale.switch');
 
 // Books index route at root (accessible to everyone)
-// Named 'home' - reverted from 'books.index' as requested
+// Named 'home' - reverted from 'home' as requested
 Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
