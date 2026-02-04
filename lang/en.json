@@ -332,7 +332,6 @@
     "This app is designed for small-scale library management and supports fetching book information using the Google Books API.": "This app is designed for small-scale library management and supports fetching book information using the Google Books API.",
     "Login is required to borrow books.": "Login is required to borrow books.",
     "Logged in as": "Logged in as",
-    "Go to Dashboard": "Go to Dashboard",
     "Platform": "Platform",
     "Application": "Application",
     "Administration": "Administration"

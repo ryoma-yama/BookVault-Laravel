@@ -103,7 +103,7 @@ export function AppSidebar() {
                 </SidebarGroup>
 
                 {/* Admin Section - Only visible to admins */}
-                {auth.user.role === 'admin' && (
+                {auth.user?.role === 'admin' && (
                     <SidebarGroup className="px-2 py-0">
                         <SidebarGroupLabel>{t('Administration')}</SidebarGroupLabel>
                         <SidebarMenu>
