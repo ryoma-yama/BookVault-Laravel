@@ -56,20 +56,19 @@ export function UserMenuContent({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>
-                        <Globe className="mr-2" />
-                        {t('Language')}
+                    <DropdownMenuSubTrigger className='cursor-pointer'>
+                        <span className="ml-8">{t('Language')}</span> 
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                         <DropdownMenuItem
                             onClick={() => handleLanguageSwitch('ja')}
-                            className={locale === 'ja' ? 'bg-accent' : ''}
+                            className={`${locale === 'ja' ? 'bg-accent' : ''} cursor-pointer`}
                         >
                             日本語
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={() => handleLanguageSwitch('en')}
-                            className={locale === 'en' ? 'bg-accent' : ''}
+                            className={`${locale === 'en' ? 'bg-accent' : ''} cursor-pointer`}
                         >
                             English
                         </DropdownMenuItem>
