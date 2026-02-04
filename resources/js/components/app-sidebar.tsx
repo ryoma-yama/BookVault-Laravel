@@ -1,8 +1,7 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BookOpen, Folder, Library, LayoutGrid, Users } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -12,19 +11,45 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarGroup,
+    SidebarGroupLabel,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import type { NavItem } from '@/types';
+import { useCurrentUrl } from '@/hooks/use-current-url';
+import admin from '@/routes/admin';
+import books from '@/routes/books';
+import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { t } = useLaravelReactI18n();
+    const { auth } = usePage<SharedData>().props;
+    const { isCurrentUrl } = useCurrentUrl();
 
-    const mainNavItems: NavItem[] = [
+    // General user navigation items
+    const generalNavItems: NavItem[] = [
         {
-            title: t('Dashboard'),
-            href: dashboard(),
+            title: t('Books'),
+            href: books.index(),
+            icon: Library,
+        },
+    ];
+
+    // Admin navigation items
+    const adminNavItems: NavItem[] = [
+        {
+            title: t('Admin Dashboard'),
+            href: admin.dashboard(),
             icon: LayoutGrid,
+        },
+        {
+            title: t('Book Collection'),
+            href: admin.books.index(),
+            icon: BookOpen,
+        },
+        {
+            title: t('User Management'),
+            href: admin.users.index(),
+            icon: Users,
         },
     ];
 
@@ -40,13 +65,14 @@ export function AppSidebar() {
             icon: BookOpen,
         },
     ];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={books.index()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -55,7 +81,49 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                {/* General Section */}
+                <SidebarGroup className="px-2 py-0">
+                    <SidebarGroupLabel>{t('Application')}</SidebarGroupLabel>
+                    <SidebarMenu>
+                        {generalNavItems.map((item) => (
+                            <SidebarMenuItem key={item.title}>
+                                <SidebarMenuButton
+                                    asChild
+                                    isActive={isCurrentUrl(item.href)}
+                                    tooltip={{ children: item.title }}
+                                >
+                                    <Link href={item.href} prefetch>
+                                        {item.icon && <item.icon />}
+                                        <span>{item.title}</span>
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                </SidebarGroup>
+
+                {/* Admin Section - Only visible to admins */}
+                {auth.user?.role === 'admin' && (
+                    <SidebarGroup className="px-2 py-0">
+                        <SidebarGroupLabel>{t('Administration')}</SidebarGroupLabel>
+                        <SidebarMenu>
+                            {adminNavItems.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                    <SidebarMenuButton
+                                        asChild
+                                        isActive={isCurrentUrl(item.href)}
+                                        tooltip={{ children: item.title }}
+                                    >
+                                        <Link href={item.href} prefetch>
+                                            {item.icon && <item.icon />}
+                                            <span>{item.title}</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            ))}
+                        </SidebarMenu>
+                    </SidebarGroup>
+                )}
             </SidebarContent>
 
             <SidebarFooter>

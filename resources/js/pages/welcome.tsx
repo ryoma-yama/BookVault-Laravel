@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { dashboard, login, register } from '@/routes';
+import books from '@/routes/books';
+import { login, register } from '@/routes';
 import type { SharedData } from '@/types';
 
 export default function Welcome({
@@ -57,10 +58,10 @@ export default function Welcome({
                                     {t('Logged in as')}: {auth.user.name}
                                 </p>
                                 <Link
-                                    href={dashboard()}
+                                    href={books.index()}
                                     className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                                 >
-                                    {t('Go to Dashboard')}
+                                    {t('Books')}
                                 </Link>
                             </>
                         )}

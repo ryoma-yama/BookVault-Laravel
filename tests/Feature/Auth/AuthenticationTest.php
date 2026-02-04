@@ -19,7 +19,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('books.index', absolute: false));
 });
 
 test('users with two factor enabled are redirected to two factor challenge', function () {
@@ -81,4 +81,12 @@ test('users are rate limited', function () {
     ]);
 
     $response->assertTooManyRequests();
+});
+
+test('authenticated users are redirected from login page', function () {
+    $user = User::factory()->create();
+    
+    $response = $this->actingAs($user)->get(route('login'));
+    
+    $response->assertRedirect(route('books.index'));
 });

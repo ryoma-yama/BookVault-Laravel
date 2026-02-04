@@ -88,7 +88,7 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [search, author, publisher]);
+    }, [search, author, publisher, filters.search, filters.author, filters.publisher]);
 
     const handleSort = (field: string) => {
         const direction =
