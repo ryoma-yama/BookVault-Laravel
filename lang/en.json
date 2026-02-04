@@ -333,5 +333,7 @@
     "Login is required to borrow books.": "Login is required to borrow books.",
     "Logged in as": "Logged in as",
     "Go to Dashboard": "Go to Dashboard",
-    "Platform": "Platform"
+    "Platform": "Platform",
+    "Application": "Application",
+    "Administration": "Administration"
 }

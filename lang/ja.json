@@ -333,5 +333,7 @@
     "Login is required to borrow books.": "書籍の貸出にはログインが必要です。",
     "Logged in as": "ログイン中",
     "Go to Dashboard": "ダッシュボードへ",
-    "Platform": "プラットフォーム"
+    "Platform": "プラットフォーム",
+    "Application": "アプリケーション",
+    "Administration": "管理"
 }

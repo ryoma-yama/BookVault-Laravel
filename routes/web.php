@@ -24,9 +24,7 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 // Public book routes
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
