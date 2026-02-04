@@ -22,10 +22,6 @@ export function LanguageSwitcher() {
         router.get(`/locale/${newLocale}`, {}, {
             preserveState: false,
             preserveScroll: true,
-            onSuccess: () => {
-                // Force reload to ensure UI updates
-                router.reload();
-            },
         });
     };
 

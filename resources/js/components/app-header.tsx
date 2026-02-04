@@ -1,4 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { BookOpen, Folder, Menu, Search } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -31,7 +32,7 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { useInitials } from '@/hooks/use-initials';
 import { cn, toUrl } from '@/lib/utils';
-import { home } from '@/routes';
+import { home, login } from '@/routes';
 import type { BreadcrumbItem, NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
@@ -233,7 +234,7 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                             </DropdownMenu>
                         ) : (
                             <Button asChild variant="ghost">
-                                <Link href={home()}>Login</Link>
+                                <Link href={login()}>Login</Link>
                             </Button>
                         )}
                     </div>
