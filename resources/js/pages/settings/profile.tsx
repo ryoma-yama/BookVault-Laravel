@@ -31,6 +31,14 @@ export default function Profile({
     const { t } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
 
+    // This page requires authentication - if user is null, they shouldn't be here
+    if (!auth.user) {
+        return null;
+    }
+    
+    // Extract user to help TypeScript understand it's not null
+    const user = auth.user;
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Profile settings')} />
@@ -62,7 +70,7 @@ export default function Profile({
                                     <Input
                                         id="name"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
+                                        defaultValue={user.name}
                                         name="name"
                                         required
                                         autoComplete="name"
@@ -83,7 +91,7 @@ export default function Profile({
                                     <Input
                                         id="display_name"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.display_name}
+                                        defaultValue={user.display_name}
                                         name="display_name"
                                         required
                                         autoComplete="off"
@@ -105,7 +113,7 @@ export default function Profile({
                                         id="email"
                                         type="email"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
+                                        defaultValue={user.email}
                                         name="email"
                                         required
                                         autoComplete="username"
@@ -119,7 +127,7 @@ export default function Profile({
                                 </div>
 
                                 {mustVerifyEmail &&
-                                    auth.user.email_verified_at === null && (
+                                    user.email_verified_at === null && (
                                         <div>
                                             <p className="-mt-4 text-sm text-muted-foreground">
                                                 {t(
