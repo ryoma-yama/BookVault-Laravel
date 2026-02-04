@@ -1,7 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import books from '@/routes/books';
 import { login, register } from '@/routes';
+import books from '@/routes/books';
 import type { SharedData } from '@/types';
 
 export default function Welcome({
@@ -17,7 +17,9 @@ export default function Welcome({
             <Head title="BookVault">
                 <meta
                     name="description"
-                    content={t('Library management app built with Laravel/Inertia.')}
+                    content={t(
+                        'Library management app built with Laravel/Inertia.',
+                    )}
                 />
             </Head>
             <div className="min-h-screen bg-background text-foreground">
@@ -26,7 +28,9 @@ export default function Welcome({
                         {t('Welcome to BookVault')}
                     </h1>
                     <p className="text-muted-foreground">
-                        {t('This app is designed for small-scale library management and supports fetching book information using the Google Books API.')}
+                        {t(
+                            'This app is designed for small-scale library management and supports fetching book information using the Google Books API.',
+                        )}
                     </p>
                     <div className="flex flex-col items-center gap-4">
                         {!auth.user && (

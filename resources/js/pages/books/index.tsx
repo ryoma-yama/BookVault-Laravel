@@ -88,7 +88,14 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [search, author, publisher, filters.search, filters.author, filters.publisher]);
+    }, [
+        search,
+        author,
+        publisher,
+        filters.search,
+        filters.author,
+        filters.publisher,
+    ]);
 
     const handleSort = (field: string) => {
         const direction =
@@ -315,8 +322,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         <p className="text-sm text-muted-foreground">
                             {t('Showing :from-:to of :total books', {
                                 from: (
-                                    (books.current_page - 1) *
-                                        books.per_page +
+                                    (books.current_page - 1) * books.per_page +
                                     1
                                 ).toString(),
                                 to: Math.min(

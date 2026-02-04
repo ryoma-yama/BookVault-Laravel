@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { BookOpen, Folder, Library, LayoutGrid, Users } from 'lucide-react';
-import { NavFooter } from '@/components/nav-footer';
+import { BookOpen, Library, LayoutGrid, Users } from 'lucide-react';
+import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -11,8 +11,6 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarGroup,
-    SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import admin from '@/routes/admin';
@@ -31,6 +29,7 @@ export function AppSidebar() {
             title: t('Books'),
             href: books.index(),
             icon: Library,
+            isActive: isCurrentUrl(books.index()),
         },
     ];
 
@@ -40,29 +39,19 @@ export function AppSidebar() {
             title: t('Admin Dashboard'),
             href: admin.dashboard(),
             icon: LayoutGrid,
+            isActive: isCurrentUrl(admin.dashboard()),
         },
         {
             title: t('Book Collection'),
             href: admin.books.index(),
             icon: BookOpen,
+            isActive: isCurrentUrl(admin.books.index()),
         },
         {
             title: t('User Management'),
             href: admin.users.index(),
             icon: Users,
-        },
-    ];
-
-    const footerNavItems: NavItem[] = [
-        {
-            title: 'Repository',
-            href: 'https://github.com/laravel/react-starter-kit',
-            icon: Folder,
-        },
-        {
-            title: 'Documentation',
-            href: 'https://laravel.com/docs/starter-kits#react',
-            icon: BookOpen,
+            isActive: isCurrentUrl(admin.users.index()),
         },
     ];
 
@@ -81,53 +70,17 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                {/* General Section */}
-                <SidebarGroup className="px-2 py-0">
-                    <SidebarGroupLabel>{t('Application')}</SidebarGroupLabel>
-                    <SidebarMenu>
-                        {generalNavItems.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton
-                                    asChild
-                                    isActive={isCurrentUrl(item.href)}
-                                    tooltip={{ children: item.title }}
-                                >
-                                    <Link href={item.href} prefetch>
-                                        {item.icon && <item.icon />}
-                                        <span>{item.title}</span>
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarGroup>
-
-                {/* Admin Section - Only visible to admins */}
+                <NavMain label={t('Application')} items={generalNavItems} />
                 {auth.user?.role === 'admin' && (
-                    <SidebarGroup className="px-2 py-0">
-                        <SidebarGroupLabel>{t('Administration')}</SidebarGroupLabel>
-                        <SidebarMenu>
-                            {adminNavItems.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton
-                                        asChild
-                                        isActive={isCurrentUrl(item.href)}
-                                        tooltip={{ children: item.title }}
-                                    >
-                                        <Link href={item.href} prefetch>
-                                            {item.icon && <item.icon />}
-                                            <span>{item.title}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroup>
+                    <NavMain
+                        label={t('Administration')}
+                        items={adminNavItems}
+                    />
                 )}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

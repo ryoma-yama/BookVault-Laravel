@@ -1,6 +1,6 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { Globe, LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -56,8 +56,8 @@ export function UserMenuContent({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className='cursor-pointer'>
-                        <span className="ml-8">{t('Language')}</span> 
+                    <DropdownMenuSubTrigger className="cursor-pointer">
+                        <span className="ml-8">{t('Language')}</span>
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent>
                         <DropdownMenuItem

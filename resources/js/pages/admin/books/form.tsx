@@ -33,7 +33,9 @@ function extractCameraError(error: unknown): string {
         const isPermissionError =
             error.message.includes('Permission') ||
             error.message.includes('NotAllowedError');
-        return isPermissionError ? CAMERA_PERMISSION_ERROR : CAMERA_GENERIC_ERROR;
+        return isPermissionError
+            ? CAMERA_PERMISSION_ERROR
+            : CAMERA_GENERIC_ERROR;
     }
     return CAMERA_GENERIC_ERROR;
 }
