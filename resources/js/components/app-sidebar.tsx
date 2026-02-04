@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { BookOpen, Folder, Library, LayoutGrid, Settings, Users } from 'lucide-react';
+import { BookOpen, Folder, Library, LayoutGrid, Users } from 'lucide-react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavUser } from '@/components/nav-user';
 import {

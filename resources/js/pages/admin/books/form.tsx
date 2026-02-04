@@ -132,6 +132,7 @@ export default function AdminBookForm({ book }: Props) {
         } finally {
             setIsSearching(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data.isbn_13, setData]);
 
     const handleAddAuthor = () => {
