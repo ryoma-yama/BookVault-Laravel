@@ -26,13 +26,11 @@ Route::get('/', function () {
 
 
 
-// Book routes (requires authentication)
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/books', [BookController::class, 'index'])->name('books.index');
-    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
-});
+// Public book routes (accessible to everyone)
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
-// Loan and reservation routes
+// Loan and reservation routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::apiResource('loans', LoanController::class);
     Route::apiResource('reservations', ReservationController::class);
