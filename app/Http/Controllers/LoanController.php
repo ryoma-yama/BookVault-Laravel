@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookCopy;
+use App\Http\Requests\StoreLoanRequest;
+use App\Http\Resources\LoanResource;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 
@@ -24,63 +25,22 @@ class LoanController extends Controller
     /**
      * Store a newly created loan (borrow a book).
      */
-    public function store(Request $request)
+    public function store(StoreLoanRequest $request)
     {
-        $request->validate([
-            'book_id' => 'required_without:book_copy_id|exists:books,id',
-            'book_copy_id' => 'required_without:book_id|exists:book_copies,id',
-        ]);
-
-        // If book_id is provided, find an available copy
-        if ($request->has('book_id')) {
-            $bookCopy = BookCopy::where('book_id', $request->book_id)
-                ->whereNull('discarded_date')
-                ->whereDoesntHave('loans', function ($query) {
-                    $query->whereNull('returned_date');
-                })
-                ->first();
-
-            if (! $bookCopy) {
-                // For Inertia requests, throw validation exception
-                if ($request->header('X-Inertia')) {
-                    throw \Illuminate\Validation\ValidationException::withMessages([
-                        'book_id' => 'This book is not available for borrowing.',
-                    ]);
-                }
-
-                return response()->json([
-                    'message' => 'This book is not available for borrowing.',
-                ], 422);
-            }
-        } else {
-            $bookCopy = BookCopy::findOrFail($request->book_copy_id);
-
-            if (! $bookCopy->isAvailable()) {
-                // For Inertia requests, throw validation exception
-                if ($request->header('X-Inertia')) {
-                    throw \Illuminate\Validation\ValidationException::withMessages([
-                        'book_copy_id' => 'This book copy is not available for borrowing.',
-                    ]);
-                }
-
-                return response()->json([
-                    'message' => 'This book copy is not available for borrowing.',
-                ], 422);
-            }
-        }
-
         $loan = Loan::create([
             'user_id' => $request->user()->id,
-            'book_copy_id' => $bookCopy->id,
+            'book_copy_id' => $request->getBookCopy()->id,
             'borrowed_date' => now(),
         ]);
 
-        // For Inertia requests, return back (which will be handled by onSuccess)
-        if ($request->header('X-Inertia')) {
-            return back();
+        $loan->load(['bookCopy.book', 'user']);
+
+        // For Inertia requests, redirect back
+        if ($request->wantsJson()) {
+            return response()->json($loan, 201);
         }
 
-        return response()->json($loan->load(['bookCopy.book', 'user']), 201);
+        return back();
     }
 
     /**
