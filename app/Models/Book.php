@@ -106,7 +106,6 @@ class Book extends Model
             'title' => $this->title,
             'publisher' => $this->publisher,
             'description' => $this->description,
-            'isbn_13' => $this->isbn_13,
         ];
 
         // Only include authors and tags for non-database drivers (e.g., Meilisearch)

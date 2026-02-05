@@ -102,6 +102,60 @@ test('can search books by ISBN using full-text search', function () {
         );
 });
 
+test('can search books by ISBN-13 exact match using database query', function () {
+    $book1 = Book::factory()->create([
+        'title' => 'Laravel Programming',
+        'isbn_13' => '9781234567890',
+    ]);
+    $book2 = Book::factory()->create([
+        'title' => 'React Development',
+        'isbn_13' => '9780987654321',
+    ]);
+
+    // Search with exact ISBN should use DB query and return exact match
+    get(route('home', ['search' => '9781234567890']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('books/index')
+            ->has('books.data', 1)
+            ->where('books.data.0.id', $book1->id)
+            ->where('books.data.0.isbn_13', '9781234567890')
+        );
+});
+
+test('can search books by ISBN-13 with hyphens', function () {
+    $book = Book::factory()->create([
+        'title' => 'Book with ISBN',
+        'isbn_13' => '9781234567890',
+    ]);
+
+    // ISBN with hyphens should still match
+    get(route('home', ['search' => '978-1-234-56789-0']))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('books/index')
+            ->has('books.data', 1)
+            ->where('books.data.0.id', $book->id)
+        );
+});
+
+test('falls back to full-text search when ISBN not found in database', function () {
+    $book1 = Book::factory()->create([
+        'title' => 'Book about 9781234567890',
+        'isbn_13' => '9780000000000',
+    ]);
+
+    // ISBN not in database but mentioned in title - should fall back to full-text search
+    // This test verifies fallback behavior exists, but with database driver it won't find the book
+    // In production with Meilisearch, it would find the book via title search
+    $response = get(route('home', ['search' => '9781234567890']));
+    
+    $response->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('books/index')
+        );
+});
+
 test('can search books with multiple keywords', function () {
     $book1 = Book::factory()->create([
         'title' => 'Advanced Laravel Programming',

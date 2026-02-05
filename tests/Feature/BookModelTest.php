@@ -46,10 +46,9 @@ describe('Book Searchable Array', function () {
             ->and($searchableArray)->toHaveKey('title')
             ->and($searchableArray)->toHaveKey('publisher')
             ->and($searchableArray)->toHaveKey('description')
-            ->and($searchableArray)->toHaveKey('isbn_13')
+            ->and($searchableArray)->not->toHaveKey('isbn_13') // ISBN should not be in searchable array
             ->and($searchableArray['title'])->toBe('Laravel Guide')
-            ->and($searchableArray['publisher'])->toBe('Tech Publisher')
-            ->and($searchableArray['isbn_13'])->toBe('9781234567890');
+            ->and($searchableArray['publisher'])->toBe('Tech Publisher');
     });
 
     it('includes authors as comma-separated string in searchable array for non-database drivers', function () {
