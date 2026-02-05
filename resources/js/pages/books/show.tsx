@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -62,10 +62,12 @@ export default function BookShow({ book }: Props) {
 
     const handleBorrow = () => {
         if (!isAuthenticated) {
-            window.location.href = '/login';
+            // Use Inertia router for SPA navigation
+            router.visit('/login');
         } else {
-            // TODO: Implement borrow functionality
-            console.log('Borrow book:', book.id);
+            // Borrow functionality will be implemented in a future PR
+            // For now, this is a placeholder that shows the button is clickable
+            alert(t('Borrow functionality coming soon'));
         }
     };
 

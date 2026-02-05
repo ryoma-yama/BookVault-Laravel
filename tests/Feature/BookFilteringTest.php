@@ -128,8 +128,8 @@ test('updating book copy discarded_date touches parent book', function () {
 
     $originalUpdatedAt = $book->updated_at;
 
-    // Wait a bit to ensure timestamp changes
-    sleep(1);
+    // Simulate time passage
+    $this->travel(1)->seconds();
 
     // Update the copy's discarded_date
     $copy->update(['discarded_date' => now()]);
@@ -144,8 +144,8 @@ test('creating book copy touches parent book', function () {
     $book = Book::factory()->create();
     $originalUpdatedAt = $book->updated_at;
 
-    // Wait a bit to ensure timestamp changes
-    sleep(1);
+    // Simulate time passage
+    $this->travel(1)->seconds();
 
     // Create a new copy
     BookCopy::factory()->create([
@@ -168,8 +168,8 @@ test('deleting book copy touches parent book', function () {
 
     $originalUpdatedAt = $book->updated_at;
 
-    // Wait a bit to ensure timestamp changes
-    sleep(1);
+    // Simulate time passage
+    $this->travel(1)->seconds();
 
     // Delete the copy
     $copy->delete();
