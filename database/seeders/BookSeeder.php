@@ -17,13 +17,14 @@ class BookSeeder extends Seeder
         // Sample books data with authors
         $books = [
             [
-                'isbn_13' => '9784798179216',
+                'isbn_13' => '9784873115658',
                 'title' => 'リーダブルコード',
                 'publisher' => 'オライリージャパン',
                 'published_date' => '2012-06-23',
                 'description' => '読みやすいコードを書くための実践的なテクニックを解説した書籍。変数名の付け方、コメントの書き方、関数の分割など、すぐに実践できるノウハウが満載。',
                 'authors' => ['Dustin Boswell', 'Trevor Foucher'],
                 'tags' => ['programming', 'best practices'],
+                'image_url' => 'http://books.google.com/books/content?id=Wx1dLwEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api',
             ],
             [
                 'isbn_13' => '9784873119038',
