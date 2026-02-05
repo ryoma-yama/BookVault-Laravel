@@ -1,12 +1,12 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { ImageOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Heading from '@/components/heading';
 import IsbnScanner from '@/components/isbn-scanner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -215,7 +215,12 @@ export default function BooksIndex({ books, filters }: Props) {
                                                     loading="lazy"
                                                 />
                                             ) : (
-                                                <Skeleton className="h-full w-full" />
+                                                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
+                                                    <ImageOff className="h-10 w-10 opacity-40" />
+                                                    <span className="text-xs font-medium">
+                                                        No Image
+                                                    </span>
+                                                </div>
                                             )}
                                         </div>
                                         <div className="p-3">

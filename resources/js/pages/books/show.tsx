@@ -2,7 +2,8 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
+import type { BreadcrumbItem, SharedData } from '@/types';
+import { ImageOff } from 'lucide-react';
 
 interface Author {
     id: number;
@@ -37,15 +38,9 @@ interface User {
     email: string;
 }
 
-interface PageProps {
-    auth: {
-        user: User | null;
-    };
-}
-
 export default function BookShow({ book }: Props) {
     const { t } = useLaravelReactI18n();
-    const { auth } = usePage<PageProps>().props;
+    const { auth } = usePage<SharedData>().props;
     const isAuthenticated = !!auth.user;
     const canBorrow = book.inventory_status.available_count > 0;
 
@@ -76,15 +71,22 @@ export default function BookShow({ book }: Props) {
             <Head title={book.title} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex flex-col gap-6 md:flex-row">
-                    {book.image_url && (
-                        <div className="flex-shrink-0">
+                    <div className="flex-shrink-0">
+                        {book.image_url ? (
                             <img
                                 src={book.image_url}
                                 alt={book.title}
                                 className="h-64 w-48 rounded-lg object-cover shadow-md"
                             />
-                        </div>
-                    )}
+                        ) : (
+                            <div className="flex h-64 w-48 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed bg-muted text-muted-foreground">
+                                <ImageOff className="h-12 w-12 opacity-40" />
+                                <span className="text-xs font-medium opacity-60">
+                                    No Image
+                                </span>
+                            </div>
+                        )}
+                    </div>
                     <div className="flex-1">
                         <h1 className="mb-2 text-3xl font-bold">
                             {book.title}
@@ -100,7 +102,9 @@ export default function BookShow({ book }: Props) {
                             </p>
                             <p>
                                 <strong>{t('Published')}:</strong>{' '}
-                                {book.published_date}
+                                {new Date(
+                                    book.published_date,
+                                ).toLocaleDateString()}
                             </p>
                             <p>
                                 <strong>ISBN-13:</strong> {book.isbn_13}
@@ -155,7 +159,9 @@ export default function BookShow({ book }: Props) {
                             {!canBorrow &&
                                 book.inventory_status.total_copies === 0 && (
                                     <p className="mt-2 text-sm text-muted-foreground">
-                                        {t('No copies available in the library')}
+                                        {t(
+                                            'No copies available in the library',
+                                        )}
                                     </p>
                                 )}
                         </div>
@@ -164,7 +170,7 @@ export default function BookShow({ book }: Props) {
                             <h2 className="mb-2 text-xl font-semibold">
                                 {t('Description')}
                             </h2>
-                            <div className="prose max-w-none dark:prose-invert">
+                            <div className="prose dark:prose-invert max-w-none">
                                 <p>{book.description}</p>
                             </div>
                         </div>
