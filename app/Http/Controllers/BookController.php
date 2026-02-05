@@ -17,28 +17,11 @@ class BookController extends Controller
         // Use Scout search when there's a search query
         if ($request->filled('search')) {
             $books = Book::search($request->input('search'))
-                ->query(function ($builder) use ($request) {
+                ->query(function ($builder) {
                     $builder->with([
                         'tags:id,name',
                         'authors:id,name',
                     ]);
-
-                    // Apply additional filters
-                    if ($request->filled('author')) {
-                        $builder->whereHas('authors', function ($q) use ($request) {
-                            $q->where('name', 'like', "%{$request->input('author')}%");
-                        });
-                    }
-
-                    if ($request->filled('publisher')) {
-                        $builder->where('publisher', 'like', "%{$request->input('publisher')}%");
-                    }
-
-                    if ($request->filled('tag')) {
-                        $builder->whereHas('tags', function ($q) use ($request) {
-                            $q->where('name', 'like', "%{$request->input('tag')}%");
-                        });
-                    }
                 })
                 ->paginate(15)
                 ->withQueryString();
@@ -49,7 +32,6 @@ class BookController extends Controller
                 'authors:id,name',
             ]);
 
-            $this->applySearchFilters($query, $request);
             $this->applySorting($query, $request);
 
             $books = $query->paginate(15)->withQueryString();
@@ -57,7 +39,7 @@ class BookController extends Controller
 
         return Inertia::render('books/index', [
             'books' => $books,
-            'filters' => $request->only(['search', 'author', 'publisher', 'tag', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'sort', 'direction']),
         ]);
     }
 
@@ -71,32 +53,6 @@ class BookController extends Controller
         return Inertia::render('books/show', [
             'book' => $book,
         ]);
-    }
-
-    /**
-     * Apply search and filter conditions to the query.
-     */
-    private function applySearchFilters($query, Request $request): void
-    {
-        if ($request->filled('search')) {
-            $query->where('title', 'like', "%{$request->input('search')}%");
-        }
-
-        if ($request->filled('author')) {
-            $query->whereHas('authors', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('author')}%");
-            });
-        }
-
-        if ($request->filled('publisher')) {
-            $query->where('publisher', 'like', "%{$request->input('publisher')}%");
-        }
-
-        if ($request->filled('tag')) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('tag')}%");
-            });
-        }
     }
 
     /**

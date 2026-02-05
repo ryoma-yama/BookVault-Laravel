@@ -46,9 +46,6 @@ interface Props {
     };
     filters: {
         search?: string;
-        author?: string;
-        publisher?: string;
-        tag?: string;
         sort?: string;
         direction?: string;
     };
@@ -59,25 +56,17 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
     const [search, setSearch] = useState(filters.search || '');
-    const [author, setAuthor] = useState(filters.author || '');
-    const [publisher, setPublisher] = useState(filters.publisher || '');
     const [isSearching, setIsSearching] = useState(false);
 
     // Debounce search to avoid too many requests
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (
-                search !== filters.search ||
-                author !== filters.author ||
-                publisher !== filters.publisher
-            ) {
+            if (search !== filters.search) {
                 setIsSearching(true);
                 router.get(
                     '/',
                     {
                         search: search || undefined,
-                        author: author || undefined,
-                        publisher: publisher || undefined,
                     },
                     {
                         preserveState: true,
@@ -89,14 +78,7 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [
-        search,
-        author,
-        publisher,
-        filters.search,
-        filters.author,
-        filters.publisher,
-    ]);
+    }, [search, filters.search]);
 
     const handleSort = (field: string) => {
         const direction =
@@ -117,7 +99,7 @@ export default function BooksIndex({ books, filters }: Props) {
         );
     };
 
-    const hasActiveFilters = search || author || publisher;
+    const hasActiveFilters = search;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -127,28 +109,14 @@ export default function BooksIndex({ books, filters }: Props) {
                 <Heading title={t('Books')} />
 
                 <div className="space-y-4">
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div>
                         <Input
                             type="text"
                             placeholder={t(
-                                'Search by title, author, description...',
+                                'Search by title, author, publisher, ISBN, tags...',
                             )}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                        />
-
-                        <Input
-                            type="text"
-                            placeholder={t('Filter by author...')}
-                            value={author}
-                            onChange={(e) => setAuthor(e.target.value)}
-                        />
-
-                        <Input
-                            type="text"
-                            placeholder={t('Filter by publisher...')}
-                            value={publisher}
-                            onChange={(e) => setPublisher(e.target.value)}
                         />
                     </div>
 
@@ -190,8 +158,6 @@ export default function BooksIndex({ books, filters }: Props) {
                                 size="sm"
                                 onClick={() => {
                                     setSearch('');
-                                    setAuthor('');
-                                    setPublisher('');
                                 }}
                             >
                                 {t('Clear filters')}
