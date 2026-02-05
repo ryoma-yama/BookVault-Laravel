@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { useEffect, useState } from 'react';
 import Heading from '@/components/heading';
+import IsbnScanner from '@/components/isbn-scanner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -58,6 +59,24 @@ export default function BooksIndex({ books, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
 
+    // Handle ISBN scan
+    const handleIsbnScan = (isbn: string) => {
+        setSearch(isbn);
+        // Immediately trigger search without debounce
+        setIsSearching(true);
+        router.get(
+            '/',
+            {
+                search: isbn,
+            },
+            {
+                preserveState: true,
+                preserveScroll: true,
+                onFinish: () => setIsSearching(false),
+            },
+        );
+    };
+
     // Debounce search to avoid too many requests
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -109,7 +128,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 <Heading title={t('Books')} />
 
                 <div className="space-y-4">
-                    <div>
+                    <div className="flex gap-2">
                         <Input
                             type="text"
                             placeholder={t(
@@ -117,6 +136,11 @@ export default function BooksIndex({ books, filters }: Props) {
                             )}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
+                            className="flex-1"
+                        />
+                        <IsbnScanner
+                            onScan={handleIsbnScan}
+                            buttonVariant="outline"
                         />
                     </div>
 
