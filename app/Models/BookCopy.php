@@ -106,6 +106,23 @@ class BookCopy extends Model
     }
 
     /**
+     * Scope to get available copies for a specific book.
+     * A copy is available if it's not discarded and has no outstanding loan.
+     *
+     * @param  Builder<BookCopy>  $query
+     * @param  int  $bookId
+     * @return Builder<BookCopy>
+     */
+    public function scopeAvailableForBook(Builder $query, int $bookId): Builder
+    {
+        return $query->where('book_id', $bookId)
+            ->whereNull('discarded_date')
+            ->whereDoesntHave('loans', function ($query) {
+                $query->whereNull('returned_date');
+            });
+    }
+
+    /**
      * Get the current outstanding loan for this copy.
      */
     public function currentLoan(): ?Loan

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BookCopy;
+use App\Http\Requests\StoreLoanRequest;
+use App\Http\Resources\LoanResource;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 
@@ -24,27 +25,22 @@ class LoanController extends Controller
     /**
      * Store a newly created loan (borrow a book).
      */
-    public function store(Request $request)
+    public function store(StoreLoanRequest $request)
     {
-        $request->validate([
-            'book_copy_id' => 'required|exists:book_copies,id',
-        ]);
-
-        $bookCopy = BookCopy::findOrFail($request->book_copy_id);
-
-        if (! $bookCopy->isAvailable()) {
-            return response()->json([
-                'message' => 'This book copy is not available for borrowing.',
-            ], 422);
-        }
-
         $loan = Loan::create([
             'user_id' => $request->user()->id,
-            'book_copy_id' => $request->book_copy_id,
+            'book_copy_id' => $request->getBookCopy()->id,
             'borrowed_date' => now(),
         ]);
 
-        return response()->json($loan->load(['bookCopy.book', 'user']), 201);
+        $loan->load(['bookCopy.book', 'user']);
+
+        // For Inertia requests, redirect back
+        if ($request->wantsJson()) {
+            return response()->json($loan, 201);
+        }
+
+        return back();
     }
 
     /**
