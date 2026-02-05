@@ -15,6 +15,7 @@ return new class extends Migration
             $table->text('two_factor_secret')->nullable()->after('remember_token');
             $table->text('two_factor_recovery_codes')->nullable()->after('two_factor_secret');
             $table->timestamp('two_factor_confirmed_at')->nullable()->after('two_factor_recovery_codes');
+            $table->string('role')->default('user')->after('two_factor_confirmed_at');
         });
     }
 
@@ -28,6 +29,7 @@ return new class extends Migration
                 'two_factor_secret',
                 'two_factor_recovery_codes',
                 'two_factor_confirmed_at',
+                'role',
             ]);
         });
     }

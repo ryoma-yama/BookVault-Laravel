@@ -51,7 +51,7 @@ export default function Profile({
                         variant="small"
                         title={t('Profile information')}
                         description={t(
-                            'Update your name, display name, and email address',
+                            'Update your name and email address',
                         )}
                     />
 
@@ -80,27 +80,6 @@ export default function Profile({
                                     <InputError
                                         className="mt-2"
                                         message={errors.name}
-                                    />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="display_name">
-                                        {t('Display Name')}
-                                    </Label>
-
-                                    <Input
-                                        id="display_name"
-                                        className="mt-1 block w-full"
-                                        defaultValue={user.display_name}
-                                        name="display_name"
-                                        required
-                                        autoComplete="off"
-                                        placeholder={t('Display Name')}
-                                    />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.display_name}
                                     />
                                 </div>
 
