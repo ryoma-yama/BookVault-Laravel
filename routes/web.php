@@ -5,12 +5,10 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LanguageController;
-use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
 // Language route for laravel-react-i18n
 Route::get('/languages', [LanguageController::class, 'index'])->name('languages.index');

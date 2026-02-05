@@ -16,7 +16,6 @@ trait ProfileValidationRules
     {
         return [
             'name' => $this->nameRules(),
-            'display_name' => $this->displayNameRules(),
             'email' => $this->emailRules($userId),
             'role' => $this->roleRules(),
         ];
@@ -28,16 +27,6 @@ trait ProfileValidationRules
      * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
      */
     protected function nameRules(): array
-    {
-        return ['required', 'string', 'max:255'];
-    }
-
-    /**
-     * Get the validation rules used to validate display names.
-     *
-     * @return array<int, \Illuminate\Contracts\Validation\Rule|array<mixed>|string>
-     */
-    protected function displayNameRules(): array
     {
         return ['required', 'string', 'max:255'];
     }

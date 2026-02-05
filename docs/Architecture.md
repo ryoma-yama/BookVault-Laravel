@@ -716,7 +716,6 @@ erDiagram
     users {
         bigint id PK
         string name
-        string display_name
         string email
         string password
         enum role "user|admin"

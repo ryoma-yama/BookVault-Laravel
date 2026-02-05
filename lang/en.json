@@ -293,9 +293,7 @@
   "Profile settings": "Profile settings",
   "Profile Settings": "Profile Settings",
   "Profile information": "Profile information",
-  "Update your name, display name, and email address": "Update your name, display name, and email address",
   "Full name": "Full name",
-  "Display Name": "Display Name",
   "Email address": "Email address",
   "Your email address is unverified.": "Your email address is unverified.",
   "Click here to resend the verification email.": "Click here to resend the verification email.",
@@ -341,5 +339,6 @@
   "camera_permission_denied": "Camera access was denied. Please check your browser settings.",
   "camera_generic_error": "Failed to start camera.",
   "Search by title, description, publisher, authors, tags...": "Search by title, description, publisher, authors, tags...",
-  "Go Back": "Go Back"
+  "Go Back": "Go Back",
+  "Update your name and email address": "Update your name and email address"
 }

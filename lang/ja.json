@@ -293,9 +293,7 @@
   "Profile settings": "プロフィール設定",
   "Profile Settings": "プロフィール設定",
   "Profile information": "プロフィール情報",
-  "Update your name, display name, and email address": "名前、表示名、メールアドレスを更新",
   "Full name": "名前",
-  "Display Name": "表示名",
   "Email address": "メールアドレス",
   "Your email address is unverified.": "メールアドレスが未確認です。",
   "Click here to resend the verification email.": "ここをクリックして確認メールを再送信してください。",
@@ -341,5 +339,6 @@
   "camera_permission_denied": "カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。",
   "camera_generic_error": "カメラの起動に失敗しました。",
   "Search by title, description, publisher, authors, tags...": "タイトル、説明、出版社、著者、タグで検索...",
-  "Go Back": "戻る"
+  "Go Back": "戻る",
+  "Update your name and email address": "名前とメールアドレスを更新"
 }

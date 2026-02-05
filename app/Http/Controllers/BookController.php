@@ -50,8 +50,8 @@ class BookController extends Controller
     {
         // Validate ISBN format
         $cleanedIsbn = $this->normalizeIsbn($isbn);
-        
-        if (!$this->isValidIsbn13($cleanedIsbn)) {
+
+        if (! $this->isValidIsbn13($cleanedIsbn)) {
             return back()->withErrors([
                 'isbn' => 'Invalid ISBN-13 format. Please scan a valid ISBN-13 barcode.',
             ]);
@@ -62,9 +62,9 @@ class BookController extends Controller
             ->with(['authors:id,name', 'tags:id,name'])
             ->first();
 
-        if (!$book) {
+        if (! $book) {
             return back()->withErrors([
-                'isbn' => 'Book with ISBN ' . $isbn . ' not found in our catalog.',
+                'isbn' => 'Book with ISBN '.$isbn.' not found in our catalog.',
             ]);
         }
 

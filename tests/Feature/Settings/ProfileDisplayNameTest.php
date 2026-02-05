@@ -2,8 +2,8 @@
 
 use App\Models\User;
 
-test('profile page displays display_name field', function () {
-    $user = User::factory()->create(['display_name' => 'Test Display Name']);
+test('profile page displays name field', function () {
+    $user = User::factory()->create(['name' => 'Test User Name']);
 
     $response = $this
         ->actingAs($user)
@@ -12,15 +12,14 @@ test('profile page displays display_name field', function () {
     $response->assertOk();
 });
 
-test('display_name can be updated', function () {
-    $user = User::factory()->create(['display_name' => 'Old Name']);
+test('name can be updated', function () {
+    $user = User::factory()->create(['name' => 'Old Name']);
 
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
-            'name' => $user->name,
+            'name' => 'New User Name',
             'email' => $user->email,
-            'display_name' => 'New Display Name',
         ]);
 
     $response
@@ -29,60 +28,56 @@ test('display_name can be updated', function () {
 
     $user->refresh();
 
-    expect($user->display_name)->toBe('New Display Name');
+    expect($user->name)->toBe('New User Name');
 });
 
-test('display_name is required', function () {
+test('name is required', function () {
     $user = User::factory()->create();
 
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
-            'name' => 'Test User',
+            'name' => '',
             'email' => 'test@example.com',
-            'display_name' => '',
         ]);
 
-    $response->assertSessionHasErrors('display_name');
+    $response->assertSessionHasErrors('name');
 });
 
-test('display_name cannot exceed 255 characters', function () {
+test('name cannot exceed 255 characters', function () {
     $user = User::factory()->create();
 
     $response = $this
         ->actingAs($user)
         ->patch(route('profile.update'), [
-            'name' => 'Test User',
+            'name' => str_repeat('a', 256),
             'email' => 'test@example.com',
-            'display_name' => str_repeat('a', 256),
         ]);
 
-    $response->assertSessionHasErrors('display_name');
+    $response->assertSessionHasErrors('name');
 });
 
-test('user can register with display_name', function () {
+test('user can register with name', function () {
     $response = $this->post(route('register'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
-        'display_name' => 'My Display Name',
     ]);
 
     $response->assertRedirect();
 
     $user = User::where('email', 'test@example.com')->first();
     expect($user)->not->toBeNull();
-    expect($user->display_name)->toBe('My Display Name');
+    expect($user->name)->toBe('Test User');
 });
 
-test('display_name is required during registration', function () {
+test('name is required during registration', function () {
     $response = $this->post(route('register'), [
-        'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
     ]);
 
-    $response->assertSessionHasErrors('display_name');
+    $response->assertSessionHasErrors('name');
 });
