@@ -102,7 +102,7 @@ export default function IsbnScanner({
             </Button>
 
             {scanning && (
-                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-80">
+                <div className="bg-opacity-80 fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
                     <div className="mb-2 text-white">
                         {t('Point camera at ISBN barcode')}
                     </div>
