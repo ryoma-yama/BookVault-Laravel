@@ -15,13 +15,7 @@ describe('ISBN Lookup Endpoint', function () {
         $book->authors()->attach($author);
 
         get(route('books.isbn', ['isbn' => '9781234567890']))
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('books/show')
-                ->where('book.id', $book->id)
-                ->where('book.isbn_13', '9781234567890')
-                ->where('book.title', 'Test Book')
-            );
+            ->assertRedirect(route('books.show', $book));
     });
 
     test('can find book by ISBN-13 with hyphens', function () {
@@ -31,43 +25,26 @@ describe('ISBN Lookup Endpoint', function () {
         ]);
 
         get(route('books.isbn', ['isbn' => '978-1-234-56789-0']))
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('books/show')
-                ->where('book.id', $book->id)
-                ->where('book.isbn_13', '9781234567890')
-            );
+            ->assertRedirect(route('books.show', $book));
     });
 
-    test('returns 404 when ISBN not found in database', function () {
+    test('redirects back with error when ISBN not found in database', function () {
         get(route('books.isbn', ['isbn' => '9789999999999']))
-            ->assertOk() // Inertia returns 200 with error page
-            ->assertInertia(fn ($page) => $page
-                ->component('books/not-found')
-                ->has('error')
-                ->where('statusCode', 404)
-            );
+            ->assertRedirect()
+            ->assertSessionHasErrors('isbn');
     });
 
-    test('returns validation error for invalid ISBN format', function () {
+    test('redirects back with validation error for invalid ISBN format', function () {
         get(route('books.isbn', ['isbn' => '123']))
-            ->assertOk() // Inertia returns 200 with error page
-            ->assertInertia(fn ($page) => $page
-                ->component('books/not-found')
-                ->has('error')
-                ->where('statusCode', 422)
-            );
+            ->assertRedirect()
+            ->assertSessionHasErrors('isbn');
     });
 
-    test('returns validation error for non-ISBN-13 format', function () {
+    test('redirects back with validation error for non-ISBN-13 format', function () {
         // ISBN-10 format should be rejected
         get(route('books.isbn', ['isbn' => '1234567890']))
-            ->assertOk() // Inertia returns 200 with error page
-            ->assertInertia(fn ($page) => $page
-                ->component('books/not-found')
-                ->has('error')
-                ->where('statusCode', 422)
-            );
+            ->assertRedirect()
+            ->assertSessionHasErrors('isbn');
     });
 
     test('normalizes ISBN before database lookup', function () {
@@ -77,16 +54,13 @@ describe('ISBN Lookup Endpoint', function () {
 
         // Various formats should all match the same book
         get(route('books.isbn', ['isbn' => '978 1234567890']))
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('book.id', $book->id));
+            ->assertRedirect(route('books.show', $book));
 
         get(route('books.isbn', ['isbn' => '978-1-234-56789-0']))
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('book.id', $book->id));
+            ->assertRedirect(route('books.show', $book));
 
         get(route('books.isbn', ['isbn' => '978  1234  567890']))
-            ->assertOk()
-            ->assertInertia(fn ($page) => $page->where('book.id', $book->id));
+            ->assertRedirect(route('books.show', $book));
     });
 });
 

@@ -341,8 +341,5 @@
   "camera_permission_denied": "カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。",
   "camera_generic_error": "カメラの起動に失敗しました。",
   "Search by title, description, publisher, authors, tags...": "タイトル、説明、出版社、著者、タグで検索...",
-  "Book Not Found": "書籍が見つかりません",
-  "The book you are looking for does not exist.": "お探しの書籍は存在しません。",
-  "Go Back": "戻る",
-  "Browse Books": "書籍を閲覧"
+  "Go Back": "戻る"
 }

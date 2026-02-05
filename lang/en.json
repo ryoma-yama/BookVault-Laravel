@@ -341,8 +341,5 @@
   "camera_permission_denied": "Camera access was denied. Please check your browser settings.",
   "camera_generic_error": "Failed to start camera.",
   "Search by title, description, publisher, authors, tags...": "Search by title, description, publisher, authors, tags...",
-  "Book Not Found": "Book Not Found",
-  "The book you are looking for does not exist.": "The book you are looking for does not exist.",
-  "Go Back": "Go Back",
-  "Browse Books": "Browse Books"
+  "Go Back": "Go Back"
 }

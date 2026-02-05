@@ -52,9 +52,8 @@ class BookController extends Controller
         $cleanedIsbn = $this->normalizeIsbn($isbn);
         
         if (!$this->isValidIsbn13($cleanedIsbn)) {
-            return Inertia::render('books/not-found', [
-                'error' => 'Invalid ISBN-13 format',
-                'statusCode' => 422,
+            return back()->withErrors([
+                'isbn' => 'Invalid ISBN-13 format. Please scan a valid ISBN-13 barcode.',
             ]);
         }
 
@@ -64,14 +63,13 @@ class BookController extends Controller
             ->first();
 
         if (!$book) {
-            return Inertia::render('books/not-found', [
-                'error' => 'Book with ISBN ' . $isbn . ' not found',
-                'statusCode' => 404,
+            return back()->withErrors([
+                'isbn' => 'Book with ISBN ' . $isbn . ' not found in our catalog.',
             ]);
         }
 
-        // Return book detail page
-        return $this->show($book);
+        // Redirect to book detail page
+        return redirect()->route('books.show', $book);
     }
 
     /**

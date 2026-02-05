@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { useEffect, useState } from 'react';
 import Heading from '@/components/heading';
@@ -56,6 +56,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
 
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
+    const { errors } = usePage().props;
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
 
@@ -131,6 +132,12 @@ export default function BooksIndex({ books, filters }: Props) {
                             buttonVariant="outline"
                         />
                     </div>
+
+                    {errors.isbn && (
+                        <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+                            {errors.isbn}
+                        </div>
+                    )}
 
                     {hasActiveFilters && (
                         <div className="flex items-center justify-between text-sm">
