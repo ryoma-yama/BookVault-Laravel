@@ -17,28 +17,11 @@ class BookController extends Controller
         // Use Scout search when there's a search query
         if ($request->filled('search')) {
             $books = Book::search($request->input('search'))
-                ->query(function ($builder) use ($request) {
+                ->query(function ($builder) {
                     $builder->with([
                         'tags:id,name',
                         'authors:id,name',
                     ]);
-
-                    // Apply additional filters
-                    if ($request->filled('author')) {
-                        $builder->whereHas('authors', function ($q) use ($request) {
-                            $q->where('name', 'like', "%{$request->input('author')}%");
-                        });
-                    }
-
-                    if ($request->filled('publisher')) {
-                        $builder->where('publisher', 'like', "%{$request->input('publisher')}%");
-                    }
-
-                    if ($request->filled('tag')) {
-                        $builder->whereHas('tags', function ($q) use ($request) {
-                            $q->where('name', 'like', "%{$request->input('tag')}%");
-                        });
-                    }
                 })
                 ->paginate(15)
                 ->withQueryString();
@@ -49,7 +32,6 @@ class BookController extends Controller
                 'authors:id,name',
             ]);
 
-            $this->applySearchFilters($query, $request);
             $this->applySorting($query, $request);
 
             $books = $query->paginate(15)->withQueryString();
@@ -57,8 +39,54 @@ class BookController extends Controller
 
         return Inertia::render('books/index', [
             'books' => $books,
-            'filters' => $request->only(['search', 'author', 'publisher', 'tag', 'sort', 'direction']),
+            'filters' => $request->only(['search', 'sort', 'direction']),
         ]);
+    }
+
+    /**
+     * Find a book by ISBN-13.
+     */
+    public function findByIsbn(Request $request, string $isbn)
+    {
+        // Validate ISBN format
+        $cleanedIsbn = $this->normalizeIsbn($isbn);
+        
+        if (!$this->isValidIsbn13($cleanedIsbn)) {
+            return back()->withErrors([
+                'isbn' => 'Invalid ISBN-13 format. Please scan a valid ISBN-13 barcode.',
+            ]);
+        }
+
+        // Find book by exact ISBN match
+        $book = Book::where('isbn_13', $cleanedIsbn)
+            ->with(['authors:id,name', 'tags:id,name'])
+            ->first();
+
+        if (!$book) {
+            return back()->withErrors([
+                'isbn' => 'Book with ISBN ' . $isbn . ' not found in our catalog.',
+            ]);
+        }
+
+        // Redirect to book detail page
+        return redirect()->route('books.show', $book);
+    }
+
+    /**
+     * Normalize ISBN by removing hyphens, spaces, and other non-digit characters.
+     */
+    private function normalizeIsbn(string $isbn): string
+    {
+        return preg_replace('/[^0-9]/', '', $isbn);
+    }
+
+    /**
+     * Check if the given string is a valid ISBN-13.
+     */
+    private function isValidIsbn13(string $isbn): bool
+    {
+        // Must be exactly 13 digits and start with 978 or 979
+        return preg_match('/^(978|979)\d{10}$/', $isbn) === 1;
     }
 
     /**
@@ -71,32 +99,6 @@ class BookController extends Controller
         return Inertia::render('books/show', [
             'book' => $book,
         ]);
-    }
-
-    /**
-     * Apply search and filter conditions to the query.
-     */
-    private function applySearchFilters($query, Request $request): void
-    {
-        if ($request->filled('search')) {
-            $query->where('title', 'like', "%{$request->input('search')}%");
-        }
-
-        if ($request->filled('author')) {
-            $query->whereHas('authors', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('author')}%");
-            });
-        }
-
-        if ($request->filled('publisher')) {
-            $query->where('publisher', 'like', "%{$request->input('publisher')}%");
-        }
-
-        if ($request->filled('tag')) {
-            $query->whereHas('tags', function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->input('tag')}%");
-            });
-        }
     }
 
     /**

@@ -1,6 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { BookOpen, Library, LayoutGrid, Users } from 'lucide-react';
+import { BookOpen, Library, Users } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -36,12 +36,12 @@ export function AppSidebar() {
 
     // Admin navigation items
     const adminNavItems: NavItem[] = [
-        {
-            title: t('Admin Dashboard'),
-            href: admin.dashboard(),
-            icon: LayoutGrid,
-            isActive: isCurrentUrl(admin.dashboard()),
-        },
+        // {
+        //     title: t('Admin Dashboard'),
+        //     href: admin.dashboard(),
+        //     icon: LayoutGrid,
+        //     isActive: isCurrentUrl(admin.dashboard()),
+        // },
         {
             title: t('Book Management'),
             href: admin.books.index(),

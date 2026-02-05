@@ -21,6 +21,7 @@ Route::get('/locale/{locale}', [LocaleController::class, 'switch'])->name('local
 // Books index route at root (accessible to everyone)
 // Named 'home' - reverted from 'home' as requested
 Route::get('/', [BookController::class, 'index'])->name('home');
+Route::get('/books/isbn/{isbn}', [BookController::class, 'findByIsbn'])->name('books.isbn');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
 // Loan and reservation routes (require authentication)

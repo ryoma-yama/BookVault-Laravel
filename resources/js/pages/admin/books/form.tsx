@@ -1,8 +1,8 @@
 import { Head, useForm } from '@inertiajs/react';
-import { BrowserBarcodeReader } from '@zxing/library';
 import axios, { AxiosError } from 'axios';
 import type { FormEventHandler } from 'react';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import IsbnScanner from '@/components/isbn-scanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,33 +11,12 @@ import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
 const DEFAULT_ERROR_MESSAGE = 'Failed to fetch book information';
-const CAMERA_PERMISSION_ERROR =
-    'カメラへのアクセスが拒否されました。ブラウザの設定を確認してください。';
-const CAMERA_GENERIC_ERROR = 'カメラの起動に失敗しました。';
-
-function isISBN13(code: string): boolean {
-    return (
-        code.length === 13 && (code.startsWith('978') || code.startsWith('979'))
-    );
-}
 
 function extractErrorMessage(error: unknown): string {
     if (error instanceof AxiosError && error.response?.data?.error) {
         return error.response.data.error;
     }
     return DEFAULT_ERROR_MESSAGE;
-}
-
-function extractCameraError(error: unknown): string {
-    if (error instanceof Error) {
-        const isPermissionError =
-            error.message.includes('Permission') ||
-            error.message.includes('NotAllowedError');
-        return isPermissionError
-            ? CAMERA_PERMISSION_ERROR
-            : CAMERA_GENERIC_ERROR;
-    }
-    return CAMERA_GENERIC_ERROR;
 }
 
 interface Author {
@@ -65,9 +44,6 @@ export default function AdminBookForm({ book }: Props) {
     const isEditing = !!book;
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
-    const [scanning, setScanning] = useState(false);
-    const [scannerError, setScannerError] = useState<string | null>(null);
-    const scannerRef = useRef<HTMLVideoElement>(null);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -154,49 +130,11 @@ export default function AdminBookForm({ book }: Props) {
         setData('authors', newAuthors);
     };
 
-    useEffect(() => {
-        if (!scanning || !scannerRef.current) return;
-
-        let scanner: BrowserBarcodeReader | null = null;
-        let isStarted = false;
-
-        const startScanner = async () => {
-            scanner = new BrowserBarcodeReader();
-            setScannerError(null);
-
-            try {
-                await scanner.decodeFromVideoDevice(
-                    null, // デバイスID（nullで背面カメラを優先）
-                    scannerRef.current!.id,
-                    (result) => {
-                        if (result) {
-                            const code = result.getText();
-                            if (isISBN13(code)) {
-                                // カメラ停止とISBN処理
-                                scanner?.reset();
-                                setScanning(false);
-                                setData('isbn_13', code);
-                                handleSearchByIsbn();
-                            }
-                        }
-                    },
-                );
-                isStarted = true;
-            } catch (err) {
-                console.error('Scanner error:', err);
-                setScannerError(extractCameraError(err));
-                setScanning(false);
-            }
-        };
-
-        startScanner();
-
-        return () => {
-            if (scanner && isStarted) {
-                scanner.reset();
-            }
-        };
-    }, [scanning, handleSearchByIsbn, setData]);
+    const handleIsbnScan = (isbn: string) => {
+        setData('isbn_13', isbn);
+        // Automatically search for book info after scanning
+        handleSearchByIsbn();
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -237,13 +175,10 @@ export default function AdminBookForm({ book }: Props) {
                             >
                                 {isSearching ? 'Searching...' : 'Search ISBN'}
                             </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => setScanning(true)}
-                            >
-                                カメラで読み取る
-                            </Button>
+                            <IsbnScanner
+                                onScan={handleIsbnScan}
+                                buttonVariant="outline"
+                            />
                         </div>
                         {errors.isbn_13 && (
                             <p className="text-sm text-red-500">
@@ -253,11 +188,6 @@ export default function AdminBookForm({ book }: Props) {
                         {searchError && (
                             <p className="text-sm text-red-500">
                                 {searchError}
-                            </p>
-                        )}
-                        {scannerError && (
-                            <p className="text-sm text-red-500">
-                                {scannerError}
                             </p>
                         )}
                     </div>
@@ -402,25 +332,6 @@ export default function AdminBookForm({ book }: Props) {
                         </Button>
                     </div>
                 </form>
-
-                {scanning && (
-                    <div className="bg-opacity-80 fixed inset-0 z-50 flex flex-col items-center justify-center bg-black">
-                        <div className="mb-2 text-white">
-                            カメラをISBNバーコードに向けてください
-                        </div>
-                        <video
-                            id="isbn-scanner"
-                            ref={scannerRef}
-                            className="h-[300px] w-[300px] bg-white"
-                        />
-                        <button
-                            onClick={() => setScanning(false)}
-                            className="mt-4 text-white underline"
-                        >
-                            閉じる
-                        </button>
-                    </div>
-                )}
             </div>
         </AppLayout>
     );
