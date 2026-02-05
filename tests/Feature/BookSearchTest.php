@@ -199,6 +199,7 @@ test('can filter by author without search query', function () {
     $author2 = Author::create(['name' => 'Jane Smith']);
 
     // Include author name in searchable fields (title/description) for database driver compatibility
+    // Note: With Meilisearch driver, the author name would be searchable via the 'authors' field in searchable array
     $book1 = Book::factory()->create([
         'title' => 'Book by John',
         'description' => 'Written by John Doe',
@@ -211,7 +212,7 @@ test('can filter by author without search query', function () {
     ]);
     $book2->authors()->attach($author2);
 
-    // Search by author name (will match in description for database driver)
+    // Search by author name (will match in description for database driver, in 'authors' field for Meilisearch)
     get(route('home', ['search' => 'John']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -225,7 +226,8 @@ test('can search books by publisher', function () {
     $book1 = Book::factory()->create(['publisher' => 'O\'Reilly Media']);
     $book2 = Book::factory()->create(['publisher' => 'Packt Publishing']);
 
-    // Now search by publisher using the main search field
+    // Search by publisher using the main search field
+    // This searches the 'publisher' field which is included in the searchable array
     get(route('home', ['search' => 'O\'Reilly']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -240,6 +242,7 @@ test('can search books by tag', function () {
     $tag2 = Tag::factory()->create(['name' => 'design']);
 
     // Include tag in searchable fields for database driver compatibility
+    // Note: With Meilisearch driver, the tag name would be searchable via the 'tags' field in searchable array
     $book1 = Book::factory()->create([
         'title' => 'Programming Guide',
         'description' => 'Learn programming basics',
@@ -252,7 +255,7 @@ test('can search books by tag', function () {
     ]);
     $book2->tags()->attach($tag2);
 
-    // Search by tag (will match in title/description for database driver)
+    // Search by tag (will match in title/description for database driver, in 'tags' field for Meilisearch)
     get(route('home', ['search' => 'programming']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page

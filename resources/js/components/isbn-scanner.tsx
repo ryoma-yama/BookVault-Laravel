@@ -55,13 +55,13 @@ export default function IsbnScanner({
 
             try {
                 await scanner.decodeFromVideoDevice(
-                    null, // デバイスID（nullで背面カメラを優先）
+                    null, // Device ID (null prioritizes rear camera)
                     scannerRef.current!.id,
                     (result) => {
                         if (result) {
                             const code = result.getText();
                             if (isISBN13(code)) {
-                                // カメラ停止とISBN処理
+                                // Stop camera and process ISBN
                                 scanner?.reset();
                                 setScanning(false);
                                 onScan(code);
