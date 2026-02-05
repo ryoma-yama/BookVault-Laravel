@@ -41,26 +41,33 @@ describe('ISBN Lookup Endpoint', function () {
 
     test('returns 404 when ISBN not found in database', function () {
         get(route('books.isbn', ['isbn' => '9789999999999']))
-            ->assertNotFound()
+            ->assertOk() // Inertia returns 200 with error page
             ->assertInertia(fn ($page) => $page
                 ->component('books/not-found')
                 ->has('error')
+                ->where('statusCode', 404)
             );
     });
 
     test('returns validation error for invalid ISBN format', function () {
         get(route('books.isbn', ['isbn' => '123']))
-            ->assertStatus(422)
+            ->assertOk() // Inertia returns 200 with error page
             ->assertInertia(fn ($page) => $page
                 ->component('books/not-found')
                 ->has('error')
+                ->where('statusCode', 422)
             );
     });
 
     test('returns validation error for non-ISBN-13 format', function () {
         // ISBN-10 format should be rejected
         get(route('books.isbn', ['isbn' => '1234567890']))
-            ->assertStatus(422);
+            ->assertOk() // Inertia returns 200 with error page
+            ->assertInertia(fn ($page) => $page
+                ->component('books/not-found')
+                ->has('error')
+                ->where('statusCode', 422)
+            );
     });
 
     test('normalizes ISBN before database lookup', function () {

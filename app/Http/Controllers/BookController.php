@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -47,7 +46,7 @@ class BookController extends Controller
     /**
      * Find a book by ISBN-13.
      */
-    public function findByIsbn(Request $request, string $isbn): Response|HttpResponse
+    public function findByIsbn(Request $request, string $isbn)
     {
         // Validate ISBN format
         $cleanedIsbn = $this->normalizeIsbn($isbn);
@@ -55,7 +54,8 @@ class BookController extends Controller
         if (!$this->isValidIsbn13($cleanedIsbn)) {
             return Inertia::render('books/not-found', [
                 'error' => 'Invalid ISBN-13 format',
-            ])->toResponse($request)->setStatusCode(422);
+                'statusCode' => 422,
+            ]);
         }
 
         // Find book by exact ISBN match
@@ -66,10 +66,11 @@ class BookController extends Controller
         if (!$book) {
             return Inertia::render('books/not-found', [
                 'error' => 'Book with ISBN ' . $isbn . ' not found',
-            ])->toResponse($request)->setStatusCode(404);
+                'statusCode' => 404,
+            ]);
         }
 
-        // Redirect to book show page or return book data
+        // Return book detail page
         return $this->show($book);
     }
 

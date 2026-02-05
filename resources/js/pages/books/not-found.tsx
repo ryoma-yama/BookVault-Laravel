@@ -6,6 +6,7 @@ import type { BreadcrumbItem } from '@/types';
 
 interface Props {
     error?: string;
+    statusCode?: number;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
