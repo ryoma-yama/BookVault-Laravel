@@ -92,7 +92,8 @@ export default function BookShow({ book }: Props) {
             onError: (errors) => {
                 setShowDialog(false);
                 const errorMessage =
-                    errors.message ||
+                    errors.book_id ||
+                    errors.book_copy_id ||
                     t('This book is not available for borrowing.');
                 toast.error(errorMessage);
             },

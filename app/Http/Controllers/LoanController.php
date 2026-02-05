@@ -41,6 +41,13 @@ class LoanController extends Controller
                 ->first();
 
             if (! $bookCopy) {
+                // For Inertia requests, throw validation exception
+                if ($request->header('X-Inertia')) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'book_id' => 'This book is not available for borrowing.',
+                    ]);
+                }
+
                 return response()->json([
                     'message' => 'This book is not available for borrowing.',
                 ], 422);
@@ -49,6 +56,13 @@ class LoanController extends Controller
             $bookCopy = BookCopy::findOrFail($request->book_copy_id);
 
             if (! $bookCopy->isAvailable()) {
+                // For Inertia requests, throw validation exception
+                if ($request->header('X-Inertia')) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'book_copy_id' => 'This book copy is not available for borrowing.',
+                    ]);
+                }
+
                 return response()->json([
                     'message' => 'This book copy is not available for borrowing.',
                 ], 422);
@@ -60,6 +74,11 @@ class LoanController extends Controller
             'book_copy_id' => $bookCopy->id,
             'borrowed_date' => now(),
         ]);
+
+        // For Inertia requests, return back (which will be handled by onSuccess)
+        if ($request->header('X-Inertia')) {
+            return back();
+        }
 
         return response()->json($loan->load(['bookCopy.book', 'user']), 201);
     }
