@@ -129,7 +129,6 @@ BookVault-Laravelのシステム構成とアーキテクチャについて説明
 #### users（ユーザー）
 - 基本情報（名前、メール、パスワード）
 - 役割（role: user/admin）
-- 表示名（display_name）
 - 二要素認証情報
 
 #### books（書籍）
