@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -97,6 +98,19 @@ class Book extends Model
     }
 
     /**
+     * Scope to get only books that have at least one valid (non-discarded) copy.
+     *
+     * @param  Builder<Book>  $query
+     * @return Builder<Book>
+     */
+    public function scopeHasValidCopies(Builder $query): Builder
+    {
+        return $query->whereHas('copies', function ($q) {
+            $q->whereNull('discarded_date');
+        });
+    }
+
+    /**
      * Get the indexable data array for the model.
      */
     public function toSearchableArray(): array
@@ -113,6 +127,7 @@ class Book extends Model
         if (config('scout.driver') !== 'database') {
             $array['authors'] = $this->authors->pluck('name')->implode(', ');
             $array['tags'] = $this->tags->pluck('name')->implode(', ');
+            $array['has_valid_copies'] = $this->copies()->whereNull('discarded_date')->exists();
         }
 
         return $array;

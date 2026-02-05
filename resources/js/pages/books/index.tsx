@@ -1,19 +1,12 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { ImageOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Heading from '@/components/heading';
 import IsbnScanner from '@/components/isbn-scanner';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
@@ -34,6 +27,7 @@ interface Book {
     publisher: string | null;
     isbn_13: string | null;
     tags: Tag[];
+    image_url?: string;
     created_at: string;
 }
 
@@ -90,25 +84,6 @@ export default function BooksIndex({ books, filters }: Props) {
 
         return () => clearTimeout(timeout);
     }, [search, filters.search, errors.isbn]);
-
-    const handleSort = (field: string) => {
-        const direction =
-            filters.sort === field && filters.direction === 'asc'
-                ? 'desc'
-                : 'asc';
-        router.get(
-            '/',
-            {
-                ...filters,
-                sort: field,
-                direction,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-            },
-        );
-    };
 
     const hasActiveFilters = search;
 
@@ -193,116 +168,72 @@ export default function BooksIndex({ books, filters }: Props) {
                     )}
                 </div>
 
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>
-                                    <button
-                                        onClick={() => handleSort('title')}
-                                        className="font-medium hover:underline"
-                                    >
-                                        {t('Title')}{' '}
-                                        {filters.sort === 'title' &&
-                                            (filters.direction === 'asc'
-                                                ? '↑'
-                                                : '↓')}
-                                    </button>
-                                </TableHead>
-                                <TableHead>{t('Author')}</TableHead>
-                                <TableHead>{t('Publisher')}</TableHead>
-                                <TableHead>{t('Tags')}</TableHead>
-                                <TableHead>
-                                    <button
-                                        onClick={() => handleSort('created_at')}
-                                        className="font-medium hover:underline"
-                                    >
-                                        {t('Added')}{' '}
-                                        {filters.sort === 'created_at' &&
-                                            (filters.direction === 'asc'
-                                                ? '↑'
-                                                : '↓')}
-                                    </button>
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {books.data.length === 0 ? (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={5}
-                                        className="text-center"
-                                    >
-                                        <div className="py-12">
-                                            <svg
-                                                className="mx-auto h-12 w-12 text-muted-foreground/50"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                {books.data.length === 0 ? (
+                    <div className="py-12 text-center">
+                        <svg
+                            className="mx-auto h-12 w-12 text-muted-foreground/50"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                        </svg>
+                        <p className="mt-4 text-lg font-medium text-muted-foreground">
+                            {hasActiveFilters
+                                ? t('No books found matching your search')
+                                : t('No books found')}
+                        </p>
+                        {hasActiveFilters && (
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                {t(
+                                    'Try adjusting your filters or search terms',
+                                )}
+                            </p>
+                        )}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                        {books.data.map((book) => (
+                            <Link
+                                key={book.id}
+                                href={`/books/${book.id}`}
+                                className="group"
+                            >
+                                <Card className="overflow-hidden transition-all hover:shadow-lg">
+                                    <CardContent className="p-0">
+                                        <div className="relative aspect-[2/3] w-full overflow-hidden bg-muted">
+                                            {book.image_url ? (
+                                                <img
+                                                    src={book.image_url}
+                                                    alt={book.title}
+                                                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                                    loading="lazy"
                                                 />
-                                            </svg>
-                                            <p className="mt-4 text-lg font-medium text-muted-foreground">
-                                                {hasActiveFilters
-                                                    ? t(
-                                                          'No books found matching your search',
-                                                      )
-                                                    : t('No books found')}
-                                            </p>
-                                            {hasActiveFilters && (
-                                                <p className="mt-2 text-sm text-muted-foreground">
-                                                    {t(
-                                                        'Try adjusting your filters or search terms',
-                                                    )}
-                                                </p>
+                                            ) : (
+                                                <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-muted text-muted-foreground">
+                                                    <ImageOff className="h-10 w-10 opacity-40" />
+                                                    <span className="text-xs font-medium">
+                                                        No Image
+                                                    </span>
+                                                </div>
                                             )}
                                         </div>
-                                    </TableCell>
-                                </TableRow>
-                            ) : (
-                                books.data.map((book) => (
-                                    <TableRow key={book.id}>
-                                        <TableCell className="font-medium">
-                                            {book.title}
-                                        </TableCell>
-                                        <TableCell>
-                                            {book.authors.length > 0
-                                                ? book.authors
-                                                      .map((a) => a.name)
-                                                      .join(', ')
-                                                : '—'}
-                                        </TableCell>
-                                        <TableCell>
-                                            {book.publisher || '—'}
-                                        </TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-wrap gap-1">
-                                                {book.tags.map((tag) => (
-                                                    <Badge
-                                                        key={tag.id}
-                                                        variant="outline"
-                                                    >
-                                                        {tag.name}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            {new Date(
-                                                book.created_at,
-                                            ).toLocaleDateString()}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                                        <div className="p-3">
+                                            <h3 className="line-clamp-2 text-sm font-medium">
+                                                {book.title}
+                                            </h3>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        ))}
+                    </div>
+                )}
 
                 {books.last_page > 1 && (
                     <div className="flex items-center justify-between">

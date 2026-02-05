@@ -18,19 +18,22 @@ class BookController extends Controller
         if ($request->filled('search')) {
             $books = Book::search($request->input('search'))
                 ->query(function ($builder) {
-                    $builder->with([
-                        'tags:id,name',
-                        'authors:id,name',
-                    ]);
+                    $builder->hasValidCopies()
+                        ->with([
+                            'tags:id,name',
+                            'authors:id,name',
+                        ]);
                 })
                 ->paginate(15)
                 ->withQueryString();
         } else {
             // Use traditional query builder when no search query
-            $query = Book::query()->with([
-                'tags:id,name',
-                'authors:id,name',
-            ]);
+            $query = Book::query()
+                ->hasValidCopies()
+                ->with([
+                    'tags:id,name',
+                    'authors:id,name',
+                ]);
 
             $this->applySorting($query, $request);
 
@@ -96,8 +99,20 @@ class BookController extends Controller
     {
         $book->load('authors:id,name');
 
+        // Calculate inventory status
+        $activeCopies = $book->copies()->active()->get();
+        $totalCopies = $activeCopies->count();
+        $borrowedCount = $activeCopies->filter(fn ($copy) => $copy->hasOutstandingLoan())->count();
+        $availableCount = $totalCopies - $borrowedCount;
+
         return Inertia::render('books/show', [
-            'book' => $book,
+            'book' => array_merge($book->toArray(), [
+                'inventory_status' => [
+                    'total_copies' => $totalCopies,
+                    'borrowed_count' => $borrowedCount,
+                    'available_count' => $availableCount,
+                ],
+            ]),
         ]);
     }
 
@@ -106,10 +121,10 @@ class BookController extends Controller
      */
     private function applySorting($query, Request $request): void
     {
-        $sortField = $request->input('sort', 'created_at');
+        $sortField = $request->input('sort', 'id');
         $sortDirection = $request->input('direction', 'desc');
 
-        $allowedSortFields = ['title', 'created_at'];
+        $allowedSortFields = ['id', 'title', 'created_at'];
         if (in_array($sortField, $allowedSortFields, true)) {
             $query->orderBy($sortField, $sortDirection);
         }

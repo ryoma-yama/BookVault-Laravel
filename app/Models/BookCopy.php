@@ -24,6 +24,13 @@ class BookCopy extends Model
     ];
 
     /**
+     * All of the relationships to be touched.
+     *
+     * @var array<int, string>
+     */
+    protected $touches = ['book'];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
