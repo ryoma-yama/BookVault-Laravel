@@ -120,7 +120,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         <Input
                             type="text"
                             placeholder={t(
-                                'Search by title, author, publisher, ISBN, tags...',
+                                'Search by title, description, publisher, authors, tags...',
                             )}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
