@@ -109,12 +109,21 @@ class Book extends Model
             'isbn_13' => $this->isbn_13,
         ];
 
-        // Only include authors for non-database drivers (e.g., Meilisearch)
+        // Only include authors and tags for non-database drivers (e.g., Meilisearch)
         // Database driver can't search on relationship fields
         if (config('scout.driver') !== 'database') {
             $array['authors'] = $this->authors->pluck('name')->implode(', ');
+            $array['tags'] = $this->tags->pluck('name')->implode(', ');
         }
 
         return $array;
+    }
+
+    /**
+     * Modify the query used to retrieve models when making all of the models searchable.
+     */
+    protected function makeAllSearchableUsing($query)
+    {
+        return $query->with(['authors', 'tags']);
     }
 }
