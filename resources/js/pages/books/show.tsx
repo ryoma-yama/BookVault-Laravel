@@ -32,12 +32,6 @@ interface Props {
     book: Book;
 }
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
-
 export default function BookShow({ book }: Props) {
     const { t } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
