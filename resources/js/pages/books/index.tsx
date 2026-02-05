@@ -68,6 +68,9 @@ export default function BooksIndex({ books, filters }: Props) {
 
     // Debounce search to avoid too many requests
     useEffect(() => {
+        // ISBNエラーがある場合は、自動検索を走らせない（エラー表示を維持するため）
+        if (errors.isbn) return;
+
         const timeout = setTimeout(() => {
             if (search !== filters.search) {
                 setIsSearching(true);
@@ -86,7 +89,7 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [search, filters.search]);
+    }, [search, filters.search, errors.isbn]);
 
     const handleSort = (field: string) => {
         const direction =
@@ -124,7 +127,12 @@ export default function BooksIndex({ books, filters }: Props) {
                                 'Search by title, description, publisher, authors, tags...',
                             )}
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                if (errors.isbn) {
+                                    router.reload({ only: ['errors'] });
+                                }
+                            }}
                             className="flex-1"
                         />
                         <IsbnScanner
