@@ -59,22 +59,10 @@ export default function BooksIndex({ books, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
 
-    // Handle ISBN scan
+    // Handle ISBN scan - redirect to dedicated ISBN lookup endpoint
     const handleIsbnScan = (isbn: string) => {
-        setSearch(isbn);
-        // Immediately trigger search without debounce
-        setIsSearching(true);
-        router.get(
-            '/',
-            {
-                search: isbn,
-            },
-            {
-                preserveState: true,
-                preserveScroll: true,
-                onFinish: () => setIsSearching(false),
-            },
-        );
+        // Navigate to ISBN lookup endpoint
+        router.visit(`/books/isbn/${isbn}`);
     };
 
     // Debounce search to avoid too many requests

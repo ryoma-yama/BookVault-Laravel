@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,47 +17,15 @@ class BookController extends Controller
     {
         // Use Scout search when there's a search query
         if ($request->filled('search')) {
-            $searchTerm = $request->input('search');
-
-            // Check if search term is ISBN-13 format (13 digits)
-            if ($this->isIsbn13Format($searchTerm)) {
-                // Clean the ISBN for database search (remove hyphens and spaces)
-                $cleanedIsbn = preg_replace('/[\s-]/', '', $searchTerm);
-
-                // Try exact match on ISBN-13 first
-                $query = Book::query()
-                    ->where('isbn_13', $cleanedIsbn)
-                    ->with([
+            $books = Book::search($request->input('search'))
+                ->query(function ($builder) {
+                    $builder->with([
                         'tags:id,name',
                         'authors:id,name',
                     ]);
-
-                $books = $query->paginate(15)->withQueryString();
-
-                // If no results from ISBN search, fall back to full-text search
-                if ($books->isEmpty()) {
-                    $books = Book::search($searchTerm)
-                        ->query(function ($builder) {
-                            $builder->with([
-                                'tags:id,name',
-                                'authors:id,name',
-                            ]);
-                        })
-                        ->paginate(15)
-                        ->withQueryString();
-                }
-            } else {
-                // Use full-text search for non-ISBN queries
-                $books = Book::search($searchTerm)
-                    ->query(function ($builder) {
-                        $builder->with([
-                            'tags:id,name',
-                            'authors:id,name',
-                        ]);
-                    })
-                    ->paginate(15)
-                    ->withQueryString();
-            }
+                })
+                ->paginate(15)
+                ->withQueryString();
         } else {
             // Use traditional query builder when no search query
             $query = Book::query()->with([
@@ -76,15 +45,49 @@ class BookController extends Controller
     }
 
     /**
-     * Check if the given string is in ISBN-13 format.
+     * Find a book by ISBN-13.
      */
-    private function isIsbn13Format(string $value): bool
+    public function findByIsbn(Request $request, string $isbn): Response|HttpResponse
     {
-        // Remove any hyphens or spaces
-        $cleaned = preg_replace('/[\s-]/', '', $value);
+        // Validate ISBN format
+        $cleanedIsbn = $this->normalizeIsbn($isbn);
+        
+        if (!$this->isValidIsbn13($cleanedIsbn)) {
+            return Inertia::render('books/not-found', [
+                'error' => 'Invalid ISBN-13 format',
+            ])->toResponse($request)->setStatusCode(422);
+        }
 
-        // Check if it's exactly 13 digits and starts with 978 or 979
-        return preg_match('/^(978|979)\d{10}$/', $cleaned) === 1;
+        // Find book by exact ISBN match
+        $book = Book::where('isbn_13', $cleanedIsbn)
+            ->with(['authors:id,name', 'tags:id,name'])
+            ->first();
+
+        if (!$book) {
+            return Inertia::render('books/not-found', [
+                'error' => 'Book with ISBN ' . $isbn . ' not found',
+            ])->toResponse($request)->setStatusCode(404);
+        }
+
+        // Redirect to book show page or return book data
+        return $this->show($book);
+    }
+
+    /**
+     * Normalize ISBN by removing hyphens, spaces, and other non-digit characters.
+     */
+    private function normalizeIsbn(string $isbn): string
+    {
+        return preg_replace('/[^0-9]/', '', $isbn);
+    }
+
+    /**
+     * Check if the given string is a valid ISBN-13.
+     */
+    private function isValidIsbn13(string $isbn): bool
+    {
+        // Must be exactly 13 digits and start with 978 or 979
+        return preg_match('/^(978|979)\d{10}$/', $isbn) === 1;
     }
 
     /**
