@@ -114,7 +114,7 @@ test('falls back to full-text search when ISBN not found in database', function 
     // This test verifies fallback behavior exists, but with database driver it won't find the book
     // In production with Meilisearch, it would find the book via title search
     $response = get(route('home', ['search' => '9781234567890']));
-    
+
     $response->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')

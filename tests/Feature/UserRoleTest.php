@@ -18,7 +18,7 @@ test('user role can only be admin or user', function () {
     // Test that factory defaults to 'user' role and doesn't accept invalid roles
     $user = User::factory()->create();
     expect($user->role)->toBe('user');
-    
+
     // Test that only valid roles are accepted through validation
     // (invalid roles would be rejected at the controller/request validation level)
     $validRoles = ['admin', 'user'];

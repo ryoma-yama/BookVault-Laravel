@@ -56,7 +56,7 @@ describe('Book Searchable Array', function () {
         $originalDriver = config('scout.driver');
         config(['scout.driver' => 'meilisearch']);
 
-        Book::withoutSyncingToSearch(function () use ($originalDriver) {
+        Book::withoutSyncingToSearch(function () {
             $book = Book::factory()->create();
             $author1 = Author::create(['name' => 'John Doe']);
             $author2 = Author::create(['name' => 'Jane Smith']);
@@ -79,7 +79,7 @@ describe('Book Searchable Array', function () {
         $originalDriver = config('scout.driver');
         config(['scout.driver' => 'meilisearch']);
 
-        Book::withoutSyncingToSearch(function () use ($originalDriver) {
+        Book::withoutSyncingToSearch(function () {
             $book = Book::factory()->create();
             $tag1 = Tag::create(['name' => 'programming']);
             $tag2 = Tag::create(['name' => 'web-development']);
@@ -119,7 +119,7 @@ describe('Book Searchable Array', function () {
         $originalDriver = config('scout.driver');
         config(['scout.driver' => 'meilisearch']);
 
-        Book::withoutSyncingToSearch(function () use ($originalDriver) {
+        Book::withoutSyncingToSearch(function () {
             $book = Book::factory()->create();
             $book->load(['authors', 'tags']);
             $searchableArray = $book->toSearchableArray();

@@ -37,7 +37,7 @@ describe('Language Switch', function () {
         $response = get('/locale/ja');
         $response->assertRedirect('/');
         $response->assertCookie('app_locale');
-        
+
         // Switch to English
         $response = get('/locale/en');
         $response->assertRedirect('/');

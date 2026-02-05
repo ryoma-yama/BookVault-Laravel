@@ -85,8 +85,8 @@ test('users are rate limited', function () {
 
 test('authenticated users are redirected from login page', function () {
     $user = User::factory()->create();
-    
+
     $response = $this->actingAs($user)->get(route('login'));
-    
+
     $response->assertRedirect(route('home'));
 });

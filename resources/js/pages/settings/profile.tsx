@@ -50,9 +50,7 @@ export default function Profile({
                     <Heading
                         variant="small"
                         title={t('Profile information')}
-                        description={t(
-                            'Update your name and email address',
-                        )}
+                        description={t('Update your name and email address')}
                     />
 
                     <Form
