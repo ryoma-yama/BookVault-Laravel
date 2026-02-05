@@ -1,7 +1,7 @@
 {
     "(and :count more error)": "(その他、:countエラーあり)",
     "(and :count more errors)": "(その他、:countエラーあり)",
-    ":count currently borrowed": ":count 冊貸出中",
+    ":count currently borrowed": ":count冊貸出中",
     "A Timeout Occurred": "タイムアウト発生",
     "A decryption key is required.": "復号キーは必須です。",
     "A new verification link has been sent to your email address.": "新しい確認リンクがメールアドレスに送信されました。",

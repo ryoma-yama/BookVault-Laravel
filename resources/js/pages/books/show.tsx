@@ -66,8 +66,8 @@ export default function BookShow({ book }: Props) {
             router.visit('/login');
         } else {
             // Borrow functionality will be implemented in a future PR
-            // For now, this is a placeholder that shows the button is clickable
-            alert(t('Borrow functionality coming soon'));
+            // which will integrate with the LoanController API endpoint
+            // For now, the button demonstrates the UI/UX flow
         }
     };
 
