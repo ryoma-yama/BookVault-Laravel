@@ -35,7 +35,7 @@ export default function Profile({
     if (!auth.user) {
         return null;
     }
-    
+
     // Extract user to help TypeScript understand it's not null
     const user = auth.user;
 

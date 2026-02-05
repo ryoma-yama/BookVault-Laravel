@@ -1,5 +1,4 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { BookOpen, Folder, Menu, Search } from 'lucide-react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -228,7 +227,10 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end">
+                                <DropdownMenuContent
+                                    className="w-56"
+                                    align="end"
+                                >
                                     <UserMenuContent user={auth.user} />
                                 </DropdownMenuContent>
                             </DropdownMenu>

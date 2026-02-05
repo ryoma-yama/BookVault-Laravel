@@ -19,13 +19,17 @@ export function LanguageSwitcher() {
     const { t, setLocale } = useLaravelReactI18n();
 
     const handleLanguageSwitch = (newLocale: string) => {
-        router.get(`/locale/${newLocale}`, {}, {
-            preserveState: false,
-            preserveScroll: true,
-            onSuccess: () => {
-                setLocale(newLocale);
+        router.get(
+            `/locale/${newLocale}`,
+            {},
+            {
+                preserveState: false,
+                preserveScroll: true,
+                onSuccess: () => {
+                    setLocale(newLocale);
+                },
             },
-        });
+        );
     };
 
     return (
