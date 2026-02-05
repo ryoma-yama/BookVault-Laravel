@@ -97,7 +97,7 @@ class BookController extends Controller
      */
     public function show(Book $book): Response
     {
-        $book->load('authors:id,name');
+        $book->load('authors:id,name', 'tags:id,name');
 
         // Calculate inventory status
         $activeCopies = $book->copies()->active()->get();

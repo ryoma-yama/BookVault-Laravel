@@ -1,11 +1,29 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { ImageOff } from 'lucide-react';
+import { ImageOff, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
 
 interface Author {
+    id: number;
+    name: string;
+}
+
+interface Tag {
     id: number;
     name: string;
 }
@@ -25,6 +43,7 @@ interface Book {
     description: string;
     image_url?: string;
     authors: Author[];
+    tags: Tag[];
     inventory_status: InventoryStatus;
 }
 
@@ -37,6 +56,11 @@ export default function BookShow({ book }: Props) {
     const { auth } = usePage<SharedData>().props;
     const isAuthenticated = !!auth.user;
     const canBorrow = book.inventory_status.available_count > 0;
+    const [showDialog, setShowDialog] = useState(false);
+
+    const { post, processing } = useForm({
+        book_id: book.id,
+    });
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -49,15 +73,30 @@ export default function BookShow({ book }: Props) {
         },
     ];
 
-    const handleBorrow = () => {
+    const handleBorrowClick = () => {
         if (!isAuthenticated) {
-            // Use Inertia router for SPA navigation
             router.visit('/login');
         } else {
-            // Borrow functionality will be implemented in a future PR
-            // which will integrate with the LoanController API endpoint
-            // For now, the button demonstrates the UI/UX flow
+            setShowDialog(true);
         }
+    };
+
+    const handleBorrowConfirm = () => {
+        post('/loans', {
+            preserveScroll: true,
+            onSuccess: () => {
+                setShowDialog(false);
+                toast.success(t('Book borrowed successfully!'));
+                router.reload({ only: ['book'] });
+            },
+            onError: (errors) => {
+                setShowDialog(false);
+                const errorMessage =
+                    errors.message ||
+                    t('This book is not available for borrowing.');
+                toast.error(errorMessage);
+            },
+        });
     };
 
     return (
@@ -139,11 +178,14 @@ export default function BookShow({ book }: Props) {
                         {/* Borrow Button */}
                         <div className="mt-6">
                             <Button
-                                onClick={handleBorrow}
-                                disabled={!canBorrow}
+                                onClick={handleBorrowClick}
+                                disabled={!canBorrow || processing}
                                 size="lg"
                                 className="w-full md:w-auto"
                             >
+                                {processing && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
                                 {!canBorrow
                                     ? t('Currently Unavailable')
                                     : isAuthenticated
@@ -168,9 +210,55 @@ export default function BookShow({ book }: Props) {
                                 <p>{book.description}</p>
                             </div>
                         </div>
+
+                        {/* Tags Display */}
+                        {book.tags && book.tags.length > 0 && (
+                            <div className="mt-4">
+                                <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+                                    {t('Tags')}
+                                </h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {book.tags.map((tag) => (
+                                        <Badge key={tag.id} variant="secondary">
+                                            {tag.name}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+
+            {/* Borrow Confirmation Dialog */}
+            <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {t('Borrow this book?')}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t('Are you sure you want to borrow this book?')}
+                            <br />
+                            <strong className="mt-2 block">{book.title}</strong>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={processing}>
+                            {t('Cancel')}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={handleBorrowConfirm}
+                            disabled={processing}
+                        >
+                            {processing && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+                            {t('Confirm')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

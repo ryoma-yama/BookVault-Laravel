@@ -27,20 +27,37 @@ class LoanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'book_copy_id' => 'required|exists:book_copies,id',
+            'book_id' => 'required_without:book_copy_id|exists:books,id',
+            'book_copy_id' => 'required_without:book_id|exists:book_copies,id',
         ]);
 
-        $bookCopy = BookCopy::findOrFail($request->book_copy_id);
+        // If book_id is provided, find an available copy
+        if ($request->has('book_id')) {
+            $bookCopy = BookCopy::where('book_id', $request->book_id)
+                ->whereNull('discarded_date')
+                ->whereDoesntHave('loans', function ($query) {
+                    $query->whereNull('returned_date');
+                })
+                ->first();
 
-        if (! $bookCopy->isAvailable()) {
-            return response()->json([
-                'message' => 'This book copy is not available for borrowing.',
-            ], 422);
+            if (! $bookCopy) {
+                return response()->json([
+                    'message' => 'This book is not available for borrowing.',
+                ], 422);
+            }
+        } else {
+            $bookCopy = BookCopy::findOrFail($request->book_copy_id);
+
+            if (! $bookCopy->isAvailable()) {
+                return response()->json([
+                    'message' => 'This book copy is not available for borrowing.',
+                ], 422);
+            }
         }
 
         $loan = Loan::create([
             'user_id' => $request->user()->id,
-            'book_copy_id' => $request->book_copy_id,
+            'book_copy_id' => $bookCopy->id,
             'borrowed_date' => now(),
         ]);
 
