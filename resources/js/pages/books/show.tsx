@@ -1,9 +1,9 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { ImageOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import { ImageOff } from 'lucide-react';
 
 interface Author {
     id: number;
