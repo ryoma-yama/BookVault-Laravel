@@ -2,6 +2,7 @@
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\BookCopy;
 
 use function Pest\Laravel\get;
 
@@ -21,6 +22,12 @@ test('books index displays list of books', function () {
         'description' => 'Test Description',
     ]);
     $book->authors()->attach($author);
+    
+    // Add a valid book copy
+    BookCopy::factory()->create([
+        'book_id' => $book->id,
+        'discarded_date' => null,
+    ]);
 
     $response = get('/');
 
@@ -50,5 +57,6 @@ test('book show page can be rendered', function () {
         ->component('books/show')
         ->where('book.title', 'Test Book')
         ->has('book.authors', 1)
+        ->has('book.inventory_status')
     );
 });

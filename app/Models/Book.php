@@ -120,7 +120,6 @@ class Book extends Model
             'title' => $this->title,
             'publisher' => $this->publisher,
             'description' => $this->description,
-            'has_valid_copies' => $this->copies()->whereNull('discarded_date')->exists(),
         ];
 
         // Only include authors and tags for non-database drivers (e.g., Meilisearch)
@@ -128,6 +127,7 @@ class Book extends Model
         if (config('scout.driver') !== 'database') {
             $array['authors'] = $this->authors->pluck('name')->implode(', ');
             $array['tags'] = $this->tags->pluck('name')->implode(', ');
+            $array['has_valid_copies'] = $this->copies()->whereNull('discarded_date')->exists();
         }
 
         return $array;

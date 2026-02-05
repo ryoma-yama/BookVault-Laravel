@@ -2,9 +2,23 @@
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\BookCopy;
 use App\Models\Tag;
 
 use function Pest\Laravel\get;
+
+/**
+ * Helper function to create a book with a valid copy
+ */
+function createBookWithCopy(array $attributes = []): Book
+{
+    $book = Book::factory()->create($attributes);
+    BookCopy::factory()->create([
+        'book_id' => $book->id,
+        'discarded_date' => null,
+    ]);
+    return $book;
+}
 
 test('guest can access book list', function () {
     get(route('home'))
@@ -13,7 +27,10 @@ test('guest can access book list', function () {
 });
 
 test('book list displays all books', function () {
-    $books = Book::factory()->count(3)->create();
+    // Create 3 books with valid copies
+    for ($i = 0; $i < 3; $i++) {
+        createBookWithCopy();
+    }
 
     get(route('home'))
         ->assertOk()
@@ -24,9 +41,9 @@ test('book list displays all books', function () {
 });
 
 test('can search books by title using full-text search', function () {
-    $book1 = Book::factory()->create(['title' => 'Laravel Programming']);
-    $book2 = Book::factory()->create(['title' => 'React Development']);
-    $book3 = Book::factory()->create(['title' => 'PHP Basics']);
+    $book1 = createBookWithCopy(['title' => 'Laravel Programming']);
+    $book2 = createBookWithCopy(['title' => 'React Development']);
+    $book3 = createBookWithCopy(['title' => 'PHP Basics']);
 
     get(route('home', ['search' => 'Laravel']))
         ->assertOk()
@@ -38,11 +55,11 @@ test('can search books by title using full-text search', function () {
 });
 
 test('can search books by description using full-text search', function () {
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Book One',
         'description' => 'A comprehensive guide to Laravel framework',
     ]);
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'Book Two',
         'description' => 'Learn React from scratch',
     ]);
@@ -61,13 +78,13 @@ test('can search books by author name using full-text search', function () {
     $author2 = Author::create(['name' => 'Jane Smith']);
 
     // Include author name in searchable fields (title/description) for database driver compatibility
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Laravel Programming',
         'description' => 'A book written by John Doe about Laravel',
     ]);
     $book1->authors()->attach($author1);
 
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'React Development',
         'description' => 'A book written by Jane Smith about React',
     ]);
@@ -85,11 +102,11 @@ test('can search books by author name using full-text search', function () {
 
 test('search by ISBN does not trigger special handling in general search', function () {
     // ISBN search in general search endpoint should treat it as text, not special ISBN lookup
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Book One',
         'isbn_13' => '9781234567890',
     ]);
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'Book Two about 9781234567890',
         'isbn_13' => '9780987654321',
     ]);
@@ -105,7 +122,7 @@ test('search by ISBN does not trigger special handling in general search', funct
 });
 
 test('falls back to full-text search when ISBN not found in database', function () {
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Book about 9781234567890',
         'isbn_13' => '9780000000000',
     ]);
@@ -122,11 +139,11 @@ test('falls back to full-text search when ISBN not found in database', function 
 });
 
 test('can search books with multiple keywords', function () {
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Advanced Laravel Programming',
         'description' => 'Master Laravel framework',
     ]);
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'Basic PHP',
         'description' => 'Introduction to PHP',
     ]);
@@ -141,11 +158,11 @@ test('can search books with multiple keywords', function () {
 });
 
 test('can search books with Japanese text', function () {
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Laravelプログラミング入門',
         'description' => 'Laravel フレームワークの基礎',
     ]);
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'React開発ガイド',
         'description' => 'Reactの基本',
     ]);
@@ -165,13 +182,13 @@ test('can filter by author without search query', function () {
 
     // Include author name in searchable fields (title/description) for database driver compatibility
     // Note: With Meilisearch driver, the author name would be searchable via the 'authors' field in searchable array
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Book by John',
         'description' => 'Written by John Doe',
     ]);
     $book1->authors()->attach($author1);
 
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'Book by Jane',
         'description' => 'Written by Jane Smith',
     ]);
@@ -188,8 +205,8 @@ test('can filter by author without search query', function () {
 });
 
 test('can search books by publisher', function () {
-    $book1 = Book::factory()->create(['publisher' => 'O\'Reilly Media']);
-    $book2 = Book::factory()->create(['publisher' => 'Packt Publishing']);
+    $book1 = createBookWithCopy(['publisher' => 'O\'Reilly Media']);
+    $book2 = createBookWithCopy(['publisher' => 'Packt Publishing']);
 
     // Search by publisher using the main search field
     // This searches the 'publisher' field which is included in the searchable array
@@ -208,13 +225,13 @@ test('can search books by tag', function () {
 
     // Include tag in searchable fields for database driver compatibility
     // Note: With Meilisearch driver, the tag name would be searchable via the 'tags' field in searchable array
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Programming Guide',
         'description' => 'Learn programming basics',
     ]);
     $book1->tags()->attach($tag1);
 
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'Design Patterns',
         'description' => 'Learn design principles',
     ]);
@@ -235,7 +252,7 @@ test('can search books with all filters using Scout search', function () {
     $tag = Tag::create(['name' => 'programming']);
 
     // Include searchable content in title/description for database driver
-    $book1 = Book::factory()->create([
+    $book1 = createBookWithCopy([
         'title' => 'Laravel Programming Guide by John',
         'publisher' => 'Tech Publisher',
         'description' => 'A comprehensive Laravel programming guide by John Doe',
@@ -243,7 +260,7 @@ test('can search books with all filters using Scout search', function () {
     $book1->authors()->attach($author);
     $book1->tags()->attach($tag);
 
-    $book2 = Book::factory()->create([
+    $book2 = createBookWithCopy([
         'title' => 'React Development',
         'publisher' => 'Web Publisher',
     ]);
@@ -266,7 +283,10 @@ test('can search books with all filters using Scout search', function () {
 });
 
 test('book list is paginated', function () {
-    Book::factory()->count(25)->create();
+    // Create 25 books with valid copies
+    for ($i = 0; $i < 25; $i++) {
+        createBookWithCopy();
+    }
 
     get(route('home'))
         ->assertOk()
@@ -278,8 +298,8 @@ test('book list is paginated', function () {
 });
 
 test('can sort books by title ascending', function () {
-    Book::factory()->create(['title' => 'Zebra Book']);
-    Book::factory()->create(['title' => 'Alpha Book']);
+    createBookWithCopy(['title' => 'Zebra Book']);
+    createBookWithCopy(['title' => 'Alpha Book']);
 
     get(route('home', ['sort' => 'title', 'direction' => 'asc']))
         ->assertOk()
@@ -290,8 +310,8 @@ test('can sort books by title ascending', function () {
 });
 
 test('can sort books by title descending', function () {
-    Book::factory()->create(['title' => 'Zebra Book']);
-    Book::factory()->create(['title' => 'Alpha Book']);
+    createBookWithCopy(['title' => 'Zebra Book']);
+    createBookWithCopy(['title' => 'Alpha Book']);
 
     get(route('home', ['sort' => 'title', 'direction' => 'desc']))
         ->assertOk()
@@ -302,8 +322,8 @@ test('can sort books by title descending', function () {
 });
 
 test('can sort books by created_at', function () {
-    $old = Book::factory()->create(['created_at' => now()->subDays(2)]);
-    $new = Book::factory()->create(['created_at' => now()]);
+    $old = createBookWithCopy(['created_at' => now()->subDays(2)]);
+    $new = createBookWithCopy(['created_at' => now()]);
 
     get(route('home', ['sort' => 'created_at', 'direction' => 'desc']))
         ->assertOk()
@@ -314,7 +334,7 @@ test('can sort books by created_at', function () {
 });
 
 test('search returns empty result when no matches', function () {
-    Book::factory()->create(['title' => 'Laravel Programming']);
+    createBookWithCopy(['title' => 'Laravel Programming']);
 
     get(route('home', ['search' => 'NonExistentBook']))
         ->assertOk()
