@@ -1,5 +1,6 @@
-import { usePage } from '@inertiajs/react';
-import { ChevronsUpDown } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { ChevronsUpDown, LogIn } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,12 +15,30 @@ import {
 import { UserInfo } from '@/components/user-info';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { login } from '@/routes';
 import type { SharedData } from '@/types';
 
 export function NavUser() {
     const { auth } = usePage<SharedData>().props;
     const { state } = useSidebar();
     const isMobile = useIsMobile();
+    const { t } = useLaravelReactI18n();
+
+    // If user is not logged in, show login button
+    if (!auth.user) {
+        return (
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton size="lg" asChild>
+                        <Link href={login()} prefetch>
+                            <LogIn className="mr-2" />
+                            <span>{t('Log In')}</span>
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+        );
+    }
 
     return (
         <SidebarMenu>

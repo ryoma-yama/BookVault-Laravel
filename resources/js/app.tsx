@@ -17,7 +17,7 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
-        const locale = props.initialPage.props.locale || 'ja';
+        const locale = (props.initialPage.props.locale || 'ja') as string;
 
         root.render(
             <StrictMode>
