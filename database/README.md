@@ -88,26 +88,3 @@ Book::factory(100)->create(); // 100冊の書籍を作成
 ```
 
 これにより、テスト実行ごとに新しいデータベースが作成され、テスト終了後に自動的に破棄されます。
-
-## 使用例
-
-```php
-use App\Models\Book;
-use App\Helpers\GoogleBooksHelper;
-
-// 書籍の作成
-$book = Book::create([
-    'google_id' => 'abc123',
-    'isbn_13' => '978-1-234-56789-0',
-    'title' => 'サンプル書籍',
-    'publisher' => 'サンプル出版社',
-    'published_date' => '2024-01-01',
-    'description' => 'これはサンプルの説明です。',
-]);
-
-// カバー画像URLの取得
-$coverUrl = GoogleBooksHelper::getCoverUrl($book->google_id);
-
-// 書籍の検索
-$books = Book::where('title', 'like', '%Laravel%')->get();
-```

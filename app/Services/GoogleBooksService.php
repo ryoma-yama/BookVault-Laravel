@@ -9,29 +9,37 @@ class GoogleBooksService
     private const API_BASE = 'https://www.googleapis.com/books/v1/volumes';
 
     /**
-     * Fetch book information from Google Books API by ISBN
+     * Fetch book information from Google Books API by ISBN.
+     *
+     * This method uses a two-step process:
+     * 1. Search by ISBN to identify the specific Google Books Volume ID.
+     * 2. Fetch the full volume details using that ID.
+     *
+     * Rationale for two steps:
+     * - The 'list' API (Step 1) often returns truncated descriptions.
+     * - Key fields like 'publisher' are frequently missing in the search results
+     *   but present in the detailed 'get' response.
      */
     public function fetchBookInfoByISBN(string $isbn): ?array
     {
         $apiKey = config('services.google_books.api_key');
         $useApiKey = $apiKey && $apiKey !== 'your-google-books-api-key';
 
-        // Step 1: Search by ISBN
-        $searchUrl = self::API_BASE;
+        // Step 1: Search by ISBN to get the Google Books Volume ID
         $searchParams = ['q' => "isbn:{$isbn}"];
         if ($useApiKey) {
             $searchParams['key'] = $apiKey;
         }
 
-        $searchResponse = Http::get($searchUrl, $searchParams);
+        $searchResponse = Http::get(self::API_BASE, $searchParams);
 
         if (! $searchResponse->successful()) {
-            throw new \Exception("Google Books ISBN検索に失敗: {$searchResponse->status()}");
+            throw new \Exception("Google Books ISBN search failed: {$searchResponse->status()}");
         }
 
         $searchData = $searchResponse->json();
 
-        if (! isset($searchData['items']) || empty($searchData['items'])) {
+        if (empty($searchData['items'])) {
             return null;
         }
 
@@ -42,27 +50,23 @@ class GoogleBooksService
         $volumeResponse = Http::get($volumeUrl);
 
         if (! $volumeResponse->successful()) {
-            throw new \Exception("Google Books 詳細取得に失敗: {$volumeResponse->status()}");
+            throw new \Exception("Google Books detail fetch failed: {$volumeResponse->status()}");
         }
 
         $volumeData = $volumeResponse->json();
+        $info = $volumeData['volumeInfo'] ?? null;
 
-        if (! isset($volumeData['volumeInfo'])) {
+        if (! $info) {
             return null;
         }
 
-        $info = $volumeData['volumeInfo'];
-
         // Extract ISBN-13
-        $isbn13 = null;
-        if (isset($info['industryIdentifiers'])) {
-            foreach ($info['industryIdentifiers'] as $identifier) {
-                if ($identifier['type'] === 'ISBN_13') {
-                    $isbn13 = $identifier['identifier'];
-                    break;
-                }
-            }
-        }
+        $isbn13 = collect($info['industryIdentifiers'] ?? [])
+            ->firstWhere('type', 'ISBN_13')['identifier'] ?? null;
+
+        // Ensure image URL uses HTTPS to avoid mixed content issues
+        $thumbnail = $info['imageLinks']['thumbnail'] ?? '';
+        $secureImageUrl = str_replace('http://', 'https://', $thumbnail);
 
         return [
             'google_id' => $googleId,
@@ -72,18 +76,7 @@ class GoogleBooksService
             'publisher' => $info['publisher'] ?? '',
             'published_date' => $info['publishedDate'] ?? '',
             'description' => $info['description'] ?? '',
+            'image_url' => $secureImageUrl,
         ];
-    }
-
-    /**
-     * Get Google Books cover image URL
-     */
-    public function getCoverUrl(?string $googleId): string
-    {
-        if (! $googleId) {
-            return '';
-        }
-
-        return "https://books.google.com/books/content?id={$googleId}&printsec=frontcover&img=1&zoom=1&source=gbs_api";
     }
 }

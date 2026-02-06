@@ -24,19 +24,12 @@ class GoogleBooksController extends Controller
             $bookInfo = $this->googleBooksService->fetchBookInfoByISBN($request->isbn);
 
             if (! $bookInfo) {
-                return response()->json([
-                    'error' => 'Book not found',
-                ], 404);
+                return response()->json(['error' => 'Book not found'], 404);
             }
-
-            // Add cover image URL
-            $bookInfo['image_url'] = $this->googleBooksService->getCoverUrl($bookInfo['google_id']);
 
             return response()->json($bookInfo);
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }
