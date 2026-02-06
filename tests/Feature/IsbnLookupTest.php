@@ -90,7 +90,7 @@ describe('General Search Without ISBN Logic', function () {
             'title' => 'Laravel Programming',
             'description' => 'A book about Laravel',
         ]);
-        
+
         // Add a valid book copy so the book appears in the list
         \App\Models\BookCopy::factory()->create([
             'book_id' => $book->id,

@@ -110,7 +110,6 @@ class BookCopy extends Model
      * A copy is available if it's not discarded and has no outstanding loan.
      *
      * @param  Builder<BookCopy>  $query
-     * @param  int  $bookId
      * @return Builder<BookCopy>
      */
     public function scopeAvailableForBook(Builder $query, int $bookId): Builder

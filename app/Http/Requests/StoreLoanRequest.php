@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use App\Models\BookCopy;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\ValidationException;
 
 class StoreLoanRequest extends FormRequest
 {

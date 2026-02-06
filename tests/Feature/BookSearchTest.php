@@ -17,6 +17,7 @@ function createBookWithCopy(array $attributes = []): Book
         'book_id' => $book->id,
         'discarded_date' => null,
     ]);
+
     return $book;
 }
 

@@ -21,7 +21,7 @@ test('root route displays books index component', function () {
         'description' => 'Test Description',
     ]);
     $book->authors()->attach($author);
-    
+
     // Add a valid book copy so the book appears in the list
     \App\Models\BookCopy::factory()->create([
         'book_id' => $book->id,

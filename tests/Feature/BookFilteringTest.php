@@ -94,7 +94,7 @@ test('book searchable array includes has_valid_copies flag', function () {
     if (config('scout.driver') === 'database') {
         $this->markTestSkipped('Database driver does not support computed fields in search index');
     }
-    
+
     // Create a book with valid copy
     $bookWithValidCopy = Book::factory()->create();
     BookCopy::factory()->create([

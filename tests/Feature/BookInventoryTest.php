@@ -7,7 +7,7 @@ use App\Models\User;
 
 test('book show page includes inventory status', function () {
     $book = Book::factory()->create();
-    
+
     // Create 3 copies
     $copy1 = BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
     $copy2 = BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
@@ -38,7 +38,7 @@ test('book show page includes inventory status', function () {
 
 test('book show page calculates available copies correctly', function () {
     $book = Book::factory()->create();
-    
+
     // Create 4 valid copies
     $copy1 = BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
     $copy2 = BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
@@ -46,7 +46,7 @@ test('book show page calculates available copies correctly', function () {
     $copy4 = BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
 
     $user = User::factory()->create();
-    
+
     // Borrow copy1 (not returned)
     Loan::factory()->create([
         'book_copy_id' => $copy1->id,

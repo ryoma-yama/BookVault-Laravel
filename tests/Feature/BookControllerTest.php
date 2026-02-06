@@ -22,7 +22,7 @@ test('books index displays list of books', function () {
         'description' => 'Test Description',
     ]);
     $book->authors()->attach($author);
-    
+
     // Add a valid book copy
     BookCopy::factory()->create([
         'book_id' => $book->id,

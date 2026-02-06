@@ -62,7 +62,7 @@ it('handles availability errors for api requests', function () {
     $user = User::factory()->create();
     $book = Book::factory()->create();
     $bookCopy = BookCopy::factory()->create(['book_id' => $book->id]);
-    
+
     // Make copy unavailable
     \App\Models\Loan::factory()->create(['book_copy_id' => $bookCopy->id]);
 
@@ -79,7 +79,7 @@ it('handles availability errors for web requests', function () {
     $user = User::factory()->create();
     $book = Book::factory()->create();
     $bookCopy = BookCopy::factory()->create(['book_id' => $book->id]);
-    
+
     // Make copy unavailable
     \App\Models\Loan::factory()->create(['book_copy_id' => $bookCopy->id]);
 
