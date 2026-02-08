@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Concerns\SyncsRelatedEntities;
+use App\Actions\Book\StoreBook;
+use App\Actions\Book\UpdateBook;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BookController extends Controller
 {
-    use SyncsRelatedEntities;
-
     /**
      * Display a listing of books.
      */
@@ -37,35 +37,11 @@ class BookController extends Controller
     /**
      * Store a newly created book in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request, StoreBook $action)
     {
-        $validated = $request->validate([
-            'isbn_13' => 'required|string|size:13|unique:books,isbn_13',
-            'title' => 'required|string|max:100',
-            'publisher' => 'required|string|max:100',
-            'published_date' => 'required|string',
-            'description' => 'required|string',
-            'google_id' => 'nullable|string|max:100',
-            'image_url' => 'nullable|string',
-            'authors' => 'nullable|array',
-            'authors.*' => 'string|max:100',
-        ]);
+        $action->execute($request->validated());
 
-        $book = Book::create([
-            'google_id' => $validated['google_id'] ?? null,
-            'isbn_13' => $validated['isbn_13'],
-            'title' => $validated['title'],
-            'publisher' => $validated['publisher'],
-            'published_date' => $validated['published_date'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-        ]);
-
-        if (! empty($validated['authors'])) {
-            $this->attachAuthorsByName($book, $validated['authors']);
-        }
-
-        return redirect('/admin/books');
+        return to_route('admin.books.index');
     }
 
     /**
@@ -83,35 +59,11 @@ class BookController extends Controller
     /**
      * Update the specified book in storage.
      */
-    public function update(Request $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book, UpdateBook $action)
     {
-        $validated = $request->validate([
-            'isbn_13' => 'required|string|size:13|unique:books,isbn_13,'.$book->id,
-            'title' => 'required|string|max:100',
-            'publisher' => 'required|string|max:100',
-            'published_date' => 'required|string',
-            'description' => 'required|string',
-            'google_id' => 'nullable|string|max:100',
-            'image_url' => 'nullable|string',
-            'authors' => 'nullable|array',
-            'authors.*' => 'string|max:100',
-        ]);
+        $action->execute($book, $request->validated());
 
-        $book->update([
-            'google_id' => $validated['google_id'] ?? null,
-            'isbn_13' => $validated['isbn_13'],
-            'title' => $validated['title'],
-            'publisher' => $validated['publisher'],
-            'published_date' => $validated['published_date'],
-            'description' => $validated['description'],
-            'image_url' => $validated['image_url'] ?? null,
-        ]);
-
-        if (isset($validated['authors'])) {
-            $this->attachAuthorsByName($book, $validated['authors']);
-        }
-
-        return redirect('/admin/books');
+        return to_route('admin.books.index');
     }
 
     /**
@@ -121,6 +73,6 @@ class BookController extends Controller
     {
         $book->delete();
 
-        return redirect('/admin/books');
+        return to_route('admin.books.index');
     }
 }
