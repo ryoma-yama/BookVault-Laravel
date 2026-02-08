@@ -1,7 +1,15 @@
 import { Head, router } from '@inertiajs/react';
+import {
+    type ColumnDef,
+    flexRender,
+    getCoreRowModel,
+    getSortedRowModel,
+    type SortingState,
+    useReactTable,
+} from '@tanstack/react-table';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ArrowUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,7 +47,7 @@ interface Loan {
     user_id: number;
     borrowed_date: string;
     returned_date: string | null;
-    bookCopy: BookCopy;
+    book_copy: BookCopy;
     user: User;
 }
 
@@ -47,37 +55,16 @@ interface Props {
     loans: Loan[];
 }
 
-type SortField = 'title' | 'user' | 'borrowed_date' | 'days_elapsed' | 'status';
-type SortOrder = 'asc' | 'desc';
-
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin', href: '/admin' },
     { title: 'Loan Management', href: '/admin/loans' },
 ];
 
-interface SortButtonProps {
-    field: SortField;
-    children: React.ReactNode;
-    onClick: (field: SortField) => void;
-}
-
-function SortButton({ field, children, onClick }: SortButtonProps) {
-    return (
-        <Button
-            variant="ghost"
-            onClick={() => onClick(field)}
-            className="h-auto p-0 font-semibold hover:bg-transparent"
-        >
-            {children}
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-    );
-}
-
 export default function AdminLoansIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
-    const [sortField, setSortField] = useState<SortField>('borrowed_date');
-    const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+    const [sorting, setSorting] = useState<SortingState>([
+        { id: 'borrowed_date', desc: true },
+    ]);
 
     const calculateDaysElapsed = (borrowedDate: string): number => {
         const borrowed = new Date(borrowedDate);
@@ -85,41 +72,6 @@ export default function AdminLoansIndex({ loans }: Props) {
         const diff = now.getTime() - borrowed.getTime();
         return Math.floor(diff / (1000 * 60 * 60 * 24));
     };
-
-    const handleSort = (field: SortField) => {
-        if (sortField === field) {
-            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortOrder('asc');
-        }
-    };
-
-    const sortedLoans = [...loans].sort((a, b) => {
-        let comparison = 0;
-
-        if (sortField === 'title') {
-            comparison = a.bookCopy.book.title.localeCompare(
-                b.bookCopy.book.title,
-            );
-        } else if (sortField === 'user') {
-            comparison = a.user.name.localeCompare(b.user.name);
-        } else if (sortField === 'borrowed_date') {
-            comparison =
-                new Date(a.borrowed_date).getTime() -
-                new Date(b.borrowed_date).getTime();
-        } else if (sortField === 'days_elapsed') {
-            comparison =
-                calculateDaysElapsed(a.borrowed_date) -
-                calculateDaysElapsed(b.borrowed_date);
-        } else if (sortField === 'status') {
-            const aStatus = a.returned_date ? 'returned' : 'loaned';
-            const bStatus = b.returned_date ? 'returned' : 'loaned';
-            comparison = aStatus.localeCompare(bStatus);
-        }
-
-        return sortOrder === 'asc' ? comparison : -comparison;
-    });
 
     const handleReturn = (loanId: number) => {
         if (confirm(t('Are you sure you want to return this book?'))) {
@@ -136,6 +88,154 @@ export default function AdminLoansIndex({ loans }: Props) {
         }
     };
 
+    const columns = useMemo<ColumnDef<Loan>[]>(
+        () => [
+            {
+                accessorKey: 'book_copy.book.title',
+                id: 'title',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(column.getIsSorted() === 'asc')
+                            }
+                            className="h-auto p-0 font-semibold hover:bg-transparent"
+                        >
+                            {t('Title')}
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    );
+                },
+                cell: ({ row }) => (
+                    <div className="font-medium">
+                        {row.original.book_copy.book.title}
+                    </div>
+                ),
+            },
+            {
+                accessorKey: 'user.name',
+                id: 'user',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(column.getIsSorted() === 'asc')
+                            }
+                            className="h-auto p-0 font-semibold hover:bg-transparent"
+                        >
+                            {t('User')}
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    );
+                },
+                cell: ({ row }) => row.original.user.name,
+            },
+            {
+                accessorKey: 'borrowed_date',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(column.getIsSorted() === 'asc')
+                            }
+                            className="h-auto p-0 font-semibold hover:bg-transparent"
+                        >
+                            {t('Borrowed Date')}
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    );
+                },
+                cell: ({ row }) => {
+                    return new Date(
+                        row.getValue('borrowed_date'),
+                    ).toLocaleDateString();
+                },
+            },
+            {
+                id: 'days_elapsed',
+                accessorFn: (row) => calculateDaysElapsed(row.borrowed_date),
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(column.getIsSorted() === 'asc')
+                            }
+                            className="h-auto p-0 font-semibold hover:bg-transparent"
+                        >
+                            {t('Loan Period')}
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    );
+                },
+                cell: ({ row }) => {
+                    const days = calculateDaysElapsed(row.original.borrowed_date);
+                    return t(':count days', { count: days.toString() });
+                },
+            },
+            {
+                accessorKey: 'returned_date',
+                id: 'status',
+                header: ({ column }) => {
+                    return (
+                        <Button
+                            variant="ghost"
+                            onClick={() =>
+                                column.toggleSorting(column.getIsSorted() === 'asc')
+                            }
+                            className="h-auto p-0 font-semibold hover:bg-transparent"
+                        >
+                            {t('Status')}
+                            <ArrowUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    );
+                },
+                cell: ({ row }) => {
+                    const returned = row.getValue('returned_date');
+                    return (
+                        <Badge variant={returned ? 'secondary' : 'default'}>
+                            {returned ? t('Returned') : t('Loaned')}
+                        </Badge>
+                    );
+                },
+            },
+            {
+                id: 'actions',
+                header: () => t('Actions'),
+                cell: ({ row }) => {
+                    const loan = row.original;
+                    if (loan.returned_date) {
+                        return null;
+                    }
+                    return (
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleReturn(loan.id)}
+                        >
+                            {t('Return')}
+                        </Button>
+                    );
+                },
+            },
+        ],
+        [t],
+    );
+
+    const table = useReactTable({
+        data: loans,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        onSortingChange: setSorting,
+        state: {
+            sorting,
+        },
+    });
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Loan Management')} />
@@ -146,104 +246,52 @@ export default function AdminLoansIndex({ loans }: Props) {
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>
-                                    <SortButton
-                                        field="title"
-                                        onClick={handleSort}
-                                    >
-                                        {t('Title')}
-                                    </SortButton>
-                                </TableHead>
-                                <TableHead>
-                                    <SortButton field="user" onClick={handleSort}>
-                                        {t('User')}
-                                    </SortButton>
-                                </TableHead>
-                                <TableHead>
-                                    <SortButton
-                                        field="borrowed_date"
-                                        onClick={handleSort}
-                                    >
-                                        {t('Borrowed Date')}
-                                    </SortButton>
-                                </TableHead>
-                                <TableHead>
-                                    <SortButton
-                                        field="days_elapsed"
-                                        onClick={handleSort}
-                                    >
-                                        {t('Loan Period')}
-                                    </SortButton>
-                                </TableHead>
-                                <TableHead>
-                                    <SortButton
-                                        field="status"
-                                        onClick={handleSort}
-                                    >
-                                        {t('Status')}
-                                    </SortButton>
-                                </TableHead>
-                                <TableHead>{t('Actions')}</TableHead>
-                            </TableRow>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => {
+                                        return (
+                                            <TableHead key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                          header.column.columnDef
+                                                              .header,
+                                                          header.getContext(),
+                                                      )}
+                                            </TableHead>
+                                        );
+                                    })}
+                                </TableRow>
+                            ))}
                         </TableHeader>
                         <TableBody>
-                            {sortedLoans.length === 0 ? (
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row) => (
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={
+                                            row.getIsSelected() && 'selected'
+                                        }
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext(),
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))
+                            ) : (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={6}
-                                        className="text-center text-muted-foreground"
+                                        colSpan={columns.length}
+                                        className="h-24 text-center"
                                     >
                                         {t('No loans found')}
                                     </TableCell>
                                 </TableRow>
-                            ) : (
-                                sortedLoans.map((loan) => (
-                                    <TableRow key={loan.id}>
-                                        <TableCell className="font-medium">
-                                            {loan.bookCopy.book.title}
-                                        </TableCell>
-                                        <TableCell>{loan.user.name}</TableCell>
-                                        <TableCell>
-                                            {new Date(
-                                                loan.borrowed_date,
-                                            ).toLocaleDateString()}
-                                        </TableCell>
-                                        <TableCell>
-                                            {t(':count days', {
-                                                count: calculateDaysElapsed(
-                                                    loan.borrowed_date,
-                                                ).toString(),
-                                            })}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                variant={
-                                                    loan.returned_date
-                                                        ? 'secondary'
-                                                        : 'default'
-                                                }
-                                            >
-                                                {loan.returned_date
-                                                    ? t('Returned')
-                                                    : t('Loaned')}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            {!loan.returned_date && (
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() =>
-                                                        handleReturn(loan.id)
-                                                    }
-                                                >
-                                                    {t('Return')}
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))
                             )}
                         </TableBody>
                     </Table>
