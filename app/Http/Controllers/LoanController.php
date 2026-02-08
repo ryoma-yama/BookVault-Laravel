@@ -59,7 +59,11 @@ class LoanController extends Controller
      */
     public function update(Request $request, Loan $loan)
     {
-        if (! $this->isOwnedByUser($loan, $request)) {
+        // Allow admins to return any loan (proxy return)
+        $isAdmin = $request->user()->isAdmin();
+        $isOwner = $this->isOwnedByUser($loan, $request);
+
+        if (! $isAdmin && ! $isOwner) {
             return $this->unauthorizedResponse();
         }
 
