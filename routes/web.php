@@ -40,8 +40,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
 
     // Google Books API
-    Route::post('/api/google-books/check-isbn', [\App\Http\Controllers\Api\GoogleBooksController::class, 'checkIsbn'])
-        ->name('api.google-books.check-isbn');
     Route::post('/api/google-books/search', [\App\Http\Controllers\Api\GoogleBooksController::class, 'searchByIsbn'])
         ->name('api.google-books.search');
 

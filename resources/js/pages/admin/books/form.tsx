@@ -98,19 +98,7 @@ export default function AdminBookForm({ book }: Props) {
         setSearchError(null);
 
         try {
-            // First, check if ISBN already exists in database (only for create mode)
-            if (!isEditing) {
-                const checkResponse = await axios.post(
-                    '/admin/api/google-books/check-isbn',
-                    {
-                        isbn: data.isbn_13,
-                    },
-                );
-
-                // If we get here, ISBN doesn't exist (200 response)
-                // Continue to Google Books API
-            }
-
+            // Call Google Books API - it will check for duplicates first
             const response = await axios.post(
                 '/admin/api/google-books/search',
                 {
@@ -141,7 +129,7 @@ export default function AdminBookForm({ book }: Props) {
             setIsSearching(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data.isbn_13, setData, isEditing, t]);
+    }, [data.isbn_13, setData, t]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
