@@ -27,11 +27,11 @@ class UpdateBookRequest extends FormRequest
 
         return [
             'google_id' => ['nullable', 'string', 'max:100', 'unique:books,google_id,'.$bookId],
-            'isbn_13' => ['required', 'string', 'size:13', 'unique:books,isbn_13,'.$bookId],
-            'title' => ['required', 'string', 'max:100'],
-            'publisher' => ['required', 'string', 'max:100'],
-            'published_date' => ['required', 'date'],
-            'description' => ['required', 'string'],
+            'isbn_13' => ['sometimes', 'required', 'string', 'size:13', 'unique:books,isbn_13,'.$bookId],
+            'title' => ['sometimes', 'required', 'string', 'max:100'],
+            'publisher' => ['sometimes', 'required', 'string', 'max:100'],
+            'published_date' => ['sometimes', 'required', 'date'],
+            'description' => ['sometimes', 'required', 'string'],
             'image_url' => ['nullable', 'string'],
             'authors' => ['nullable', 'array'],
             'authors.*' => ['string', 'max:100'],
