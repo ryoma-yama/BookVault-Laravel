@@ -50,6 +50,6 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return to_route('admin.users.index')->with('success', 'User role updated successfully.');
+        return back()->with('success', 'User role updated successfully.');
     }
 }
