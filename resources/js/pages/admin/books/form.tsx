@@ -24,6 +24,17 @@ interface Author {
     name: string;
 }
 
+interface Tag {
+    id: number;
+    name: string;
+}
+
+interface BookCopy {
+    id: number | null;
+    acquired_date?: string;
+    discarded_date?: string | null;
+}
+
 interface Book {
     id: number;
     isbn_13: string;
@@ -34,6 +45,8 @@ interface Book {
     google_id?: string;
     image_url?: string;
     authors: Author[];
+    tags?: Tag[];
+    copies?: BookCopy[];
 }
 
 interface Props {
@@ -71,6 +84,8 @@ export default function AdminBookForm({ book }: Props) {
         google_id: book?.google_id || '',
         image_url: book?.image_url || '',
         authors: book?.authors.map((a) => a.name) || [''],
+        tags: book?.tags?.map((t) => t.name) || [],
+        book_copies: book?.copies?.map((c) => ({ id: c.id })) || [],
     });
 
     const handleSearchByIsbn = useCallback(async () => {
@@ -128,6 +143,36 @@ export default function AdminBookForm({ book }: Props) {
         const newAuthors = [...data.authors];
         newAuthors[index] = value;
         setData('authors', newAuthors);
+    };
+
+    // Tag handlers
+    const handleAddTag = () => {
+        setData('tags', [...data.tags, '']);
+    };
+
+    const handleRemoveTag = (index: number) => {
+        setData(
+            'tags',
+            data.tags.filter((_, i) => i !== index),
+        );
+    };
+
+    const handleTagChange = (index: number, value: string) => {
+        const newTags = [...data.tags];
+        newTags[index] = value;
+        setData('tags', newTags);
+    };
+
+    // BookCopy handlers
+    const handleAddBookCopy = () => {
+        setData('book_copies', [...data.book_copies, { id: null }]);
+    };
+
+    const handleRemoveBookCopy = (index: number) => {
+        setData(
+            'book_copies',
+            data.book_copies.filter((_, i) => i !== index),
+        );
     };
 
     const handleIsbnScan = (isbn: string) => {
@@ -318,6 +363,95 @@ export default function AdminBookForm({ book }: Props) {
                             </div>
                         ))}
                     </div>
+
+                    {/* Tags Section */}
+                    <div>
+                        <div className="mb-2 flex items-center justify-between">
+                            <Label>Tags</Label>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleAddTag}
+                            >
+                                Add Tag
+                            </Button>
+                        </div>
+                        {data.tags.length === 0 && (
+                            <p className="text-sm text-muted-foreground">
+                                No tags added yet. Click "Add Tag" to add one.
+                            </p>
+                        )}
+                        {data.tags.map((tag, index) => (
+                            <div key={index} className="mb-2 flex gap-2">
+                                <Input
+                                    type="text"
+                                    value={tag}
+                                    onChange={(e) =>
+                                        handleTagChange(index, e.target.value)
+                                    }
+                                    placeholder="Tag name"
+                                    maxLength={50}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => handleRemoveTag(index)}
+                                >
+                                    Remove
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* BookCopies Section - Only show in edit mode */}
+                    {isEditing && (
+                        <div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <Label>Book Copies (Inventory)</Label>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleAddBookCopy}
+                                >
+                                    Add Copy
+                                </Button>
+                            </div>
+                            <p className="mb-2 text-sm text-muted-foreground">
+                                Manage physical copies of this book. New copies
+                                will be acquired today. Removing a copy will
+                                mark it as discarded.
+                            </p>
+                            {data.book_copies.length === 0 && (
+                                <p className="text-sm text-muted-foreground">
+                                    No active copies. Click "Add Copy" to add
+                                    one.
+                                </p>
+                            )}
+                            {data.book_copies.map((copy, index) => (
+                                <div key={index} className="mb-2 flex gap-2">
+                                    <Input
+                                        type="text"
+                                        value={
+                                            copy.id
+                                                ? `Copy #${copy.id}`
+                                                : 'New Copy (will be acquired today)'
+                                        }
+                                        disabled
+                                        className="flex-1"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        onClick={() =>
+                                            handleRemoveBookCopy(index)
+                                        }
+                                    >
+                                        {copy.id ? 'Discard' : 'Remove'}
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
 
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
