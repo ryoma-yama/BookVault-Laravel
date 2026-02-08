@@ -53,11 +53,6 @@ class BookCopy extends Model
         return $this->hasMany(Loan::class);
     }
 
-    public function reservations(): HasMany
-    {
-        return $this->hasMany(Reservation::class);
-    }
-
     /**
      * Check if the copy is available for loan.
      * A copy is available when it's not discarded and has no outstanding loan.

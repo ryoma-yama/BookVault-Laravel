@@ -367,5 +367,6 @@
   ":count days": ":count days",
   "Loaned": "Loaned",
   "No loans found": "No loans found",
-  "Return Book": "Return Book"
+  "Return Book": "Return Book",
+  "Currently borrowed by": "Currently borrowed by"
 }

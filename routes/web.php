@@ -9,7 +9,6 @@ use App\Http\Controllers\BorrowedController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 // Language route for laravel-react-i18n
@@ -24,11 +23,10 @@ Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/books/isbn/{isbn}', [BookController::class, 'findByIsbn'])->name('books.isbn');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
-// Loan and reservation routes (require authentication)
+// Loan routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('borrowed', [BorrowedController::class, 'index'])->name('borrowed.index');
     Route::apiResource('loans', LoanController::class);
-    Route::apiResource('reservations', ReservationController::class);
 });
 
 // Admin routes

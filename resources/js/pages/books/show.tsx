@@ -34,6 +34,14 @@ interface InventoryStatus {
     available_count: number;
 }
 
+interface CurrentLoan {
+    user: {
+        id: number;
+        name: string;
+    };
+    borrowed_date: string; // Format: Y/m/d
+}
+
 interface Book {
     id: number;
     isbn_13: string;
@@ -45,6 +53,7 @@ interface Book {
     authors: Author[];
     tags: Tag[];
     inventory_status: InventoryStatus;
+    current_loans: CurrentLoan[];
 }
 
 interface Props {
@@ -52,7 +61,7 @@ interface Props {
 }
 
 export default function BookShow({ book }: Props) {
-    const { t } = useLaravelReactI18n();
+    const { t, currentLocale } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
     const isAuthenticated = !!auth.user;
     const canBorrow = book.inventory_status.available_count > 0;
@@ -72,6 +81,14 @@ export default function BookShow({ book }: Props) {
             href: `/books/${book.id}`,
         },
     ];
+
+    // Format loan information based on locale
+    const formatLoanInfo = (loan: CurrentLoan) => {
+        if (currentLocale() === 'ja') {
+            return `${loan.user.name} / ${loan.borrowed_date} 〜`;
+        }
+        return `${loan.user.name} / since ${loan.borrowed_date}`;
+    };
 
     const handleBorrowClick = () => {
         if (!isAuthenticated) {
@@ -172,6 +189,21 @@ export default function BookShow({ book }: Props) {
                                             count: book.inventory_status.borrowed_count.toString(),
                                         })}
                                     </p>
+                                )}
+                                {book.current_loans.length > 0 && (
+                                    <div className="mt-3 space-y-1 border-t pt-2">
+                                        <p className="font-medium text-foreground">
+                                            {t('Currently borrowed by')}:
+                                        </p>
+                                        {book.current_loans.map((loan, index) => (
+                                            <p
+                                                key={index}
+                                                className="text-muted-foreground"
+                                            >
+                                                {formatLoanInfo(loan)}
+                                            </p>
+                                        ))}
+                                    </div>
                                 )}
                             </div>
                         </div>

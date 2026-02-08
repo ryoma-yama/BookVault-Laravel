@@ -367,5 +367,6 @@
   ":count days": ":count日",
   "Loaned": "貸出中",
   "No loans found": "貸出記録がありません",
-  "Return Book": "本を返却"
+  "Return Book": "本を返却",
+  "Currently borrowed by": "貸出中"
 }

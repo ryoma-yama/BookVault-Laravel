@@ -3,7 +3,6 @@
 use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Loan;
-use App\Models\Reservation;
 
 it('can create a book copy', function () {
     $book = Book::factory()->create();
@@ -30,14 +29,6 @@ it('has many loans', function () {
 
     expect($bookCopy->loans)->toHaveCount(3)
         ->and($bookCopy->loans->first())->toBeInstanceOf(Loan::class);
-});
-
-it('has many reservations', function () {
-    $bookCopy = BookCopy::factory()->create();
-    Reservation::factory()->count(2)->create(['book_copy_id' => $bookCopy->id]);
-
-    expect($bookCopy->reservations)->toHaveCount(2)
-        ->and($bookCopy->reservations->first())->toBeInstanceOf(Reservation::class);
 });
 
 it('is available when not loaned and not discarded', function () {
