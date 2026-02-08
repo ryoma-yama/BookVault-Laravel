@@ -81,9 +81,9 @@ it('admin can return a users loan via proxy', function () {
 
     expect($loan->returned_date)->toBeNull();
 
-    $response = $this->actingAs($admin)->putJson("/loans/{$loan->id}");
+    $response = $this->actingAs($admin)->put("/loans/{$loan->id}");
 
-    $response->assertSuccessful();
+    $response->assertRedirect();
 
     expect($loan->fresh()->returned_date)->not->toBeNull();
 });

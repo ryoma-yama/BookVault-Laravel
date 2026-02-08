@@ -144,7 +144,7 @@ export default function BorrowedIndex({ loans }: Props) {
                     );
                 },
                 cell: ({ row }) => {
-                    const returned = row.getValue('returned_date');
+                    const returned = row.original.returned_date;
                     return (
                         <Badge variant={returned ? 'secondary' : 'default'}>
                             {returned ? t('Returned') : t('Borrowed')}

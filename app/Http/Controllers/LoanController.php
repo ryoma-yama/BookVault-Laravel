@@ -75,7 +75,7 @@ class LoanController extends Controller
 
         $loan->returnBook();
 
-        return response()->json($loan->fresh()->load(['bookCopy.book', 'user']));
+        return back();
     }
 
     /**
