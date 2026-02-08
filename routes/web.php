@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\BookCopyController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\LoanController as AdminLoanController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BorrowedController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LocaleController;
@@ -24,6 +26,7 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 
 // Loan and reservation routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('borrowed', [BorrowedController::class, 'index'])->name('borrowed.index');
     Route::apiResource('loans', LoanController::class);
     Route::apiResource('reservations', ReservationController::class);
 });
@@ -33,6 +36,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+
+    Route::get('loans', [AdminLoanController::class, 'index'])->name('loans.index');
 
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
 

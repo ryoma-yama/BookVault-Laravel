@@ -354,5 +354,18 @@
   "Borrow this book?": "この本を借りますか？",
   "Are you sure you want to borrow this book?": "本当にこの本を借りますか？",
   "Book borrowed successfully!": "本を借りました！",
-  "This book is not available for borrowing.": "この本は現在借りられません。"
+  "This book is not available for borrowing.": "この本は現在借りられません。",
+  "Borrowed Books": "借りた本",
+  "Borrowed Date": "借りた日",
+  "Borrowed": "借りている",
+  "Returned": "返却済み",
+  "Return": "返却する",
+  "Are you sure you want to return this book?": "本当にこの本を返却しますか？",
+  "No borrowed books": "借りた本はありません",
+  "Loan Management": "貸出管理",
+  "User": "利用者",
+  "Loan Period": "貸出期間",
+  ":count days": ":count日",
+  "Loaned": "貸出中",
+  "No loans found": "貸出記録がありません"
 }

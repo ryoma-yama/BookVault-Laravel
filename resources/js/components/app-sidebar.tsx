@@ -1,6 +1,12 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { BookOpen, Library, Users } from 'lucide-react';
+import {
+    BookCheck,
+    BookOpen,
+    ClipboardList,
+    Library,
+    Users,
+} from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -16,6 +22,7 @@ import {
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { home } from '@/routes';
 import admin from '@/routes/admin';
+import borrowed from '@/routes/borrowed';
 import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 
@@ -31,6 +38,12 @@ export function AppSidebar() {
             href: home(),
             icon: Library,
             isActive: isCurrentUrl(home()),
+        },
+        {
+            title: t('Borrowed Books'),
+            href: borrowed.index(),
+            icon: BookCheck,
+            isActive: isCurrentUrl(borrowed.index()),
         },
     ];
 
@@ -53,6 +66,12 @@ export function AppSidebar() {
             href: admin.users.index(),
             icon: Users,
             isActive: isCurrentUrl(admin.users.index()),
+        },
+        {
+            title: t('Loan Management'),
+            href: admin.loans.index(),
+            icon: ClipboardList,
+            isActive: isCurrentUrl(admin.loans.index()),
         },
     ];
 
