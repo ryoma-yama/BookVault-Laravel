@@ -75,6 +75,12 @@ class LoanController extends Controller
 
         $loan->returnBook();
 
+        // For JSON requests (API), return the updated loan
+        if ($request->wantsJson()) {
+            return response()->json($loan->fresh()->load(['bookCopy.book', 'user']));
+        }
+
+        // For Inertia requests, redirect back
         return back();
     }
 
