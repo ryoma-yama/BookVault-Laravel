@@ -118,16 +118,6 @@ return new class extends Migration
             $table->dateTime('created_at')->nullable();
         });
 
-        Schema::create('reservations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('book_copy_id');
-            $table->integer('user_id');
-            $table->dateTime('reserved_at');
-            $table->boolean('fulfilled')->default(false);
-            $table->dateTime('created_at')->nullable();
-            $table->dateTime('updated_at')->nullable();
-        });
-
         Schema::create('reviews', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('book_id');
@@ -189,11 +179,6 @@ return new class extends Migration
             $table->foreign(['book_copy_id'], null)->references(['id'])->on('book_copies')->onUpdate('no action')->onDelete('cascade');
         });
 
-        Schema::table('reservations', function (Blueprint $table) {
-            $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
-            $table->foreign(['book_copy_id'], null)->references(['id'])->on('book_copies')->onUpdate('no action')->onDelete('cascade');
-        });
-
         Schema::table('reviews', function (Blueprint $table) {
             $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
             $table->foreign(['book_id'], null)->references(['id'])->on('books')->onUpdate('no action')->onDelete('cascade');
@@ -206,11 +191,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            $table->dropForeign();
-            $table->dropForeign();
-        });
-
-        Schema::table('reservations', function (Blueprint $table) {
             $table->dropForeign();
             $table->dropForeign();
         });
@@ -241,8 +221,6 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
 
         Schema::dropIfExists('reviews');
-
-        Schema::dropIfExists('reservations');
 
         Schema::dropIfExists('password_reset_tokens');
 

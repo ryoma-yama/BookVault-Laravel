@@ -105,6 +105,21 @@ class BookController extends Controller
         $borrowedCount = $activeCopies->filter(fn ($copy) => $copy->hasOutstandingLoan())->count();
         $availableCount = $totalCopies - $borrowedCount;
 
+        // Get current loans (outstanding loans for this book)
+        $currentLoans = [];
+        foreach ($activeCopies as $copy) {
+            $outstandingLoan = $copy->loans()->outstanding()->with('user:id,name')->first();
+            if ($outstandingLoan) {
+                $currentLoans[] = [
+                    'user' => [
+                        'id' => $outstandingLoan->user->id,
+                        'name' => $outstandingLoan->user->name,
+                    ],
+                    'borrowed_date' => $outstandingLoan->borrowed_date->format('Y/m/d'),
+                ];
+            }
+        }
+
         return Inertia::render('books/show', [
             'book' => array_merge($book->toArray(), [
                 'inventory_status' => [
@@ -112,6 +127,7 @@ class BookController extends Controller
                     'borrowed_count' => $borrowedCount,
                     'available_count' => $availableCount,
                 ],
+                'current_loans' => $currentLoans,
             ]),
         ]);
     }
