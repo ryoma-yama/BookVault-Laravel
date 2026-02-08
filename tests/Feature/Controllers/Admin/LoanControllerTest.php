@@ -46,10 +46,10 @@ it('displays all loans ordered by borrowed date descending', function () {
     $response = $this->actingAs($admin)->get('/admin/loans');
 
     $response->assertSuccessful();
-    
+
     $loans = $response->viewData('page')['props']['loans'];
     expect($loans)->toHaveCount(3);
-    
+
     // Verify order: most recent first
     expect($loans[0]['id'])->toBe($loan2->id);
     expect($loans[1]['id'])->toBe($loan1->id);
@@ -64,7 +64,7 @@ it('includes book copy and user relationship data', function () {
     $response = $this->actingAs($admin)->get('/admin/loans');
 
     $response->assertSuccessful();
-    
+
     $loans = $response->viewData('page')['props']['loans'];
     expect($loans[0]['book_copy'])->not->toBeNull();
     expect($loans[0]['book_copy']['book'])->not->toBeNull();

@@ -36,10 +36,10 @@ it('displays users borrowed books ordered by borrowed date descending', function
     $response = $this->actingAs($user)->get('/borrowed');
 
     $response->assertSuccessful();
-    
+
     $loans = $response->viewData('page')['props']['loans'];
     expect($loans)->toHaveCount(3);
-    
+
     // Verify order: most recent first
     expect($loans[0]['id'])->toBe($loan2->id);
     expect($loans[1]['id'])->toBe($loan1->id);
@@ -53,7 +53,7 @@ it('includes book and user relationship data', function () {
     $response = $this->actingAs($user)->get('/borrowed');
 
     $response->assertSuccessful();
-    
+
     $loans = $response->viewData('page')['props']['loans'];
     expect($loans[0]['book_copy'])->not->toBeNull();
     expect($loans[0]['book_copy']['book'])->not->toBeNull();
@@ -66,7 +66,7 @@ it('displays both active and returned loans', function () {
         'user_id' => $user->id,
         'returned_date' => null,
     ]);
-    
+
     $returnedLoan = Loan::factory()->returned()->create([
         'user_id' => $user->id,
     ]);
@@ -74,7 +74,7 @@ it('displays both active and returned loans', function () {
     $response = $this->actingAs($user)->get('/borrowed');
 
     $response->assertSuccessful();
-    
+
     $loans = $response->viewData('page')['props']['loans'];
     expect($loans)->toHaveCount(2);
 });

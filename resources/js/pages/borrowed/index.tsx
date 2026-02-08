@@ -47,6 +47,25 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Borrowed Books', href: '/borrowed' },
 ];
 
+interface SortButtonProps {
+    field: SortField;
+    children: React.ReactNode;
+    onClick: (field: SortField) => void;
+}
+
+function SortButton({ field, children, onClick }: SortButtonProps) {
+    return (
+        <Button
+            variant="ghost"
+            onClick={() => onClick(field)}
+            className="h-auto p-0 font-semibold hover:bg-transparent"
+        >
+            {children}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+    );
+}
+
 export default function BorrowedIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
     const [sortField, setSortField] = useState<SortField>('borrowed_date');
@@ -97,23 +116,6 @@ export default function BorrowedIndex({ loans }: Props) {
         }
     };
 
-    const SortButton = ({
-        field,
-        children,
-    }: {
-        field: SortField;
-        children: React.ReactNode;
-    }) => (
-        <Button
-            variant="ghost"
-            onClick={() => handleSort(field)}
-            className="h-auto p-0 font-semibold hover:bg-transparent"
-        >
-            {children}
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-    );
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('Borrowed Books')} />
@@ -126,17 +128,26 @@ export default function BorrowedIndex({ loans }: Props) {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>
-                                    <SortButton field="title">
+                                    <SortButton
+                                        field="title"
+                                        onClick={handleSort}
+                                    >
                                         {t('Title')}
                                     </SortButton>
                                 </TableHead>
                                 <TableHead>
-                                    <SortButton field="borrowed_date">
+                                    <SortButton
+                                        field="borrowed_date"
+                                        onClick={handleSort}
+                                    >
                                         {t('Borrowed Date')}
                                     </SortButton>
                                 </TableHead>
                                 <TableHead>
-                                    <SortButton field="status">
+                                    <SortButton
+                                        field="status"
+                                        onClick={handleSort}
+                                    >
                                         {t('Status')}
                                     </SortButton>
                                 </TableHead>
