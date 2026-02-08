@@ -363,9 +363,9 @@
   "Are you sure you want to return this book?": "Are you sure you want to return this book?",
   "No borrowed books": "No borrowed books",
   "Loan Management": "Loan Management",
-  "User": "User",
   "Loan Period": "Loan Period",
   ":count days": ":count days",
   "Loaned": "Loaned",
-  "No loans found": "No loans found"
+  "No loans found": "No loans found",
+  "Return Book": "Return Book"
 }

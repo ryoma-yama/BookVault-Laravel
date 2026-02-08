@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LoanResource;
 use App\Models\Loan;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -19,7 +20,7 @@ class LoanController extends Controller
             ->get();
 
         return Inertia::render('admin/loans/index', [
-            'loans' => $loans,
+            'loans' => LoanResource::collection($loans)->resolve(),
         ]);
     }
 }

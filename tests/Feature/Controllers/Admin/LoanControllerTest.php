@@ -66,8 +66,8 @@ it('includes book copy and user relationship data', function () {
     $response->assertSuccessful();
 
     $loans = $response->viewData('page')['props']['loans'];
-    expect($loans[0]['book_copy'])->not->toBeNull();
-    expect($loans[0]['book_copy']['book'])->not->toBeNull();
+    expect($loans[0]['bookCopy'])->not->toBeNull();
+    expect($loans[0]['bookCopy']['book'])->not->toBeNull();
     expect($loans[0]['user'])->not->toBeNull();
 });
 

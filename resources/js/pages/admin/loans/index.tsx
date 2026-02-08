@@ -11,6 +11,16 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ArrowUpDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Heading from '@/components/heading';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,7 +37,7 @@ import type { BreadcrumbItem } from '@/types';
 interface Book {
     id: number;
     title: string;
-    isbn_13: string;
+    isbn13: string;
 }
 
 interface BookCopy {
@@ -43,11 +53,11 @@ interface User {
 
 interface Loan {
     id: number;
-    book_copy_id: number;
-    user_id: number;
-    borrowed_date: string;
-    returned_date: string | null;
-    book_copy: BookCopy;
+    bookCopyId: number;
+    userId: number;
+    borrowedDate: string;
+    returnedDate: string | null;
+    bookCopy: BookCopy;
     user: User;
 }
 
@@ -63,8 +73,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function AdminLoansIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
     const [sorting, setSorting] = useState<SortingState>([
-        { id: 'borrowed_date', desc: true },
+        { id: 'borrowedDate', desc: true },
     ]);
+    const [returnLoanId, setReturnLoanId] = useState<number | null>(null);
 
     const calculateDaysElapsed = (borrowedDate: string): number => {
         const borrowed = new Date(borrowedDate);
@@ -73,15 +84,20 @@ export default function AdminLoansIndex({ loans }: Props) {
         return Math.floor(diff / (1000 * 60 * 60 * 24));
     };
 
-    const handleReturn = (loanId: number) => {
-        if (confirm(t('Are you sure you want to return this book?'))) {
+    const handleReturnClick = (loanId: number) => {
+        setReturnLoanId(loanId);
+    };
+
+    const handleReturnConfirm = () => {
+        if (returnLoanId !== null) {
             router.put(
-                `/loans/${loanId}`,
+                `/loans/${returnLoanId}`,
                 {},
                 {
                     preserveScroll: true,
                     onSuccess: () => {
                         router.reload();
+                        setReturnLoanId(null);
                     },
                 },
             );
@@ -91,7 +107,7 @@ export default function AdminLoansIndex({ loans }: Props) {
     const columns = useMemo<ColumnDef<Loan>[]>(
         () => [
             {
-                accessorKey: 'book_copy.book.title',
+                accessorKey: 'bookCopy.book.title',
                 id: 'title',
                 header: ({ column }) => {
                     return (
@@ -111,7 +127,7 @@ export default function AdminLoansIndex({ loans }: Props) {
                 },
                 cell: ({ row }) => (
                     <div className="font-medium">
-                        {row.original.book_copy.book.title}
+                        {row.original.bookCopy.book.title}
                     </div>
                 ),
             },
@@ -137,7 +153,7 @@ export default function AdminLoansIndex({ loans }: Props) {
                 cell: ({ row }) => row.original.user.name,
             },
             {
-                accessorKey: 'borrowed_date',
+                accessorKey: 'borrowedDate',
                 header: ({ column }) => {
                     return (
                         <Button
@@ -156,13 +172,13 @@ export default function AdminLoansIndex({ loans }: Props) {
                 },
                 cell: ({ row }) => {
                     return new Date(
-                        row.getValue('borrowed_date'),
+                        row.getValue('borrowedDate'),
                     ).toLocaleDateString();
                 },
             },
             {
-                id: 'days_elapsed',
-                accessorFn: (row) => calculateDaysElapsed(row.borrowed_date),
+                id: 'daysElapsed',
+                accessorFn: (row) => calculateDaysElapsed(row.borrowedDate),
                 header: ({ column }) => {
                     return (
                         <Button
@@ -181,13 +197,13 @@ export default function AdminLoansIndex({ loans }: Props) {
                 },
                 cell: ({ row }) => {
                     const days = calculateDaysElapsed(
-                        row.original.borrowed_date,
+                        row.original.borrowedDate,
                     );
                     return t(':count days', { count: days.toString() });
                 },
             },
             {
-                accessorKey: 'returned_date',
+                accessorKey: 'returnedDate',
                 id: 'status',
                 header: ({ column }) => {
                     return (
@@ -206,7 +222,7 @@ export default function AdminLoansIndex({ loans }: Props) {
                     );
                 },
                 cell: ({ row }) => {
-                    const returned = row.original.returned_date;
+                    const returned = row.original.returnedDate;
                     return (
                         <Badge variant={returned ? 'secondary' : 'default'}>
                             {returned ? t('Returned') : t('Loaned')}
@@ -219,14 +235,14 @@ export default function AdminLoansIndex({ loans }: Props) {
                 header: () => t('Actions'),
                 cell: ({ row }) => {
                     const loan = row.original;
-                    if (loan.returned_date) {
+                    if (loan.returnedDate) {
                         return null;
                     }
                     return (
                         <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleReturn(loan.id)}
+                            onClick={() => handleReturnClick(loan.id)}
                         >
                             {t('Return')}
                         </Button>
@@ -266,8 +282,8 @@ export default function AdminLoansIndex({ loans }: Props) {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
+                                                          header.column.columnDef
+                                                              .header,
                                                           header.getContext(),
                                                       )}
                                             </TableHead>
@@ -309,6 +325,30 @@ export default function AdminLoansIndex({ loans }: Props) {
                     </Table>
                 </div>
             </div>
+
+            <AlertDialog
+                open={returnLoanId !== null}
+                onOpenChange={(open) => !open && setReturnLoanId(null)}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {t('Return Book')}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {t('Are you sure you want to return this book?')}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>
+                            {t('Cancel')}
+                        </AlertDialogCancel>
+                        <AlertDialogAction onClick={handleReturnConfirm}>
+                            {t('Return')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

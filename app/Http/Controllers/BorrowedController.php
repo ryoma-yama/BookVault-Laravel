@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LoanResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,7 +21,7 @@ class BorrowedController extends Controller
             ->get();
 
         return Inertia::render('borrowed/index', [
-            'loans' => $loans,
+            'loans' => LoanResource::collection($loans)->resolve(),
         ]);
     }
 }

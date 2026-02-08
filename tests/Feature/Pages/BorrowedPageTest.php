@@ -13,8 +13,8 @@ it('renders borrowed books page without errors for authenticated user', function
     $response->assertInertia(fn ($page) => $page
         ->component('borrowed/index')
         ->has('loans', 2)
-        ->has('loans.0.book_copy')
-        ->has('loans.0.book_copy.book')
+        ->has('loans.0.bookCopy')
+        ->has('loans.0.bookCopy.book')
     );
 });
 
@@ -39,7 +39,7 @@ it('can access book title from loan data structure', function () {
     $response->assertSuccessful();
     $loans = $response->viewData('page')['props']['loans'];
 
-    expect($loans[0]['book_copy'])->toHaveKey('book');
-    expect($loans[0]['book_copy']['book'])->toHaveKey('title');
-    expect($loans[0]['book_copy']['book']['title'])->toBeString();
+    expect($loans[0]['bookCopy'])->toHaveKey('book');
+    expect($loans[0]['bookCopy']['book'])->toHaveKey('title');
+    expect($loans[0]['bookCopy']['book']['title'])->toBeString();
 });

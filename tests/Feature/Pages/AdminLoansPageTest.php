@@ -14,8 +14,8 @@ it('renders admin loans page without errors for admin user', function () {
     $response->assertInertia(fn ($page) => $page
         ->component('admin/loans/index')
         ->has('loans', 3)
-        ->has('loans.0.book_copy')
-        ->has('loans.0.book_copy.book')
+        ->has('loans.0.bookCopy')
+        ->has('loans.0.bookCopy.book')
         ->has('loans.0.user')
     );
 });
@@ -42,10 +42,10 @@ it('can access book title and user name from loan data structure', function () {
     $response->assertSuccessful();
     $loans = $response->viewData('page')['props']['loans'];
 
-    // Verify book_copy.book structure
-    expect($loans[0]['book_copy'])->toHaveKey('book');
-    expect($loans[0]['book_copy']['book'])->toHaveKey('title');
-    expect($loans[0]['book_copy']['book']['title'])->toBeString();
+    // Verify bookCopy.book structure
+    expect($loans[0]['bookCopy'])->toHaveKey('book');
+    expect($loans[0]['bookCopy']['book'])->toHaveKey('title');
+    expect($loans[0]['bookCopy']['book']['title'])->toBeString();
 
     // Verify user structure
     expect($loans[0]['user'])->toHaveKey('name');
@@ -66,5 +66,5 @@ it('includes all required loan data for calculations', function () {
     $response->assertSuccessful();
     $loans = $response->viewData('page')['props']['loans'];
 
-    expect($loans[0])->toHaveKeys(['borrowed_date', 'returned_date', 'book_copy', 'user']);
+    expect($loans[0])->toHaveKeys(['borrowedDate', 'returnedDate', 'bookCopy', 'user']);
 });
