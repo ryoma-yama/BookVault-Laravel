@@ -38,7 +38,7 @@ it('can access book title from loan data structure', function () {
 
     $response->assertSuccessful();
     $loans = $response->viewData('page')['props']['loans'];
-    
+
     expect($loans[0]['book_copy'])->toHaveKey('book');
     expect($loans[0]['book_copy']['book'])->toHaveKey('title');
     expect($loans[0]['book_copy']['book']['title'])->toBeString();

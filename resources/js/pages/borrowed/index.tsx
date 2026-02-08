@@ -83,7 +83,9 @@ export default function BorrowedIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -105,7 +107,9 @@ export default function BorrowedIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -128,7 +132,9 @@ export default function BorrowedIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -198,8 +204,8 @@ export default function BorrowedIndex({ loans }: Props) {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column.columnDef
-                                                              .header,
+                                                          header.column
+                                                              .columnDef.header,
                                                           header.getContext(),
                                                       )}
                                             </TableHead>

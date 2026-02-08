@@ -98,7 +98,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -121,7 +123,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -139,7 +143,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -162,7 +168,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -172,7 +180,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                     );
                 },
                 cell: ({ row }) => {
-                    const days = calculateDaysElapsed(row.original.borrowed_date);
+                    const days = calculateDaysElapsed(
+                        row.original.borrowed_date,
+                    );
                     return t(':count days', { count: days.toString() });
                 },
             },
@@ -184,7 +194,9 @@ export default function AdminLoansIndex({ loans }: Props) {
                         <Button
                             variant="ghost"
                             onClick={() =>
-                                column.toggleSorting(column.getIsSorted() === 'asc')
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc',
+                                )
                             }
                             className="h-auto p-0 font-semibold hover:bg-transparent"
                         >
@@ -254,8 +266,8 @@ export default function AdminLoansIndex({ loans }: Props) {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column.columnDef
-                                                              .header,
+                                                          header.column
+                                                              .columnDef.header,
                                                           header.getContext(),
                                                       )}
                                             </TableHead>
