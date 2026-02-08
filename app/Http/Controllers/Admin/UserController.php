@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -45,14 +46,10 @@ class UserController extends Controller
     /**
      * Update the specified user.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $validated = $request->validate([
-            'role' => ['required', 'in:user,admin'],
-        ]);
+        $user->update($request->validated());
 
-        $user->update($validated);
-
-        return redirect()->back()->with('success', 'User role updated successfully.');
+        return back()->with('success', 'User role updated successfully.');
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReservationRequest;
 use App\Models\BookCopy;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReservationController extends Controller
 {
@@ -24,33 +26,31 @@ class ReservationController extends Controller
     /**
      * Store a newly created reservation.
      */
-    public function store(Request $request)
+    public function store(StoreReservationRequest $request)
     {
-        $request->validate([
-            'book_copy_id' => 'required|exists:book_copies,id',
-        ]);
+        return DB::transaction(function () use ($request) {
+            BookCopy::findOrFail($request->validated()['book_copy_id']);
 
-        BookCopy::findOrFail($request->book_copy_id);
+            $hasActiveReservation = Reservation::where('user_id', $request->user()->id)
+                ->where('book_copy_id', $request->validated()['book_copy_id'])
+                ->pending()
+                ->exists();
 
-        $hasActiveReservation = Reservation::where('user_id', $request->user()->id)
-            ->where('book_copy_id', $request->book_copy_id)
-            ->pending()
-            ->exists();
+            if ($hasActiveReservation) {
+                return response()->json([
+                    'message' => 'You already have an active reservation for this book copy.',
+                ], 422);
+            }
 
-        if ($hasActiveReservation) {
-            return response()->json([
-                'message' => 'You already have an active reservation for this book copy.',
-            ], 422);
-        }
+            $reservation = Reservation::create([
+                'user_id' => $request->user()->id,
+                'book_copy_id' => $request->validated()['book_copy_id'],
+                'reserved_at' => now(),
+                'fulfilled' => false,
+            ]);
 
-        $reservation = Reservation::create([
-            'user_id' => $request->user()->id,
-            'book_copy_id' => $request->book_copy_id,
-            'reserved_at' => now(),
-            'fulfilled' => false,
-        ]);
-
-        return response()->json($reservation->load(['bookCopy.book', 'user']), 201);
+            return response()->json($reservation->load(['bookCopy.book', 'user']), 201);
+        });
     }
 
     /**

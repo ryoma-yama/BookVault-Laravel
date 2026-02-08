@@ -28,6 +28,9 @@ class StoreBookRequest extends FormRequest
             'publisher' => ['required', 'string', 'max:100'],
             'published_date' => ['required', 'date'],
             'description' => ['required', 'string'],
+            'image_url' => ['nullable', 'string'],
+            'authors' => ['nullable', 'array'],
+            'authors.*' => ['string', 'max:100'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
         ];

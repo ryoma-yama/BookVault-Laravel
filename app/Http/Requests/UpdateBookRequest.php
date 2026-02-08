@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Book;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBookRequest extends FormRequest
@@ -21,7 +22,8 @@ class UpdateBookRequest extends FormRequest
      */
     public function rules(): array
     {
-        $bookId = $this->route('book');
+        $book = $this->route('book');
+        $bookId = $book instanceof Book ? $book->id : $book;
 
         return [
             'google_id' => ['nullable', 'string', 'max:100', 'unique:books,google_id,'.$bookId],
@@ -30,6 +32,9 @@ class UpdateBookRequest extends FormRequest
             'publisher' => ['sometimes', 'required', 'string', 'max:100'],
             'published_date' => ['sometimes', 'required', 'date'],
             'description' => ['sometimes', 'required', 'string'],
+            'image_url' => ['nullable', 'string'],
+            'authors' => ['nullable', 'array'],
+            'authors.*' => ['string', 'max:100'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
         ];
