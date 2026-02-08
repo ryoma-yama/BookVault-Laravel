@@ -49,7 +49,13 @@ class BookController extends Controller
      */
     public function edit(Book $book)
     {
-        $book->load('authors:id,name');
+        $book->load([
+            'authors:id,name',
+            'tags:id,name',
+            'copies' => function ($query) {
+                $query->active()->orderBy('acquired_date', 'desc');
+            },
+        ]);
 
         return Inertia::render('admin/books/form', [
             'book' => $book,

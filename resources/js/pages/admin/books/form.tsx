@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 import axios, { AxiosError } from 'axios';
 import type { FormEventHandler } from 'react';
 import { useState, useCallback } from 'react';
@@ -10,18 +11,27 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 
-const DEFAULT_ERROR_MESSAGE = 'Failed to fetch book information';
-
-function extractErrorMessage(error: unknown): string {
+function extractErrorMessage(error: unknown, t: (key: string) => string): string {
     if (error instanceof AxiosError && error.response?.data?.error) {
         return error.response.data.error;
     }
-    return DEFAULT_ERROR_MESSAGE;
+    return t('Failed to fetch book information');
 }
 
 interface Author {
     id: number;
     name: string;
+}
+
+interface Tag {
+    id: number;
+    name: string;
+}
+
+interface BookCopy {
+    id: number | null;
+    acquired_date?: string;
+    discarded_date?: string | null;
 }
 
 interface Book {
@@ -34,6 +44,8 @@ interface Book {
     google_id?: string;
     image_url?: string;
     authors: Author[];
+    tags?: Tag[];
+    copies?: BookCopy[];
 }
 
 interface Props {
@@ -41,21 +53,22 @@ interface Props {
 }
 
 export default function AdminBookForm({ book }: Props) {
+    const { t } = useLaravelReactI18n();
     const isEditing = !!book;
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Admin',
+            title: t('Admin'),
             href: '/admin/books',
         },
         {
-            title: 'Books',
+            title: t('Books'),
             href: '/admin/books',
         },
         {
-            title: isEditing ? 'Edit Book' : 'New Book',
+            title: isEditing ? t('Edit Book') : t('Add New Book'),
             href: isEditing
                 ? `/admin/books/${book.id}/edit`
                 : '/admin/books/create',
@@ -70,12 +83,14 @@ export default function AdminBookForm({ book }: Props) {
         description: book?.description || '',
         google_id: book?.google_id || '',
         image_url: book?.image_url || '',
-        authors: book?.authors.map((a) => a.name) || [''],
+        authors: book?.authors?.map((a) => a.name) || [''],
+        tags: book?.tags?.map((t) => t.name) || [],
+        book_copies: book?.copies?.map((c) => ({ id: c.id })) || [],
     });
 
     const handleSearchByIsbn = useCallback(async () => {
         if (!data.isbn_13) {
-            setSearchError('Please enter an ISBN first');
+            setSearchError(t('Please enter an ISBN first'));
             return;
         }
 
@@ -83,6 +98,7 @@ export default function AdminBookForm({ book }: Props) {
         setSearchError(null);
 
         try {
+            // Call Google Books API - it will check for duplicates first
             const response = await axios.post(
                 '/admin/api/google-books/search',
                 {
@@ -104,14 +120,16 @@ export default function AdminBookForm({ book }: Props) {
                     bookInfo.authors && bookInfo.authors.length > 0
                         ? bookInfo.authors
                         : data.authors,
+                tags: data.tags,
+                book_copies: data.book_copies,
             });
         } catch (error) {
-            setSearchError(extractErrorMessage(error));
+            setSearchError(extractErrorMessage(error, t));
         } finally {
             setIsSearching(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data.isbn_13, setData]);
+    }, [data.isbn_13, setData, t]);
 
     const handleAddAuthor = () => {
         setData('authors', [...data.authors, '']);
@@ -128,6 +146,36 @@ export default function AdminBookForm({ book }: Props) {
         const newAuthors = [...data.authors];
         newAuthors[index] = value;
         setData('authors', newAuthors);
+    };
+
+    // Tag handlers
+    const handleAddTag = () => {
+        setData('tags', [...data.tags, '']);
+    };
+
+    const handleRemoveTag = (index: number) => {
+        setData(
+            'tags',
+            data.tags.filter((_, i) => i !== index),
+        );
+    };
+
+    const handleTagChange = (index: number, value: string) => {
+        const newTags = [...data.tags];
+        newTags[index] = value;
+        setData('tags', newTags);
+    };
+
+    // BookCopy handlers
+    const handleAddBookCopy = () => {
+        setData('book_copies', [...data.book_copies, { id: null }]);
+    };
+
+    const handleRemoveBookCopy = (index: number) => {
+        setData(
+            'book_copies',
+            data.book_copies.filter((_, i) => i !== index),
+        );
     };
 
     const handleIsbnScan = (isbn: string) => {
@@ -148,14 +196,14 @@ export default function AdminBookForm({ book }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={isEditing ? 'Edit Book' : 'New Book'} />
+            <Head title={isEditing ? t('Edit Book') : t('Add New Book')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <h1 className="text-2xl font-bold">
-                    {isEditing ? 'Edit Book' : 'Add New Book'}
+                    {isEditing ? t('Edit Book') : t('Add New Book')}
                 </h1>
                 <form onSubmit={submit} className="max-w-2xl space-y-4">
                     <div>
-                        <Label htmlFor="isbn_13">ISBN-13</Label>
+                        <Label htmlFor="isbn_13">{t('ISBN-13')}</Label>
                         <div className="flex gap-2">
                             <Input
                                 id="isbn_13"
@@ -173,7 +221,7 @@ export default function AdminBookForm({ book }: Props) {
                                 onClick={handleSearchByIsbn}
                                 disabled={isSearching || !data.isbn_13}
                             >
-                                {isSearching ? 'Searching...' : 'Search ISBN'}
+                                {isSearching ? t('Searching...') : t('Search ISBN')}
                             </Button>
                             <IsbnScanner
                                 onScan={handleIsbnScan}
@@ -193,7 +241,7 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="title">Title</Label>
+                        <Label htmlFor="title">{t('Title')}</Label>
                         <Input
                             id="title"
                             type="text"
@@ -209,7 +257,7 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="publisher">Publisher</Label>
+                        <Label htmlFor="publisher">{t('Publisher')}</Label>
                         <Input
                             id="publisher"
                             type="text"
@@ -227,7 +275,7 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="published_date">Published Date</Label>
+                        <Label htmlFor="published_date">{t('Published')}</Label>
                         <Input
                             id="published_date"
                             type="text"
@@ -246,7 +294,7 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="description">Description</Label>
+                        <Label htmlFor="description">{t('Description')}</Label>
                         <Textarea
                             id="description"
                             value={data.description}
@@ -264,7 +312,7 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="image_url">Cover Image URL</Label>
+                        <Label htmlFor="image_url">{t('Cover Image URL')}</Label>
                         <Input
                             id="image_url"
                             type="text"
@@ -282,13 +330,13 @@ export default function AdminBookForm({ book }: Props) {
 
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <Label>Authors</Label>
+                            <Label>{t('Authors')}</Label>
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={handleAddAuthor}
                             >
-                                Add Author
+                                {t('Add Author')}
                             </Button>
                         </div>
                         {data.authors.map((author, index) => (
@@ -302,7 +350,7 @@ export default function AdminBookForm({ book }: Props) {
                                             e.target.value,
                                         )
                                     }
-                                    placeholder="Author name"
+                                    placeholder={t('Author name')}
                                 />
                                 {data.authors.length > 1 && (
                                     <Button
@@ -312,23 +360,109 @@ export default function AdminBookForm({ book }: Props) {
                                             handleRemoveAuthor(index)
                                         }
                                     >
-                                        Remove
+                                        {t('Remove')}
                                     </Button>
                                 )}
                             </div>
                         ))}
                     </div>
 
+                    {/* Tags Section */}
+                    <div>
+                        <div className="mb-2 flex items-center justify-between">
+                            <Label>{t('Tags')}</Label>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={handleAddTag}
+                            >
+                                {t('Add Tag')}
+                            </Button>
+                        </div>
+                        {data.tags.length === 0 && (
+                            <p className="text-sm text-muted-foreground">
+                                {t('No tags added yet. Click "Add Tag" to add one.')}
+                            </p>
+                        )}
+                        {data.tags.map((tag, index) => (
+                            <div key={index} className="mb-2 flex gap-2">
+                                <Input
+                                    type="text"
+                                    value={tag}
+                                    onChange={(e) =>
+                                        handleTagChange(index, e.target.value)
+                                    }
+                                    placeholder={t('Tag name')}
+                                    maxLength={50}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() => handleRemoveTag(index)}
+                                >
+                                    {t('Remove')}
+                                </Button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* BookCopies Section - Only show in edit mode */}
+                    {isEditing && (
+                        <div>
+                            <div className="mb-2 flex items-center justify-between">
+                                <Label>{t('Book Copies (Inventory)')}</Label>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={handleAddBookCopy}
+                                >
+                                    {t('Add Copy')}
+                                </Button>
+                            </div>
+                            <p className="mb-2 text-sm text-muted-foreground">
+                                {t('Manage physical copies of this book. New copies will be acquired today. Removing a copy will mark it as discarded.')}
+                            </p>
+                            {data.book_copies.length === 0 && (
+                                <p className="text-sm text-muted-foreground">
+                                    {t('No active copies. Click "Add Copy" to add one.')}
+                                </p>
+                            )}
+                            {data.book_copies.map((copy, index) => (
+                                <div key={index} className="mb-2 flex gap-2">
+                                    <Input
+                                        type="text"
+                                        value={
+                                            copy.id
+                                                ? t('Copy #:id', { id: copy.id })
+                                                : t('New Copy (will be acquired today)')
+                                        }
+                                        disabled
+                                        className="flex-1"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="destructive"
+                                        onClick={() =>
+                                            handleRemoveBookCopy(index)
+                                        }
+                                    >
+                                        {copy.id ? t('Discard') : t('Remove')}
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                     <div className="flex gap-2">
                         <Button type="submit" disabled={processing}>
-                            {isEditing ? 'Update Book' : 'Create Book'}
+                            {isEditing ? t('Update Book') : t('Create Book')}
                         </Button>
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => window.history.back()}
                         >
-                            Cancel
+                            {t('Cancel')}
                         </Button>
                     </div>
                 </form>

@@ -37,6 +37,8 @@ class UpdateBookRequest extends FormRequest
             'authors.*' => ['string', 'max:100'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
+            'book_copies' => ['nullable', 'array'],
+            'book_copies.*.id' => ['nullable', 'integer', 'exists:book_copies,id'],
         ];
     }
 }
