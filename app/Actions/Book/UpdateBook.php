@@ -41,7 +41,52 @@ class UpdateBook
                 $this->attachTagsByName($book, $validated['tags']);
             }
 
+            // Sync book copies if provided
+            if (isset($validated['book_copies'])) {
+                $this->syncBookCopies($book, $validated['book_copies']);
+            }
+
             return $book;
         });
+    }
+
+    /**
+     * Sync book copies for the book.
+     * - Keeps existing copies that are in the request
+     * - Creates new copies with current date as acquired_date
+     * - Marks removed copies as discarded with current date
+     *
+     * @param  Book  $book
+     * @param  array  $copies  Array of copy data with 'id' key (null for new copies)
+     * @return void
+     */
+    private function syncBookCopies(Book $book, array $copies): void
+    {
+        $submittedIds = collect($copies)
+            ->pluck('id')
+            ->filter()
+            ->all();
+
+        // Get all active copies for this book
+        $activeCopies = $book->copies()->active()->get();
+
+        // Mark copies as discarded if they are not in the submitted list
+        $activeCopies->each(function ($copy) use ($submittedIds) {
+            if (! in_array($copy->id, $submittedIds)) {
+                $copy->update(['discarded_date' => now()]);
+            }
+        });
+
+        // Create new copies (where id is null)
+        $newCopiesCount = collect($copies)
+            ->filter(fn ($copy) => is_null($copy['id']))
+            ->count();
+
+        for ($i = 0; $i < $newCopiesCount; $i++) {
+            $book->copies()->create([
+                'acquired_date' => now(),
+                'discarded_date' => null,
+            ]);
+        }
     }
 }
