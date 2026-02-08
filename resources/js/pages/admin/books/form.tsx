@@ -83,7 +83,7 @@ export default function AdminBookForm({ book }: Props) {
         description: book?.description || '',
         google_id: book?.google_id || '',
         image_url: book?.image_url || '',
-        authors: book?.authors.map((a) => a.name) || [''],
+        authors: book?.authors?.map((a) => a.name) || [''],
         tags: book?.tags?.map((t) => t.name) || [],
         book_copies: book?.copies?.map((c) => ({ id: c.id })) || [],
     });
