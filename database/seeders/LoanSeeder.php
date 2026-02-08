@@ -29,13 +29,5 @@ class LoanSeeder extends Seeder
                 'book_copy_id' => $bookCopies->random()->id,
             ]);
         });
-
-        // Create some reservations
-        $users->take(5)->each(function ($user) use ($bookCopies) {
-            \App\Models\Reservation::factory()->count(rand(1, 3))->create([
-                'user_id' => $user->id,
-                'book_copy_id' => $bookCopies->random()->id,
-            ]);
-        });
     }
 }
