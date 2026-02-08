@@ -354,5 +354,18 @@
   "Borrow this book?": "Borrow this book?",
   "Are you sure you want to borrow this book?": "Are you sure you want to borrow this book?",
   "Book borrowed successfully!": "Book borrowed successfully!",
-  "This book is not available for borrowing.": "This book is not available for borrowing."
+  "This book is not available for borrowing.": "This book is not available for borrowing.",
+  "Borrowed Books": "Borrowed Books",
+  "Borrowed Date": "Borrowed Date",
+  "Borrowed": "Borrowed",
+  "Returned": "Returned",
+  "Return": "Return",
+  "Are you sure you want to return this book?": "Are you sure you want to return this book?",
+  "No borrowed books": "No borrowed books",
+  "Loan Management": "Loan Management",
+  "Loan Period": "Loan Period",
+  ":count days": ":count days",
+  "Loaned": "Loaned",
+  "No loans found": "No loans found",
+  "Return Book": "Return Book"
 }

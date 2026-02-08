@@ -325,7 +325,7 @@
   "Update your name and email address": "名前とメールアドレスを更新",
   "Upgrade Required": "アップグレードが必要",
   "Use Proxy": "プロキシ使用",
-  "User": "ユーザー",
+  "User": "利用者",
   "User Management": "ユーザー管理",
   "Variant Also Negotiates": "バリアントの再認証",
   "Verify Email Address": "メールアドレスの確認",
@@ -354,5 +354,18 @@
   "Borrow this book?": "この本を借りますか？",
   "Are you sure you want to borrow this book?": "本当にこの本を借りますか？",
   "Book borrowed successfully!": "本を借りました！",
-  "This book is not available for borrowing.": "この本は現在借りられません。"
+  "This book is not available for borrowing.": "この本は現在借りられません。",
+  "Borrowed Books": "借りた本",
+  "Borrowed Date": "借りた日",
+  "Borrowed": "借りている",
+  "Returned": "返却済み",
+  "Return": "返却する",
+  "Are you sure you want to return this book?": "本当にこの本を返却しますか？",
+  "No borrowed books": "借りた本はありません",
+  "Loan Management": "貸出管理",
+  "Loan Period": "貸出期間",
+  ":count days": ":count日",
+  "Loaned": "貸出中",
+  "No loans found": "貸出記録がありません",
+  "Return Book": "本を返却"
 }
