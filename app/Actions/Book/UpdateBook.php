@@ -65,6 +65,7 @@ class UpdateBook
         $submittedIds = collect($copies)
             ->pluck('id')
             ->filter()
+            ->values()
             ->all();
 
         // Get all active copies for this book
@@ -72,7 +73,7 @@ class UpdateBook
 
         // Mark copies as discarded if they are not in the submitted list
         $activeCopies->each(function ($copy) use ($submittedIds) {
-            if (! in_array($copy->id, $submittedIds)) {
+            if (! in_array($copy->id, $submittedIds, true)) {
                 $copy->update(['discarded_date' => now()]);
             }
         });

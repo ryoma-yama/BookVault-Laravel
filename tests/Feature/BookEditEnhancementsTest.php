@@ -166,13 +166,15 @@ test('book copy can be kept during update', function () {
 });
 
 test('multiple book copies can be added at once', function () {
-    $book = Book::create([
+    $book = App\Models\Book::create([
         'isbn_13' => '9784123456789',
         'title' => 'Test Book',
         'publisher' => 'Test Publisher',
         'published_date' => '2024-01-01',
         'description' => 'Test Description',
     ]);
+
+    $today = now()->format('Y-m-d');
 
     $response = actingAs($this->admin)->put("/admin/books/{$book->id}", [
         'isbn_13' => '9784123456789',
@@ -191,8 +193,8 @@ test('multiple book copies can be added at once', function () {
 
     $book->refresh();
     expect($book->copies()->active()->count())->toBe(3);
-    $book->copies->each(function ($copy) {
-        expect($copy->acquired_date->format('Y-m-d'))->toBe(now()->format('Y-m-d'));
+    $book->copies->each(function ($copy) use ($today) {
+        expect($copy->acquired_date->format('Y-m-d'))->toBe($today);
         expect($copy->discarded_date)->toBeNull();
     });
 });
