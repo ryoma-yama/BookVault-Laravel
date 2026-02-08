@@ -119,6 +119,8 @@ export default function AdminBookForm({ book }: Props) {
                     bookInfo.authors && bookInfo.authors.length > 0
                         ? bookInfo.authors
                         : data.authors,
+                tags: data.tags,
+                book_copies: data.book_copies,
             });
         } catch (error) {
             setSearchError(extractErrorMessage(error));
