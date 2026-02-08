@@ -190,8 +190,8 @@ export default function BookShow({ book }: Props) {
                                 {!canBorrow
                                     ? t('Currently Unavailable')
                                     : isAuthenticated
-                                      ? t('Borrow')
-                                      : t('Login to Borrow')}
+                                        ? t('Borrow')
+                                        : t('Login to Borrow')}
                             </Button>
                             {!canBorrow &&
                                 book.inventory_status.total_copies === 0 && (
@@ -207,9 +207,14 @@ export default function BookShow({ book }: Props) {
                             <h2 className="mb-2 text-xl font-semibold">
                                 {t('Description')}
                             </h2>
-                            <div className="prose dark:prose-invert max-w-none">
-                                <p>{book.description}</p>
-                            </div>
+                            {/* 
+                              * Admin-only content: This HTML is trusted and sanitized on the server side (Laravel).
+                              * Only administrators can edit this description, so it's safe to render directly.
+                              */}
+                            <div
+                                className="prose dark:prose-invert max-w-none"
+                                dangerouslySetInnerHTML={{ __html: book.description }}
+                            />
                         </div>
 
                         {/* Tags Display */}
