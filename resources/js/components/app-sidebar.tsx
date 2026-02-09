@@ -76,12 +76,6 @@ export function AppSidebar() {
             isActive: isCurrentUrl(admin.books.index()),
         },
         {
-            title: t('User Management'),
-            href: admin.users.index(),
-            icon: Users,
-            isActive: isCurrentUrl(admin.users.index()),
-        },
-        {
             title: t('Loan Management'),
             href: admin.loans.index(),
             icon: ClipboardList,
@@ -92,6 +86,12 @@ export function AppSidebar() {
             href: admin.reviews.index(),
             icon: MessageSquare,
             isActive: isCurrentUrl(admin.reviews.index()),
+        },
+        {
+            title: t('User Management'),
+            href: admin.users.index(),
+            icon: Users,
+            isActive: isCurrentUrl(admin.users.index()),
         },
     ];
 
