@@ -391,5 +391,22 @@
   "Create Book": "Create Book",
   "Update Book": "Update Book",
   "Please enter an ISBN first": "Please enter an ISBN first",
-  "Failed to fetch book information": "Failed to fetch book information"
+  "Failed to fetch book information": "Failed to fetch book information",
+  "Reviews": "Reviews",
+  "Add Review": "Add Review",
+  "Edit Review": "Edit Review",
+  "Edit Your Review": "Edit Your Review",
+  "No reviews yet": "No reviews yet",
+  "Recommended!": "Recommended!",
+  "I recommend this book": "I recommend this book",
+  "Your Review": "Your Review",
+  "Share your thoughts about this book...": "Share your thoughts about this book...",
+  "Maximum 400 characters": "Maximum 400 characters",
+  "Submit Review": "Submit Review",
+  "Update Review": "Update Review",
+  "Delete Review": "Delete Review",
+  "Delete Review?": "Delete Review?",
+  "Are you sure you want to delete this review? This action cannot be undone.": "Are you sure you want to delete this review? This action cannot be undone.",
+  "Read More": "Read More",
+  "Read Less": "Read Less"
 }

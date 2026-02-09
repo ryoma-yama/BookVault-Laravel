@@ -22,8 +22,8 @@ class UpdateReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'content' => ['sometimes', 'required', 'string', 'min:10', 'max:1000'],
-            'rating' => ['sometimes', 'required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['required', 'string', 'max:400'],
+            'is_recommended' => ['required', 'boolean'],
         ];
     }
 }

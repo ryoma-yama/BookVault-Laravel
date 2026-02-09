@@ -120,6 +120,32 @@ class BookController extends Controller
             }
         }
 
+        // Get reviews for this book (newest first)
+        $reviews = $book->reviews()
+            ->with('user:id,name')
+            ->latest()
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'comment' => $review->comment,
+                    'is_recommended' => $review->is_recommended,
+                    'created_at' => $review->created_at->toIso8601String(),
+                    'user' => [
+                        'id' => $review->user->id,
+                        'name' => $review->user->name,
+                    ],
+                ];
+            });
+
+        // Check if the current user has already reviewed this book
+        $userReview = null;
+        if (auth()->check()) {
+            $userReview = $book->reviews()
+                ->where('user_id', auth()->id())
+                ->first();
+        }
+
         return Inertia::render('books/show', [
             'book' => array_merge($book->toArray(), [
                 'inventory_status' => [
@@ -129,6 +155,12 @@ class BookController extends Controller
                 ],
                 'current_loans' => $currentLoans,
             ]),
+            'reviews' => $reviews,
+            'userReview' => $userReview ? [
+                'id' => $userReview->id,
+                'comment' => $userReview->comment,
+                'is_recommended' => $userReview->is_recommended,
+            ] : null,
         ]);
     }
 

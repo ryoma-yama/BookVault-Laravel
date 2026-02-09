@@ -41,8 +41,8 @@ class ReviewController extends Controller
         $review = Review::create([
             'book_id' => $request->book_id,
             'user_id' => $request->user()->id,
-            'content' => $request->content,
-            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'is_recommended' => $request->is_recommended,
         ]);
 
         return response()->json($review->load(['user', 'book']), 201);

@@ -40,8 +40,8 @@ test('can show a single book with review stats', function () {
 
     $book->reviews()->create([
         'user_id' => $user->id,
-        'content' => 'Great book!',
-        'rating' => 5,
+        'comment' => 'Great book!',
+        'is_recommended' => true,
     ]);
 
     $response = $this->getJson("/api/books/{$book->id}");
@@ -50,7 +50,6 @@ test('can show a single book with review stats', function () {
         ->assertJson([
             'id' => $book->id,
             'title' => $book->title,
-            'average_rating' => 5.0,
             'review_count' => 1,
         ]);
 });

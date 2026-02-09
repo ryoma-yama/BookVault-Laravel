@@ -1,3 +1,4 @@
+"use no memo"; // React Compilerの最適化をこのファイルで無効化
 import { Head, router } from '@inertiajs/react';
 import {
     type ColumnDef,
@@ -253,6 +254,7 @@ export default function AdminLoansIndex({ loans }: Props) {
         [t],
     );
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
         data: loans,
         columns,

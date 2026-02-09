@@ -56,9 +56,7 @@ class UpdateBook
      * - Creates new copies with current date as acquired_date
      * - Marks removed copies as discarded with current date
      *
-     * @param  Book  $book
      * @param  array  $copies  Array of copy data with 'id' key (null for new copies)
-     * @return void
      */
     private function syncBookCopies(Book $book, array $copies): void
     {

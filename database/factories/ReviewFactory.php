@@ -19,8 +19,8 @@ class ReviewFactory extends Factory
         return [
             'book_id' => \App\Models\Book::factory(),
             'user_id' => \App\Models\User::factory(),
-            'content' => fake()->paragraph(),
-            'rating' => fake()->numberBetween(1, 5),
+            'comment' => fake()->paragraph(),
+            'is_recommended' => fake()->boolean(),
         ];
     }
 }

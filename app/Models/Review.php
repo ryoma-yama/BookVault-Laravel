@@ -18,8 +18,8 @@ class Review extends Model
     protected $fillable = [
         'book_id',
         'user_id',
-        'content',
-        'rating',
+        'comment',
+        'is_recommended',
     ];
 
     /**
@@ -28,7 +28,7 @@ class Review extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'rating' => 'integer',
+        'is_recommended' => 'boolean',
     ];
 
     /**
