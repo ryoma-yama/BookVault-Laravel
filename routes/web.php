@@ -25,6 +25,7 @@ Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show')
 
 // Review routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/reviews', [\App\Http\Controllers\ReviewController::class, 'index'])->name('reviews.index');
     Route::get('/books/{book}/reviews/create', [\App\Http\Controllers\ReviewController::class, 'create'])->name('reviews.create');
     Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
     Route::get('/reviews/{review}/edit', [\App\Http\Controllers\ReviewController::class, 'edit'])->name('reviews.edit');
@@ -45,6 +46,8 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
 
     Route::get('loans', [AdminLoanController::class, 'index'])->name('loans.index');
+    
+    Route::get('reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
 
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
 
