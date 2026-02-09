@@ -78,7 +78,7 @@ export default function ReviewCreate({ book }: Props) {
                                 />
                                 <Label
                                     htmlFor="is_recommended"
-                                    className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    className="text-base leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
                                     {t('I recommend this book')}
                                 </Label>
@@ -100,7 +100,9 @@ export default function ReviewCreate({ book }: Props) {
                                 onChange={(e) =>
                                     setData('comment', e.target.value)
                                 }
-                                placeholder={t('Share your thoughts about this book...')}
+                                placeholder={t(
+                                    'Share your thoughts about this book...',
+                                )}
                                 rows={6}
                                 maxLength={400}
                                 className="resize-none"
@@ -112,27 +114,37 @@ export default function ReviewCreate({ book }: Props) {
                                             {errors.comment}
                                         </span>
                                     ) : (
-                                        <span>{t('Maximum 400 characters')}</span>
+                                        <span>
+                                            {t('Maximum 400 characters')}
+                                        </span>
                                     )}
                                 </span>
-                                <span>
-                                    {data.comment.length}/400
-                                </span>
+                                <span>{data.comment.length}/400</span>
                             </div>
                         </div>
 
-                        <div className="flex gap-3">
-                            <Button type="submit" disabled={processing}>
+                        <div className="flex flex-col gap-3 sm:flex-row-reverse">
+                            {/* メインアクション：投稿（PCでは右、スマホでは一番上） */}
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full px-8 sm:w-auto"
+                            >
                                 {processing && (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
                                 {t('Submit Review')}
                             </Button>
+
+                            {/* サブアクション：キャンセル（PCでは左、スマホでは二番目） */}
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={() => router.visit(`/books/${book.id}`)}
+                                onClick={() =>
+                                    router.visit(`/books/${book.id}`)
+                                }
                                 disabled={processing}
+                                className="w-full sm:w-auto"
                             >
                                 {t('Cancel')}
                             </Button>

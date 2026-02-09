@@ -104,7 +104,7 @@ export default function ReviewEdit({ review }: Props) {
                                 />
                                 <Label
                                     htmlFor="is_recommended"
-                                    className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    className="text-base leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
                                     {t('I recommend this book')}
                                 </Label>
@@ -126,7 +126,9 @@ export default function ReviewEdit({ review }: Props) {
                                 onChange={(e) =>
                                     setData('comment', e.target.value)
                                 }
-                                placeholder={t('Share your thoughts about this book...')}
+                                placeholder={t(
+                                    'Share your thoughts about this book...',
+                                )}
                                 rows={6}
                                 maxLength={400}
                                 className="resize-none"
@@ -138,23 +140,27 @@ export default function ReviewEdit({ review }: Props) {
                                             {errors.comment}
                                         </span>
                                     ) : (
-                                        <span>{t('Maximum 400 characters')}</span>
+                                        <span>
+                                            {t('Maximum 400 characters')}
+                                        </span>
                                     )}
                                 </span>
-                                <span>
-                                    {data.comment.length}/400
-                                </span>
+                                <span>{data.comment.length}/400</span>
                             </div>
                         </div>
 
-                        <div className="flex justify-between">
-                            <div className="flex gap-3">
-                                <Button type="submit" disabled={processing}>
-                                    {processing && (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    )}
-                                    {t('Update Review')}
-                                </Button>
+                        <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setShowDeleteDialog(true)}
+                                disabled={processing || deleting}
+                                className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 sm:w-auto"
+                            >
+                                {t('Delete Review')}
+                            </Button>
+
+                            <div className="flex w-full flex-col-reverse gap-3 sm:w-auto sm:flex-row">
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -162,18 +168,21 @@ export default function ReviewEdit({ review }: Props) {
                                         router.visit(`/books/${review.book.id}`)
                                     }
                                     disabled={processing}
+                                    className="w-full sm:w-auto"
                                 >
                                     {t('Cancel')}
                                 </Button>
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {processing && (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    )}
+                                    {t('Update Review')}
+                                </Button>
                             </div>
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                onClick={() => setShowDeleteDialog(true)}
-                                disabled={processing || deleting}
-                            >
-                                {t('Delete Review')}
-                            </Button>
                         </div>
                     </form>
                 </div>
@@ -190,7 +199,9 @@ export default function ReviewEdit({ review }: Props) {
                             {t('Delete Review?')}
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                            {t('Are you sure you want to delete this review? This action cannot be undone.')}
+                            {t(
+                                'Are you sure you want to delete this review? This action cannot be undone.',
+                            )}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
