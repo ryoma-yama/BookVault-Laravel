@@ -5,6 +5,7 @@ import {
     BookOpen,
     ClipboardList,
     Library,
+    MessageSquare,
     Users,
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -23,6 +24,7 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import { home } from '@/routes';
 import admin from '@/routes/admin';
 import borrowed from '@/routes/borrowed';
+import reviews from '@/routes/reviews';
 import type { NavItem, SharedData } from '@/types';
 import AppLogo from './app-logo';
 
@@ -31,21 +33,36 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const { isCurrentUrl } = useCurrentUrl();
 
-    // General user navigation items
-    const generalNavItems: NavItem[] = [
-        {
-            title: t('Books'),
-            href: home(),
-            icon: Library,
-            isActive: isCurrentUrl(home()),
-        },
-        {
-            title: t('Borrowed Books'),
-            href: borrowed.index(),
-            icon: BookCheck,
-            isActive: isCurrentUrl(borrowed.index()),
-        },
-    ];
+    // General user navigation items (only for authenticated users)
+    const generalNavItems: NavItem[] = auth.user
+        ? [
+              {
+                  title: t('Books'),
+                  href: home(),
+                  icon: Library,
+                  isActive: isCurrentUrl(home()),
+              },
+              {
+                  title: t('Borrowed Books'),
+                  href: borrowed.index(),
+                  icon: BookCheck,
+                  isActive: isCurrentUrl(borrowed.index()),
+              },
+              {
+                  title: t('My Reviews'),
+                  href: reviews.index(),
+                  icon: MessageSquare,
+                  isActive: isCurrentUrl(reviews.index()),
+              },
+          ]
+        : [
+              {
+                  title: t('Books'),
+                  href: home(),
+                  icon: Library,
+                  isActive: isCurrentUrl(home()),
+              },
+          ];
 
     // Admin navigation items
     const adminNavItems: NavItem[] = [
@@ -72,6 +89,12 @@ export function AppSidebar() {
             href: admin.loans.index(),
             icon: ClipboardList,
             isActive: isCurrentUrl(admin.loans.index()),
+        },
+        {
+            title: t('Review Management'),
+            href: admin.reviews.index(),
+            icon: MessageSquare,
+            isActive: isCurrentUrl(admin.reviews.index()),
         },
     ];
 
