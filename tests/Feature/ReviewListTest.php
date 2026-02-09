@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Book;
 use App\Models\Review;
 use App\Models\User;
 
@@ -22,7 +21,7 @@ it('prevents unauthenticated users from accessing reviews index page', function 
 it('displays only the authenticated users reviews on reviews index page', function () {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
-    
+
     $userReview1 = Review::factory()->create([
         'user_id' => $user->id,
         'created_at' => now()->subMinute(),
@@ -46,12 +45,12 @@ it('displays only the authenticated users reviews on reviews index page', functi
 
 it('displays reviews in descending order by creation date on user reviews page', function () {
     $user = User::factory()->create();
-    
+
     $oldReview = Review::factory()->create([
         'user_id' => $user->id,
         'created_at' => now()->subDays(2),
     ]);
-    
+
     $newReview = Review::factory()->create([
         'user_id' => $user->id,
         'created_at' => now(),
@@ -92,7 +91,7 @@ it('displays all reviews on admin reviews index page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
-    
+
     $review1 = Review::factory()->create(['user_id' => $user1->id]);
     $review2 = Review::factory()->create(['user_id' => $user2->id]);
     $review3 = Review::factory()->create(['user_id' => $admin->id]);
@@ -108,7 +107,7 @@ it('displays all reviews on admin reviews index page', function () {
 
 it('displays reviews in descending order by creation date on admin reviews page', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    
+
     $oldReview = Review::factory()->create(['created_at' => now()->subDays(2)]);
     $newReview = Review::factory()->create(['created_at' => now()]);
 
@@ -145,7 +144,7 @@ it('allows admin to update any review', function () {
     ]);
 
     $response->assertRedirect("/books/{$review->book_id}");
-    
+
     $review->refresh();
     expect($review->comment)->toBe('Admin updated comment');
 });

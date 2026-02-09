@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import type { Review, UserReview, BookWithInventory, Author } from '@/types/domain';
+import type { Review, UserReview, BookWithInventory } from '@/types/domain';
 
 interface Props {
     book: BookWithInventory;

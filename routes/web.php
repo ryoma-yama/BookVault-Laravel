@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
 
     Route::get('loans', [AdminLoanController::class, 'index'])->name('loans.index');
-    
+
     Route::get('reviews', [\App\Http\Controllers\Admin\ReviewController::class, 'index'])->name('reviews.index');
 
     Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
