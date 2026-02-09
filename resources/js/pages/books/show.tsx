@@ -199,14 +199,16 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                                         <p className="font-medium text-foreground">
                                             {t('Currently borrowed by')}:
                                         </p>
-                                        {book.current_loans.map((loan, index) => (
-                                            <p
-                                                key={index}
-                                                className="text-muted-foreground"
-                                            >
-                                                {formatLoanInfo(loan)}
-                                            </p>
-                                        ))}
+                                        {book.current_loans.map(
+                                            (loan, index) => (
+                                                <p
+                                                    key={index}
+                                                    className="text-muted-foreground"
+                                                >
+                                                    {formatLoanInfo(loan)}
+                                                </p>
+                                            ),
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -226,8 +228,8 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                                 {!canBorrow
                                     ? t('Currently Unavailable')
                                     : isAuthenticated
-                                        ? t('Borrow')
-                                        : t('Login to Borrow')}
+                                      ? t('Borrow')
+                                      : t('Login to Borrow')}
                             </Button>
                             {!canBorrow &&
                                 book.inventory_status.total_copies === 0 && (
@@ -243,13 +245,15 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                             <h2 className="mb-2 text-xl font-semibold">
                                 {t('Description')}
                             </h2>
-                            {/* 
-                              * Admin-only content: This HTML is trusted and sanitized on the server side (Laravel).
-                              * Only administrators can edit this description, so it's safe to render directly.
-                              */}
+                            {/*
+                             * Admin-only content: This HTML is trusted and sanitized on the server side (Laravel).
+                             * Only administrators can edit this description, so it's safe to render directly.
+                             */}
                             <div
                                 className="prose dark:prose-invert max-w-none"
-                                dangerouslySetInnerHTML={{ __html: book.description }}
+                                dangerouslySetInnerHTML={{
+                                    __html: book.description,
+                                }}
                             />
                         </div>
 
@@ -274,9 +278,7 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                 {/* Reviews Section */}
                 <div className="mt-8 border-t pt-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-2xl font-bold">
-                            {t('Reviews')}
-                        </h2>
+                        <h2 className="text-2xl font-bold">{t('Reviews')}</h2>
                         {isAuthenticated && (
                             <div>
                                 {userReview ? (
@@ -311,10 +313,7 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                             </div>
                         ) : (
                             reviews.map((review) => (
-                                <ReviewItem
-                                    key={review.id}
-                                    review={review}
-                                />
+                                <ReviewItem key={review.id} review={review} />
                             ))
                         )}
                     </div>

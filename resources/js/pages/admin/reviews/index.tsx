@@ -1,6 +1,6 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
@@ -49,17 +49,6 @@ export default function AdminReviewIndex({ reviews }: Props) {
 
     const handleEdit = (reviewId: number) => {
         router.visit(`/reviews/${reviewId}/edit`);
-    };
-
-    const handleDelete = (reviewId: number, bookId: number) => {
-        if (confirm(t('Are you sure you want to delete this review?'))) {
-            router.delete(`/reviews/${reviewId}`, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    router.reload({ only: ['reviews'] });
-                },
-            });
-        }
     };
 
     return (

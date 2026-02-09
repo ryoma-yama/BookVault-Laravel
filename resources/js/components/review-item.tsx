@@ -33,7 +33,7 @@ export default function ReviewItem({ review }: Props) {
             <div className="mb-2 flex items-start justify-between">
                 <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">
+                        <span className="text-sm font-semibold">
                             {review.user.name}
                         </span>
                         {review.is_recommended && (
@@ -49,7 +49,10 @@ export default function ReviewItem({ review }: Props) {
                 </div>
             </div>
             <div>
-                <p ref={contentRef} className={`whitespace-pre-wrap text-sm leading-relaxed ${!isExpanded && "line-clamp-3"}`}>
+                <p
+                    ref={contentRef}
+                    className={`text-sm leading-relaxed whitespace-pre-wrap ${!isExpanded && 'line-clamp-3'}`}
+                >
                     {review.comment}
                 </p>
 
@@ -61,9 +64,15 @@ export default function ReviewItem({ review }: Props) {
                         onClick={() => setIsExpanded(!isExpanded)}
                     >
                         {isExpanded ? (
-                            <>{t('Read Less')} <ChevronUp className="ml-1 h-3 w-3" /></>
+                            <>
+                                {t('Read Less')}{' '}
+                                <ChevronUp className="ml-1 h-3 w-3" />
+                            </>
                         ) : (
-                            <>{t('Read More')} <ChevronDown className="ml-1 h-3 w-3" /></>
+                            <>
+                                {t('Read More')}{' '}
+                                <ChevronDown className="ml-1 h-3 w-3" />
+                            </>
                         )}
                     </Button>
                 )}
