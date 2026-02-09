@@ -37,34 +37,12 @@ test('book can have reviews', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $user->id,
-        'content' => 'Great book!',
-        'rating' => 5,
+        'comment' => 'Great book!',
+        'is_recommended' => true,
     ]);
 
     expect($book->reviews)->toHaveCount(1)
-        ->and($book->reviews->first()->content)->toBe('Great book!');
-});
-
-test('book can calculate average rating', function () {
-    $book = Book::factory()->create();
-    $user1 = User::factory()->create();
-    $user2 = User::factory()->create();
-
-    Review::create([
-        'book_id' => $book->id,
-        'user_id' => $user1->id,
-        'content' => 'Good',
-        'rating' => 4,
-    ]);
-
-    Review::create([
-        'book_id' => $book->id,
-        'user_id' => $user2->id,
-        'content' => 'Excellent',
-        'rating' => 5,
-    ]);
-
-    expect($book->averageRating())->toBe(4.5);
+        ->and($book->reviews->first()->comment)->toBe('Great book!');
 });
 
 test('book can count reviews', function () {
@@ -75,15 +53,15 @@ test('book can count reviews', function () {
     Review::create([
         'book_id' => $book->id,
         'user_id' => $user1->id,
-        'content' => 'Good',
-        'rating' => 4,
+        'comment' => 'Good',
+        'is_recommended' => true,
     ]);
 
     Review::create([
         'book_id' => $book->id,
         'user_id' => $user2->id,
-        'content' => 'Excellent',
-        'rating' => 5,
+        'comment' => 'Excellent',
+        'is_recommended' => true,
     ]);
 
     expect($book->reviewCount())->toBe(2);
@@ -96,8 +74,8 @@ test('deleting a book cascades to its reviews', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $user->id,
-        'content' => 'Test review',
-        'rating' => 5,
+        'comment' => 'Test review',
+        'is_recommended' => true,
     ]);
 
     $reviewId = $review->id;

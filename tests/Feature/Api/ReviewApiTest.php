@@ -6,11 +6,21 @@ use App\Models\User;
 
 test('can list all reviews', function () {
     $book = Book::factory()->create();
-    $user = User::factory()->create();
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $user3 = User::factory()->create();
 
-    Review::factory()->count(3)->create([
+    Review::factory()->create([
         'book_id' => $book->id,
-        'user_id' => $user->id,
+        'user_id' => $user1->id,
+    ]);
+    Review::factory()->create([
+        'book_id' => $book->id,
+        'user_id' => $user2->id,
+    ]);
+    Review::factory()->create([
+        'book_id' => $book->id,
+        'user_id' => $user3->id,
     ]);
 
     $response = $this->getJson('/api/reviews');
@@ -18,7 +28,7 @@ test('can list all reviews', function () {
     $response->assertOk()
         ->assertJsonStructure([
             'data' => [
-                '*' => ['id', 'content', 'rating', 'user', 'book'],
+                '*' => ['id', 'comment', 'is_recommended', 'user', 'book'],
             ],
         ]);
 });
@@ -26,11 +36,12 @@ test('can list all reviews', function () {
 test('can filter reviews by book', function () {
     $book1 = Book::factory()->create();
     $book2 = Book::factory()->create();
-    $user = User::factory()->create();
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
 
-    Review::factory()->create(['book_id' => $book1->id, 'user_id' => $user->id]);
-    Review::factory()->create(['book_id' => $book1->id, 'user_id' => $user->id]);
-    Review::factory()->create(['book_id' => $book2->id, 'user_id' => $user->id]);
+    Review::factory()->create(['book_id' => $book1->id, 'user_id' => $user1->id]);
+    Review::factory()->create(['book_id' => $book1->id, 'user_id' => $user2->id]);
+    Review::factory()->create(['book_id' => $book2->id, 'user_id' => $user1->id]);
 
     $response = $this->getJson("/api/reviews?book_id={$book1->id}");
 
@@ -44,14 +55,14 @@ test('authenticated user can create a review', function () {
 
     $response = $this->actingAs($user)->postJson('/api/reviews', [
         'book_id' => $book->id,
-        'content' => 'This is a great book with lots of interesting content!',
-        'rating' => 5,
+        'comment' => 'This is a great book with lots of interesting content!',
+        'is_recommended' => true,
     ]);
 
     $response->assertCreated()
         ->assertJson([
-            'content' => 'This is a great book with lots of interesting content!',
-            'rating' => 5,
+            'comment' => 'This is a great book with lots of interesting content!',
+            'is_recommended' => true,
         ]);
 
     expect(Review::count())->toBe(1);
@@ -62,53 +73,52 @@ test('guest cannot create a review', function () {
 
     $response = $this->postJson('/api/reviews', [
         'book_id' => $book->id,
-        'content' => 'This is a great book!',
-        'rating' => 5,
+        'comment' => 'This is a great book!',
+        'is_recommended' => true,
     ]);
 
     $response->assertUnauthorized();
 });
 
-test('review creation validates rating range', function () {
+test('review creation validates is_recommended is boolean', function () {
     $book = Book::factory()->create();
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/api/reviews', [
         'book_id' => $book->id,
-        'content' => 'This is a great book!',
-        'rating' => 6,  // Invalid: max is 5
+        'comment' => 'This is a great book!',
+        'is_recommended' => 'not-a-boolean',
     ]);
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['rating']);
+        ->assertJsonValidationErrors(['is_recommended']);
 });
 
-test('review creation validates minimum rating', function () {
+test('review creation validates is_recommended is required', function () {
     $book = Book::factory()->create();
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/api/reviews', [
         'book_id' => $book->id,
-        'content' => 'This is a great book!',
-        'rating' => 0,  // Invalid: min is 1
+        'comment' => 'This is a great book!',
     ]);
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['rating']);
+        ->assertJsonValidationErrors(['is_recommended']);
 });
 
-test('review creation validates content length', function () {
+test('review creation validates comment length', function () {
     $book = Book::factory()->create();
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/api/reviews', [
         'book_id' => $book->id,
-        'content' => 'Short',  // Too short (min 10 characters)
-        'rating' => 5,
+        'comment' => str_repeat('a', 401),  // Too long (max 400 characters)
+        'is_recommended' => true,
     ]);
 
     $response->assertUnprocessable()
-        ->assertJsonValidationErrors(['content']);
+        ->assertJsonValidationErrors(['comment']);
 });
 
 test('review creator can update their review', function () {
@@ -118,19 +128,19 @@ test('review creator can update their review', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $user->id,
-        'content' => 'Original content here for testing purposes.',
-        'rating' => 3,
+        'comment' => 'Original content here for testing purposes.',
+        'is_recommended' => false,
     ]);
 
     $response = $this->actingAs($user)->putJson("/api/reviews/{$review->id}", [
-        'content' => 'Updated content with more details and information.',
-        'rating' => 5,
+        'comment' => 'Updated content with more details and information.',
+        'is_recommended' => true,
     ]);
 
     $response->assertOk()
         ->assertJson([
-            'content' => 'Updated content with more details and information.',
-            'rating' => 5,
+            'comment' => 'Updated content with more details and information.',
+            'is_recommended' => true,
         ]);
 });
 
@@ -142,13 +152,13 @@ test('user cannot update another users review', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $owner->id,
-        'content' => 'Original content here.',
-        'rating' => 3,
+        'comment' => 'Original content here.',
+        'is_recommended' => false,
     ]);
 
     $response = $this->actingAs($otherUser)->putJson("/api/reviews/{$review->id}", [
-        'content' => 'Trying to update.',
-        'rating' => 5,
+        'comment' => 'Trying to update.',
+        'is_recommended' => true,
     ]);
 
     $response->assertForbidden();
@@ -161,8 +171,8 @@ test('review creator can delete their review', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $user->id,
-        'content' => 'Content to be deleted.',
-        'rating' => 4,
+        'comment' => 'Content to be deleted.',
+        'is_recommended' => true,
     ]);
 
     $response = $this->actingAs($user)->deleteJson("/api/reviews/{$review->id}");
@@ -179,8 +189,8 @@ test('user cannot delete another users review', function () {
     $review = Review::create([
         'book_id' => $book->id,
         'user_id' => $owner->id,
-        'content' => 'Original content.',
-        'rating' => 4,
+        'comment' => 'Original content.',
+        'is_recommended' => true,
     ]);
 
     $response = $this->actingAs($otherUser)->deleteJson("/api/reviews/{$review->id}");

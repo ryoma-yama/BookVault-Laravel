@@ -21,8 +21,7 @@ class BookController extends Controller
     {
         $query = Book::query()
             ->with(['tags:id,name', 'reviews'])
-            ->withCount('reviews')
-            ->withAvg('reviews', 'rating');
+            ->withCount('reviews');
 
         if ($request->has('tags')) {
             $tagNames = is_array($request->tags) ? $request->tags : [$request->tags];
@@ -35,7 +34,6 @@ class BookController extends Controller
 
         // Map aggregated columns to expected response format
         $books->getCollection()->transform(function ($book) {
-            $book->average_rating = $book->reviews_avg_rating;
             $book->review_count = $book->reviews_count;
 
             return $book;
@@ -66,11 +64,9 @@ class BookController extends Controller
     public function show(Book $book): JsonResponse
     {
         $book->load(['tags:id,name', 'reviews.user:id,name'])
-            ->loadCount('reviews')
-            ->loadAvg('reviews', 'rating');
+            ->loadCount('reviews');
 
         // Map aggregated columns to expected response format
-        $book->average_rating = $book->reviews_avg_rating;
         $book->review_count = $book->reviews_count;
 
         return response()->json($book);
