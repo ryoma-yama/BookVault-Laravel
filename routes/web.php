@@ -23,6 +23,15 @@ Route::get('/', [BookController::class, 'index'])->name('home');
 Route::get('/books/isbn/{isbn}', [BookController::class, 'findByIsbn'])->name('books.isbn');
 Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
+// Review routes (require authentication)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/books/{book}/reviews/create', [\App\Http\Controllers\ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/reviews/{review}/edit', [\App\Http\Controllers\ReviewController::class, 'edit'])->name('reviews.edit');
+    Route::put('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [\App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+});
+
 // Loan routes (require authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('borrowed', [BorrowedController::class, 'index'])->name('borrowed.index');

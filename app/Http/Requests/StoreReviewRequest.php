@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreReviewRequest extends FormRequest
 {
@@ -22,9 +23,27 @@ class StoreReviewRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'book_id' => ['required', 'exists:books,id'],
-            'content' => ['required', 'string', 'min:10', 'max:1000'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'book_id' => [
+                'required',
+                'exists:books,id',
+                Rule::unique('reviews')->where(function ($query) {
+                    return $query->where('user_id', $this->user()->id);
+                }),
+            ],
+            'comment' => ['required', 'string', 'max:400'],
+            'is_recommended' => ['required', 'boolean'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'book_id.unique' => 'You have already reviewed this book.',
         ];
     }
 }

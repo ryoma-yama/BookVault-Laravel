@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 
 class Review extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,8 +19,8 @@ class Review extends Model
     protected $fillable = [
         'book_id',
         'user_id',
-        'content',
-        'rating',
+        'comment',
+        'is_recommended',
     ];
 
     /**
@@ -28,7 +29,7 @@ class Review extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'rating' => 'integer',
+        'is_recommended' => 'boolean',
     ];
 
     /**
@@ -45,5 +46,19 @@ class Review extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     * Exclude comment from search as per requirements.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'book_id' => $this->book_id,
+            'user_id' => $this->user_id,
+            'is_recommended' => $this->is_recommended,
+        ];
     }
 }
