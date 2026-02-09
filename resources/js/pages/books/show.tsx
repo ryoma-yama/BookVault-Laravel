@@ -3,6 +3,7 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import ReviewList from '@/components/review-list';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -17,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
+import type { Review, UserReview } from '@/types/domain';
 
 interface Author {
     id: number;
@@ -58,9 +60,11 @@ interface Book {
 
 interface Props {
     book: Book;
+    reviews: Review[];
+    userReview: UserReview | null;
 }
 
-export default function BookShow({ book }: Props) {
+export default function BookShow({ book, reviews, userReview }: Props) {
     const { t, currentLocale } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
     const isAuthenticated = !!auth.user;
@@ -265,6 +269,42 @@ export default function BookShow({ book }: Props) {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Reviews Section */}
+                <div className="mt-8 border-t pt-8">
+                    <div className="mb-6 flex items-center justify-between">
+                        <h2 className="text-2xl font-bold">
+                            {t('Reviews')}
+                        </h2>
+                        {isAuthenticated && (
+                            <div>
+                                {userReview ? (
+                                    <Button
+                                        onClick={() =>
+                                            router.visit(
+                                                `/reviews/${userReview.id}/edit`,
+                                            )
+                                        }
+                                        variant="outline"
+                                    >
+                                        {t('Edit Your Review')}
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        onClick={() =>
+                                            router.visit(
+                                                `/books/${book.id}/reviews/create`,
+                                            )
+                                        }
+                                    >
+                                        {t('Add Review')}
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                    <ReviewList reviews={reviews} />
                 </div>
             </div>
 

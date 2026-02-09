@@ -155,3 +155,28 @@ export type BookSummary = {
     publisher: string;
     published_date: string;
 };
+
+/**
+ * Review entity
+ */
+export type Review = {
+    id: number;
+    book_id: number;
+    user_id: number;
+    comment: string;
+    is_recommended: boolean;
+    created_at: string;
+    user: {
+        id: number;
+        name: string;
+    };
+};
+
+/**
+ * User's own review (simplified version)
+ */
+export type UserReview = {
+    id: number;
+    comment: string;
+    is_recommended: boolean;
+};
