@@ -6,12 +6,9 @@ import { Button } from './ui/button';
 
 interface Props {
     review: Review;
-    onEdit?: () => void;
-    onDelete?: () => void;
-    showActions?: boolean;
 }
 
-export default function ReviewItem({ review, onEdit, onDelete, showActions = false }: Props) {
+export default function ReviewItem({ review }: Props) {
     const { t } = useLaravelReactI18n();
     const [isExpanded, setIsExpanded] = useState(false);
     const [shouldShowButton, setShouldShowButton] = useState(false);
@@ -50,26 +47,6 @@ export default function ReviewItem({ review, onEdit, onDelete, showActions = fal
                         {new Date(review.created_at).toLocaleDateString()}
                     </time>
                 </div>
-                {showActions && (onEdit || onDelete) && (
-                    <div className="flex gap-2">
-                        {onEdit && (
-                            <button
-                                onClick={onEdit}
-                                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                            >
-                                {t('Edit')}
-                            </button>
-                        )}
-                        {onDelete && (
-                            <button
-                                onClick={onDelete}
-                                className="text-sm text-red-600 hover:underline dark:text-red-400"
-                            >
-                                {t('Delete')}
-                            </button>
-                        )}
-                    </div>
-                )}
             </div>
             <div>
                 <p ref={contentRef} className={`whitespace-pre-wrap text-sm leading-relaxed ${!isExpanded && "line-clamp-3"}`}>

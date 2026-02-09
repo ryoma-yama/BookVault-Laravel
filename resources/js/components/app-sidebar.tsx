@@ -33,15 +33,19 @@ export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
     const { isCurrentUrl } = useCurrentUrl();
 
-    // General user navigation items (only for authenticated users)
-    const generalNavItems: NavItem[] = auth.user
+    // General navigation items (for all users)
+    const generalNavItems: NavItem[] = [
+        {
+            title: t('Books'),
+            href: home(),
+            icon: Library,
+            isActive: isCurrentUrl(home()),
+        },
+    ];
+
+    // User navigation items (only for authenticated users)
+    const userNavItems: NavItem[] = auth.user
         ? [
-              {
-                  title: t('Books'),
-                  href: home(),
-                  icon: Library,
-                  isActive: isCurrentUrl(home()),
-              },
               {
                   title: t('Borrowed Books'),
                   href: borrowed.index(),
@@ -55,14 +59,7 @@ export function AppSidebar() {
                   isActive: isCurrentUrl(reviews.index()),
               },
           ]
-        : [
-              {
-                  title: t('Books'),
-                  href: home(),
-                  icon: Library,
-                  isActive: isCurrentUrl(home()),
-              },
-          ];
+        : [];
 
     // Admin navigation items
     const adminNavItems: NavItem[] = [
@@ -114,6 +111,9 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain label={t('Application')} items={generalNavItems} />
+                {auth.user && userNavItems.length > 0 && (
+                    <NavMain label={t('User')} items={userNavItems} />
+                )}
                 {auth.user?.role === 'admin' && (
                     <NavMain
                         label={t('Administration')}

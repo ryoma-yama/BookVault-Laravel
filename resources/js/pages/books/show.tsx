@@ -68,7 +68,6 @@ export default function BookShow({ book, reviews, userReview }: Props) {
     const { t, currentLocale } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
     const isAuthenticated = !!auth.user;
-    const isAdmin = auth.user?.role === 'admin';
     const canBorrow = book.inventory_status.available_count > 0;
     const [showDialog, setShowDialog] = useState(false);
 
@@ -120,30 +119,6 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                 toast.error(errorMessage);
             },
         });
-    };
-
-    const handleEditReview = (reviewId: number) => {
-        router.visit(`/reviews/${reviewId}/edit`);
-    };
-
-    const handleDeleteReview = (reviewId: number) => {
-        if (confirm(t('Are you sure you want to delete this review?'))) {
-            router.delete(`/reviews/${reviewId}`, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    toast.success(t('Review deleted successfully!'));
-                    router.reload({ only: ['reviews', 'userReview'] });
-                },
-            });
-        }
-    };
-
-    const canEditReview = (review: Review) => {
-        return isAdmin || (isAuthenticated && auth.user?.id === review.user.id);
-    };
-
-    const canDeleteReview = (review: Review) => {
-        return isAdmin || (isAuthenticated && auth.user?.id === review.user.id);
     };
 
     return (
@@ -339,9 +314,6 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                                 <ReviewItem
                                     key={review.id}
                                     review={review}
-                                    showActions={canEditReview(review) || canDeleteReview(review)}
-                                    onEdit={canEditReview(review) ? () => handleEditReview(review.id) : undefined}
-                                    onDelete={canDeleteReview(review) ? () => handleDeleteReview(review.id) : undefined}
                                 />
                             ))
                         )}
