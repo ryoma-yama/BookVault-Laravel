@@ -3,7 +3,6 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import ReviewList from '@/components/review-list';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -19,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import type { Review, UserReview } from '@/types/domain';
+import ReviewItem from '@/components/review-item';
 
 interface Author {
     id: number;
@@ -304,7 +304,20 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                             </div>
                         )}
                     </div>
-                    <ReviewList reviews={reviews} />
+                    <div className="space-y-4">
+                        {reviews.length === 0 ? (
+                            <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
+                                {t('No reviews yet')}
+                            </div>
+                        ) : (
+                            reviews.map((review) => (
+                                <ReviewItem
+                                    key={review.id}
+                                    review={review}
+                                />
+                            ))
+                        )}
+                    </div>
                 </div>
             </div>
 
