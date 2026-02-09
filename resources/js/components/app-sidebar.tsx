@@ -6,6 +6,7 @@ import {
     ClipboardList,
     Library,
     MessageSquare,
+    MessagesSquare,
     Users,
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -46,19 +47,19 @@ export function AppSidebar() {
     // User navigation items (only for authenticated users)
     const userNavItems: NavItem[] = auth.user
         ? [
-              {
-                  title: t('Borrowed Books'),
-                  href: borrowed.index(),
-                  icon: BookCheck,
-                  isActive: isCurrentUrl(borrowed.index()),
-              },
-              {
-                  title: t('My Reviews'),
-                  href: reviews.index(),
-                  icon: MessageSquare,
-                  isActive: isCurrentUrl(reviews.index()),
-              },
-          ]
+            {
+                title: t('Borrowed Books'),
+                href: borrowed.index(),
+                icon: BookCheck,
+                isActive: isCurrentUrl(borrowed.index()),
+            },
+            {
+                title: t('My Reviews'),
+                href: reviews.index(),
+                icon: MessageSquare,
+                isActive: isCurrentUrl(reviews.index()),
+            },
+        ]
         : [];
 
     // Admin navigation items
@@ -84,7 +85,7 @@ export function AppSidebar() {
         {
             title: t('Review Management'),
             href: admin.reviews.index(),
-            icon: MessageSquare,
+            icon: MessagesSquare,
             isActive: isCurrentUrl(admin.reviews.index()),
         },
         {
