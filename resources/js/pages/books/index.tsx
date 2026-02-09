@@ -9,31 +9,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-
-interface Tag {
-    id: number;
-    name: string;
-}
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Book {
-    id: number;
-    title: string;
-    authors: Author[];
-    publisher: string | null;
-    isbn_13: string | null;
-    tags: Tag[];
-    image_url?: string;
-    created_at: string;
-}
+import type { BookListItem } from '@/types/domain';
 
 interface Props {
     books: {
-        data: Book[];
+        data: BookListItem[];
         current_page: number;
         last_page: number;
         per_page: number;

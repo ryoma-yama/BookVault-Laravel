@@ -18,48 +18,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
-import type { Review, UserReview } from '@/types/domain';
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Tag {
-    id: number;
-    name: string;
-}
-
-interface InventoryStatus {
-    total_copies: number;
-    borrowed_count: number;
-    available_count: number;
-}
-
-interface CurrentLoan {
-    user: {
-        id: number;
-        name: string;
-    };
-    borrowed_date: string; // Format: Y/m/d
-}
-
-interface Book {
-    id: number;
-    isbn_13: string;
-    title: string;
-    publisher: string;
-    published_date: string;
-    description: string;
-    image_url?: string;
-    authors: Author[];
-    tags: Tag[];
-    inventory_status: InventoryStatus;
-    current_loans: CurrentLoan[];
-}
+import type { Review, UserReview, BookWithInventory, Author } from '@/types/domain';
 
 interface Props {
-    book: Book;
+    book: BookWithInventory;
     reviews: Review[];
     userReview: UserReview | null;
 }
@@ -87,7 +49,7 @@ export default function BookShow({ book, reviews, userReview }: Props) {
     ];
 
     // Format loan information based on locale
-    const formatLoanInfo = (loan: CurrentLoan) => {
+    const formatLoanInfo = (loan: BookWithInventory['current_loans'][0]) => {
         if (currentLocale() === 'ja') {
             return `${loan.user.name} / ${loan.borrowed_date} 〜`;
         }

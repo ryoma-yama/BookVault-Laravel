@@ -49,7 +49,45 @@ export type BookListItem = {
     publisher: string | null;
     isbn_13: string | null;
     tags: Tag[];
+    image_url?: string;
     created_at: string;
+};
+
+/**
+ * Inventory status for book availability
+ */
+export type InventoryStatus = {
+    total_copies: number;
+    borrowed_count: number;
+    available_count: number;
+};
+
+/**
+ * Current loan information
+ */
+export type CurrentLoan = {
+    user: {
+        id: number;
+        name: string;
+    };
+    borrowed_date: string;
+};
+
+/**
+ * Book with inventory details for book detail page
+ */
+export type BookWithInventory = {
+    id: number;
+    isbn_13: string;
+    title: string;
+    publisher: string;
+    published_date: string;
+    description: string;
+    image_url?: string;
+    authors: Author[];
+    tags: Tag[];
+    inventory_status: InventoryStatus;
+    current_loans: CurrentLoan[];
 };
 
 /**
@@ -166,6 +204,26 @@ export type Review = {
     comment: string;
     is_recommended: boolean;
     created_at: string;
+    user: {
+        id: number;
+        name: string;
+    };
+};
+
+/**
+ * Review with full book details
+ * Used in review list pages where book info is populated
+ */
+export type ReviewWithBook = {
+    id: number;
+    comment: string;
+    is_recommended: boolean;
+    created_at: string;
+    book: {
+        id: number;
+        title: string;
+        authors: Author[];
+    };
     user: {
         id: number;
         name: string;

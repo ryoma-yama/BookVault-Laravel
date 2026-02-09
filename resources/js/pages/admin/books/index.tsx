@@ -4,22 +4,7 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Book {
-    id: number;
-    isbn_13: string;
-    title: string;
-    publisher: string;
-    published_date: string;
-    description: string;
-    image_url?: string;
-    authors: Author[];
-}
+import type { Book } from '@/types/domain';
 
 interface PaginatedBooks {
     data: Book[];

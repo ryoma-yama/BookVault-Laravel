@@ -4,35 +4,10 @@ import { Pencil } from 'lucide-react';
 import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Book {
-    id: number;
-    title: string;
-    authors: Author[];
-}
-
-interface User {
-    id: number;
-    name: string;
-}
-
-interface Review {
-    id: number;
-    comment: string;
-    is_recommended: boolean;
-    created_at: string;
-    book: Book;
-    user: User;
-}
+import type { BreadcrumbItem, ReviewWithBook } from '@/types';
 
 interface Props {
-    reviews: Review[];
+    reviews: ReviewWithBook[];
 }
 
 export default function ReviewIndex({ reviews }: Props) {

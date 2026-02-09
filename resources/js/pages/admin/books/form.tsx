@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import type { Author, Tag } from '@/types/domain';
 
 function extractErrorMessage(
     error: unknown,
@@ -19,16 +20,6 @@ function extractErrorMessage(
         return error.response.data.error;
     }
     return t('Failed to fetch book information');
-}
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Tag {
-    id: number;
-    name: string;
 }
 
 interface BookCopy {

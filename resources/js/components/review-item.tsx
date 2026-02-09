@@ -1,11 +1,11 @@
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ChevronDown, ChevronUp, ThumbsUp } from 'lucide-react';
 import { useLayoutEffect, useRef, useState } from 'react';
-import type { Review } from '@/types/domain';
+import type { Review, ReviewWithBook } from '@/types/domain';
 import { Button } from './ui/button';
 
 interface Props {
-    review: Review;
+    review: Review | ReviewWithBook;
 }
 
 export default function ReviewItem({ review }: Props) {
