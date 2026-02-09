@@ -139,7 +139,7 @@ export default function ReviewForm({ book, review }: Props) {
 
                         <div className="space-y-2">
                             <Label htmlFor="comment">
-                                {t('Your Review')} *
+                                {t('Your Review')}
                             </Label>
                             <Textarea
                                 id="comment"
@@ -153,6 +153,7 @@ export default function ReviewForm({ book, review }: Props) {
                                 rows={6}
                                 maxLength={400}
                                 className="resize-none"
+                                required
                             />
                             <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>
