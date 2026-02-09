@@ -81,44 +81,24 @@ export default function AdminReviewIndex({ reviews }: Props) {
                     <div className="space-y-4">
                         {reviews.map((review) => (
                             <div key={review.id} className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <div className="text-sm text-muted-foreground">
-                                        <a
-                                            href={`/books/${review.book.id}`}
-                                            className="font-semibold text-foreground hover:underline"
-                                        >
-                                            {review.book.title}
-                                        </a>
-                                        {' by '}
-                                        {review.book.authors
-                                            .map((a) => a.name)
-                                            .join(', ')}
-                                    </div>
-                                    {isAdmin && (
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() =>
-                                                    handleEdit(review.id)
-                                                }
-                                                className="text-sm text-blue-600 hover:underline dark:text-blue-400"
-                                            >
-                                                {t('Edit')}
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    handleDelete(
-                                                        review.id,
-                                                        review.book.id,
-                                                    )
-                                                }
-                                                className="text-sm text-red-600 hover:underline dark:text-red-400"
-                                            >
-                                                {t('Delete')}
-                                            </button>
-                                        </div>
-                                    )}
+                                <div className="text-sm text-muted-foreground">
+                                    <a
+                                        href={`/books/${review.book.id}`}
+                                        className="font-semibold text-foreground hover:underline"
+                                    >
+                                        {review.book.title}
+                                    </a>
+                                    {' by '}
+                                    {review.book.authors
+                                        .map((a) => a.name)
+                                        .join(', ')}
                                 </div>
-                                <ReviewItem review={review} />
+                                <ReviewItem
+                                    review={review}
+                                    showActions={isAdmin}
+                                    onEdit={isAdmin ? () => handleEdit(review.id) : undefined}
+                                    onDelete={isAdmin ? () => handleDelete(review.id, review.book.id) : undefined}
+                                />
                             </div>
                         ))}
                     </div>
