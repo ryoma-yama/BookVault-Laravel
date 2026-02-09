@@ -1,7 +1,7 @@
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ChevronDown, ChevronUp, ThumbsUp } from 'lucide-react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import type { Review } from '@/types/domain';
-import { useEffect, useRef, useState } from 'react';
 import { Button } from './ui/button';
 
 interface Props {
@@ -14,13 +14,15 @@ export default function ReviewItem({ review }: Props) {
     const [shouldShowButton, setShouldShowButton] = useState(false);
     const contentRef = useRef<HTMLParagraphElement>(null);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const el = contentRef.current;
         if (el) {
             // 実際の高さ(scrollHeight)が、表示されている高さ(clientHeight)を超えているか判定
-            if (el.scrollHeight > el.clientHeight) {
-                setShouldShowButton(true);
-            }
+            requestAnimationFrame(() => {
+                if (el.scrollHeight > el.clientHeight) {
+                    setShouldShowButton(true);
+                }
+            });
         }
     }, [review.comment]);
     return (
