@@ -17,13 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
-import type { Author, BreadcrumbItem } from '@/types';
-
-interface Book {
-    id: number;
-    title: string;
-    authors: Author[];
-}
+import type { Book, BreadcrumbItem } from '@/types';
 
 interface Review {
     id: number;
@@ -49,14 +43,6 @@ export default function ReviewForm({ book, review }: Props) {
         throw new Error('Either book or review with book must be provided');
     }
 
-    const { data, setData, post, put, processing, errors } = useForm({
-        book_id: currentBook.id,
-        comment: review?.comment || '',
-        is_recommended: review?.is_recommended || false,
-    });
-
-    const { delete: destroy, processing: deleting } = useForm();
-
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('Books'),
@@ -73,6 +59,14 @@ export default function ReviewForm({ book, review }: Props) {
                 : `/books/${currentBook.id}/reviews/create`,
         },
     ];
+
+    const { data, setData, post, put, processing, errors } = useForm({
+        book_id: currentBook.id,
+        comment: review?.comment || '',
+        is_recommended: review?.is_recommended || false,
+    });
+
+    const { delete: destroy, processing: deleting } = useForm();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

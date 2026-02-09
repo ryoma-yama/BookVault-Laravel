@@ -54,7 +54,7 @@ class ReviewController extends Controller
      */
     public function create(Book $book): Response
     {
-        return Inertia::render('reviews/create', [
+        return Inertia::render('reviews/form', [
             'book' => $book->load('authors'),
         ]);
     }
@@ -84,7 +84,7 @@ class ReviewController extends Controller
     {
         $this->authorize('update', $review);
 
-        return Inertia::render('reviews/edit', [
+        return Inertia::render('reviews/form', [
             'review' => $review->load(['book.authors', 'user']),
         ]);
     }
