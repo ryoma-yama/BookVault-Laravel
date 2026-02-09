@@ -41,20 +41,22 @@ export default function ReviewList({ reviews }: Props) {
                     className="rounded-lg border bg-card p-4 shadow-sm"
                 >
                     <div className="mb-2 flex items-start justify-between">
-                        <div className="flex items-center gap-2">
-                            <span className="font-semibold">
-                                {review.user.name}
-                            </span>
-                            {review.is_recommended && (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                    <ThumbsUp className="h-3 w-3" />
-                                    {t('Recommended!')}
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-2">
+                                <span className="font-semibold text-sm">
+                                    {review.user.name}
                                 </span>
-                            )}
+                                {review.is_recommended && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                        <ThumbsUp className="h-3 w-3" />
+                                        {t('Recommended!')}
+                                    </span>
+                                )}
+                            </div>
+                            <time className="text-xs text-muted-foreground">
+                                {formatDate(review.created_at)}
+                            </time>
                         </div>
-                        <time className="text-sm text-muted-foreground">
-                            {formatDate(review.created_at)}
-                        </time>
                     </div>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed">
                         {review.comment}
