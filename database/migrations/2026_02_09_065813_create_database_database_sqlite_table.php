@@ -122,10 +122,12 @@ return new class extends Migration
             $table->increments('id');
             $table->integer('book_id');
             $table->integer('user_id');
-            $table->text('content');
-            $table->integer('rating');
+            $table->text('comment');
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
+            $table->boolean('is_recommended');
+
+            $table->unique(['user_id', 'book_id']);
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -161,8 +163,8 @@ return new class extends Migration
         });
 
         Schema::table('book_authors', function (Blueprint $table) {
-            $table->foreign(['author_id'], null)->references(['id'])->on('authors')->onUpdate('no action')->onDelete('cascade');
             $table->foreign(['book_id'], null)->references(['id'])->on('books')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['author_id'], null)->references(['id'])->on('authors')->onUpdate('no action')->onDelete('cascade');
         });
 
         Schema::table('book_copies', function (Blueprint $table) {
@@ -170,18 +172,18 @@ return new class extends Migration
         });
 
         Schema::table('book_tag', function (Blueprint $table) {
-            $table->foreign(['tag_id'], null)->references(['id'])->on('tags')->onUpdate('no action')->onDelete('cascade');
             $table->foreign(['book_id'], null)->references(['id'])->on('books')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['tag_id'], null)->references(['id'])->on('tags')->onUpdate('no action')->onDelete('cascade');
         });
 
         Schema::table('loans', function (Blueprint $table) {
-            $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
             $table->foreign(['book_copy_id'], null)->references(['id'])->on('book_copies')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
         });
 
         Schema::table('reviews', function (Blueprint $table) {
-            $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
             $table->foreign(['book_id'], null)->references(['id'])->on('books')->onUpdate('no action')->onDelete('cascade');
+            $table->foreign(['user_id'], null)->references(['id'])->on('users')->onUpdate('no action')->onDelete('cascade');
         });
     }
 
