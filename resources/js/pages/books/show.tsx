@@ -3,6 +3,7 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import ReviewItem from '@/components/review-item';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -18,7 +19,6 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import type { Review, UserReview } from '@/types/domain';
-import ReviewItem from '@/components/review-item';
 
 interface Author {
     id: number;
