@@ -349,10 +349,11 @@ export default function AdminBookForm({ book }: Props) {
                             {data.authors.length > 1 && (
                                 <Button
                                     type="button"
-                                    variant="destructive"
+                                    variant="ghost"
                                     onClick={() =>
                                         handleRemoveAuthor(index)
                                     }
+                                    className="text-red-600 hover:bg-red-50 hover:text-red-700"
                                 >
                                     {t('Remove')}
                                 </Button>
@@ -393,8 +394,9 @@ export default function AdminBookForm({ book }: Props) {
                             />
                             <Button
                                 type="button"
-                                variant="destructive"
+                                variant="ghost"
                                 onClick={() => handleRemoveTag(index)}
+                                className="text-red-600 hover:bg-red-50 hover:text-red-700"
                             >
                                 {t('Remove')}
                             </Button>
@@ -445,10 +447,11 @@ export default function AdminBookForm({ book }: Props) {
                                 />
                                 <Button
                                     type="button"
-                                    variant="destructive"
+                                    variant="ghost"
                                     onClick={() =>
                                         handleRemoveBookCopy(index)
                                     }
+                                    className="text-red-600 hover:bg-red-50 hover:text-red-700"
                                 >
                                     {copy.id ? t('Discard') : t('Remove')}
                                 </Button>
