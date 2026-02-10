@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class BookController extends Controller
@@ -15,17 +16,36 @@ class BookController extends Controller
     /**
      * Display a listing of books.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with(['authors:id,name', 'tags:id,name'])
-            ->withCount(['copies as copies_count' => function ($query) {
-                $query->active();
-            }])
-            ->latest()
-            ->paginate(12);
+        // Use Scout search when there's a search query
+        if ($request->filled('search')) {
+            $books = Book::search($request->input('search'))
+                ->query(function ($builder) {
+                    // Admin books: show ALL books, not just those with copies
+                    $builder->with([
+                        'authors:id,name',
+                        'tags:id,name',
+                    ])->withCount(['copies as copies_count' => function ($query) {
+                        $query->active();
+                    }]);
+                })
+                ->paginate(50)
+                ->withQueryString();
+        } else {
+            // Use traditional query builder when no search query
+            $books = Book::with(['authors:id,name', 'tags:id,name'])
+                ->withCount(['copies as copies_count' => function ($query) {
+                    $query->active();
+                }])
+                ->latest()
+                ->paginate(50)
+                ->withQueryString();
+        }
 
         return Inertia::render('admin/books/index', [
             'books' => $books,
+            'filters' => $request->only(['search']),
         ]);
     }
 

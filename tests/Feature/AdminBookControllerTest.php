@@ -234,3 +234,57 @@ test('authors are synced when updating book', function () {
     expect($book->authors->pluck('name')->toArray())->toContain('Author 2', 'Author 3');
     expect($book->authors->pluck('name')->toArray())->not->toContain('Author 1');
 });
+
+test('admin books index paginates with 50 items per page', function () {
+    // Create 60 books
+    Book::factory()->count(60)->create();
+
+    $response = actingAs($this->user)->get('/admin/books');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/books/index')
+        ->has('books.data', 50)
+        ->where('books.per_page', 50)
+        ->where('books.total', 60)
+        ->where('books.last_page', 2)
+    );
+});
+
+test('admin books index shows all books regardless of copies', function () {
+    // Create a book without any copies
+    $bookWithoutCopies = Book::factory()->create([
+        'title' => 'Book Without Copies',
+    ]);
+
+    // Create a book with copies
+    $bookWithCopies = Book::factory()->create([
+        'title' => 'Book With Copies',
+    ]);
+    \App\Models\BookCopy::factory()->create(['book_id' => $bookWithCopies->id]);
+
+    $response = actingAs($this->user)->get('/admin/books');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/books/index')
+        ->has('books.data', 2)
+    );
+});
+
+test('admin books index supports search', function () {
+    Book::factory()->create(['title' => 'Laravel Programming']);
+    Book::factory()->create(['title' => 'PHP Basics']);
+    Book::factory()->create(['title' => 'JavaScript Essentials']);
+
+    // Note: This test may need Meilisearch running or use database driver
+    // For now, we test the endpoint accepts the parameter
+    $response = actingAs($this->user)->get('/admin/books?search=Laravel');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/books/index')
+        ->has('filters')
+        ->where('filters.search', 'Laravel')
+    );
+});
