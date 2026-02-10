@@ -7,6 +7,15 @@ import IsbnScanner from '@/components/isbn-scanner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { BookListItem } from '@/types/domain';
@@ -177,7 +186,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-6">
                         {books.data.map((book) => (
                             <Link
                                 key={book.id}
@@ -204,7 +213,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                             )}
                                         </div>
                                         <div className="p-3">
-                                            <h3 className="line-clamp-2 text-sm font-medium">
+                                            <h3 className="min-h-[2.5rem] line-clamp-3 text-sm font-medium leading-5">
                                                 {book.title}
                                             </h3>
                                         </div>
@@ -216,7 +225,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 )}
 
                 {books.last_page > 1 && (
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-center gap-4">
                         <p className="text-sm text-muted-foreground">
                             {t('Showing :from-:to of :total books', {
                                 from: (
@@ -230,30 +239,131 @@ export default function BooksIndex({ books, filters }: Props) {
                                 total: books.total.toString(),
                             })}
                         </p>
-                        <div className="flex gap-2">
-                            {books.current_page > 1 && (
-                                <Link
-                                    href={`/?page=${books.current_page - 1}`}
-                                    preserveState
-                                    preserveScroll
-                                >
-                                    <Button variant="outline">
-                                        {t('Previous')}
-                                    </Button>
-                                </Link>
-                            )}
-                            {books.current_page < books.last_page && (
-                                <Link
-                                    href={`/?page=${books.current_page + 1}`}
-                                    preserveState
-                                    preserveScroll
-                                >
-                                    <Button variant="outline">
-                                        {t('Next')}
-                                    </Button>
-                                </Link>
-                            )}
-                        </div>
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    {books.current_page > 1 ? (
+                                        <Link
+                                            href={`/?page=${books.current_page - 1}${filters.search ? `&search=${filters.search}` : ''}`}
+                                            preserveState
+                                            preserveScroll
+                                        >
+                                            <PaginationPrevious>
+                                                {t('Previous')}
+                                            </PaginationPrevious>
+                                        </Link>
+                                    ) : (
+                                        <PaginationPrevious className="pointer-events-none opacity-50">
+                                            {t('Previous')}
+                                        </PaginationPrevious>
+                                    )}
+                                </PaginationItem>
+
+                                {/* Page numbers */}
+                                {(() => {
+                                    const pages = [];
+                                    const showPages = 5; // Show at most 5 page numbers
+                                    let startPage = Math.max(
+                                        1,
+                                        books.current_page - Math.floor(showPages / 2),
+                                    );
+                                    let endPage = Math.min(
+                                        books.last_page,
+                                        startPage + showPages - 1,
+                                    );
+
+                                    // Adjust start if we're near the end
+                                    if (endPage - startPage < showPages - 1) {
+                                        startPage = Math.max(1, endPage - showPages + 1);
+                                    }
+
+                                    // Show first page + ellipsis
+                                    if (startPage > 1) {
+                                        pages.push(
+                                            <PaginationItem key="1">
+                                                <Link
+                                                    href={`/?page=1${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    preserveState
+                                                    preserveScroll
+                                                >
+                                                    <PaginationLink>1</PaginationLink>
+                                                </Link>
+                                            </PaginationItem>,
+                                        );
+                                        if (startPage > 2) {
+                                            pages.push(
+                                                <PaginationItem key="ellipsis-start">
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>,
+                                            );
+                                        }
+                                    }
+
+                                    // Show page numbers
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        pages.push(
+                                            <PaginationItem key={i}>
+                                                <Link
+                                                    href={`/?page=${i}${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    preserveState
+                                                    preserveScroll
+                                                >
+                                                    <PaginationLink
+                                                        isActive={i === books.current_page}
+                                                    >
+                                                        {i}
+                                                    </PaginationLink>
+                                                </Link>
+                                            </PaginationItem>,
+                                        );
+                                    }
+
+                                    // Show ellipsis + last page
+                                    if (endPage < books.last_page) {
+                                        if (endPage < books.last_page - 1) {
+                                            pages.push(
+                                                <PaginationItem key="ellipsis-end">
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>,
+                                            );
+                                        }
+                                        pages.push(
+                                            <PaginationItem key={books.last_page}>
+                                                <Link
+                                                    href={`/?page=${books.last_page}${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    preserveState
+                                                    preserveScroll
+                                                >
+                                                    <PaginationLink>
+                                                        {books.last_page}
+                                                    </PaginationLink>
+                                                </Link>
+                                            </PaginationItem>,
+                                        );
+                                    }
+
+                                    return pages;
+                                })()}
+
+                                <PaginationItem>
+                                    {books.current_page < books.last_page ? (
+                                        <Link
+                                            href={`/?page=${books.current_page + 1}${filters.search ? `&search=${filters.search}` : ''}`}
+                                            preserveState
+                                            preserveScroll
+                                        >
+                                            <PaginationNext>
+                                                {t('Next')}
+                                            </PaginationNext>
+                                        </Link>
+                                    ) : (
+                                        <PaginationNext className="pointer-events-none opacity-50">
+                                            {t('Next')}
+                                        </PaginationNext>
+                                    )}
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
                     </div>
                 )}
             </div>
