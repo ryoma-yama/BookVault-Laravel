@@ -4,18 +4,10 @@ import { ImageOff } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '@/components/heading';
 import IsbnScanner from '@/components/isbn-scanner';
+import { PageNumbersPagination } from '@/components/page-numbers-pagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { BookListItem } from '@/types/domain';
@@ -47,16 +39,6 @@ export default function BooksIndex({ books, filters }: Props) {
     // Initialize search from filters
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
-
-    // Helper function to build pagination URLs
-    const buildPageUrl = (page: number): string => {
-        const params = new URLSearchParams();
-        params.set('page', page.toString());
-        if (search) {
-            params.set('search', search);
-        }
-        return `/?${params.toString()}`;
-    };
 
     // Handle ISBN scan - redirect to dedicated ISBN lookup endpoint
     const handleIsbnScan = (isbn: string) => {
@@ -242,131 +224,14 @@ export default function BooksIndex({ books, filters }: Props) {
                 )}
 
                 {books.last_page > 1 && (
-                    <div className="flex flex-col items-center gap-4">
-                        <p className="text-sm text-muted-foreground">
-                            {`${(books.current_page - 1) * books.per_page + 1} - ${Math.min(books.current_page * books.per_page, books.total)} / ${books.total}`}
-                        </p>
-                        <Pagination>
-                            <PaginationContent>
-                                <PaginationItem>
-                                    {books.current_page > 1 ? (
-                                        <PaginationPrevious
-                                            href={buildPageUrl(
-                                                books.current_page - 1,
-                                            )}
-                                        >
-                                            {t('Previous')}
-                                        </PaginationPrevious>
-                                    ) : (
-                                        <PaginationPrevious className="pointer-events-none opacity-50">
-                                            {t('Previous')}
-                                        </PaginationPrevious>
-                                    )}
-                                </PaginationItem>
-
-                                {/* Page numbers */}
-                                {(() => {
-                                    const pages = [];
-                                    const showPages = 5; // Show at most 5 page numbers
-                                    let startPage = Math.max(
-                                        1,
-                                        books.current_page -
-                                            Math.floor(showPages / 2),
-                                    );
-                                    const endPage = Math.min(
-                                        books.last_page,
-                                        startPage + showPages - 1,
-                                    );
-
-                                    // Adjust start if we're near the end
-                                    if (endPage - startPage < showPages - 1) {
-                                        startPage = Math.max(
-                                            1,
-                                            endPage - showPages + 1,
-                                        );
-                                    }
-
-                                    // Show first page + ellipsis
-                                    if (startPage > 1) {
-                                        pages.push(
-                                            <PaginationItem key="1">
-                                                <PaginationLink
-                                                    href={buildPageUrl(1)}
-                                                >
-                                                    1
-                                                </PaginationLink>
-                                            </PaginationItem>,
-                                        );
-                                        if (startPage > 2) {
-                                            pages.push(
-                                                <PaginationItem key="ellipsis-start">
-                                                    <PaginationEllipsis />
-                                                </PaginationItem>,
-                                            );
-                                        }
-                                    }
-
-                                    // Show page numbers
-                                    for (let i = startPage; i <= endPage; i++) {
-                                        pages.push(
-                                            <PaginationItem key={i}>
-                                                <PaginationLink
-                                                    href={buildPageUrl(i)}
-                                                    isActive={
-                                                        i === books.current_page
-                                                    }
-                                                >
-                                                    {i}
-                                                </PaginationLink>
-                                            </PaginationItem>,
-                                        );
-                                    }
-
-                                    // Show ellipsis + last page
-                                    if (endPage < books.last_page) {
-                                        if (endPage < books.last_page - 1) {
-                                            pages.push(
-                                                <PaginationItem key="ellipsis-end">
-                                                    <PaginationEllipsis />
-                                                </PaginationItem>,
-                                            );
-                                        }
-                                        pages.push(
-                                            <PaginationItem
-                                                key={books.last_page}
-                                            >
-                                                <PaginationLink
-                                                    href={buildPageUrl(
-                                                        books.last_page,
-                                                    )}
-                                                >
-                                                    {books.last_page}
-                                                </PaginationLink>
-                                            </PaginationItem>,
-                                        );
-                                    }
-
-                                    return pages;
-                                })()}
-
-                                <PaginationItem>
-                                    {books.current_page < books.last_page ? (
-                                        <PaginationNext
-                                            href={buildPageUrl(
-                                                books.current_page + 1,
-                                            )}
-                                        >
-                                            {t('Next')}
-                                        </PaginationNext>
-                                    ) : (
-                                        <PaginationNext className="pointer-events-none opacity-50">
-                                            {t('Next')}
-                                        </PaginationNext>
-                                    )}
-                                </PaginationItem>
-                            </PaginationContent>
-                        </Pagination>
-                    </div>
+                    <PageNumbersPagination
+                        currentPage={books.current_page}
+                        lastPage={books.last_page}
+                        perPage={books.per_page}
+                        total={books.total}
+                        basePath="/"
+                        filters={{ search }}
+                    />
                 )}
             </div>
         </AppLayout>

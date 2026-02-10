@@ -420,5 +420,10 @@
   "No books found matching your search": "検索条件に一致する書籍が見つかりません",
   "Showing :from-:to of :total books": ":total冊中:from-:to冊を表示",
   "Try adjusting your filters or search terms": "フィルターや検索条件を調整してください",
-  "Showing :count results": ":count件の結果を表示"
+  "Showing :count results": ":count件の結果を表示",
+  "Filter by tags...": "タグで絞り込み...",
+  "No tags": "タグなし",
+  "Inventory": "在庫",
+  "Delete Book": "書籍を削除",
+  "Are you sure you want to delete this book? This action cannot be undone.": "この書籍を削除してもよろしいですか？この操作は元に戻せません。"
 }

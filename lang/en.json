@@ -420,5 +420,10 @@
   "No books found matching your search": "No books found matching your search",
   "Showing :from-:to of :total books": "Showing :from-:to of :total books",
   "Try adjusting your filters or search terms": "Try adjusting your filters or search terms",
-  "Showing :count results": "Showing :count results"
+  "Showing :count results": "Showing :count results",
+  "Filter by tags...": "Filter by tags...",
+  "No tags": "No tags",
+  "Inventory": "Inventory",
+  "Delete Book": "Delete Book",
+  "Are you sure you want to delete this book? This action cannot be undone.": "Are you sure you want to delete this book? This action cannot be undone."
 }

@@ -1,9 +1,20 @@
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import axios, { AxiosError } from 'axios';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { Loader2 } from 'lucide-react';
 import type { FormEventHandler } from 'react';
 import { useState, useCallback } from 'react';
 import IsbnScanner from '@/components/isbn-scanner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,6 +63,8 @@ export default function AdminBookForm({ book }: Props) {
     const isEditing = !!book;
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -187,6 +200,18 @@ export default function AdminBookForm({ book }: Props) {
         } else {
             post('/admin/books');
         }
+    };
+
+    const handleDelete = () => {
+        if (!book) return;
+
+        setDeleting(true);
+        router.delete(`/admin/books/${book.id}`, {
+            onFinish: () => {
+                setDeleting(false);
+                setShowDeleteDialog(false);
+            },
+        });
     };
 
     return (
@@ -438,19 +463,104 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
                 )}
 
-                <div className="flex gap-2">
-                    <Button type="submit" disabled={processing}>
-                        {isEditing ? t('Update Book') : t('Create Book')}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => window.history.back()}
-                    >
-                        {t('Cancel')}
-                    </Button>
-                </div>
+                {/* Action Buttons */}
+                {isEditing ? (
+                    // Edit mode: Delete (left) | Cancel + Update (right)
+                    <div className="mt-8 flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            onClick={() => setShowDeleteDialog(true)}
+                            disabled={processing || deleting}
+                            className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 sm:w-auto"
+                        >
+                            {t('Delete Book')}
+                        </Button>
+
+                        <div className="flex w-full flex-col-reverse gap-3 sm:w-auto sm:flex-row">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => router.visit('/admin/books')}
+                                disabled={processing}
+                                className="w-full sm:w-auto"
+                            >
+                                {t('Cancel')}
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={processing}
+                                className="w-full sm:w-auto"
+                            >
+                                {processing && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
+                                {t('Update Book')}
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    // Create mode: Submit and Cancel
+                    <div className="flex flex-col gap-3 sm:flex-row-reverse">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full px-8 sm:w-auto"
+                        >
+                            {processing && (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            )}
+                            {t('Create Book')}
+                        </Button>
+
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => router.visit('/admin/books')}
+                            disabled={processing}
+                            className="w-full sm:w-auto"
+                        >
+                            {t('Cancel')}
+                        </Button>
+                    </div>
+                )}
             </form>
+
+            {/* Delete Confirmation Dialog */}
+            {isEditing && (
+                <AlertDialog
+                    open={showDeleteDialog}
+                    onOpenChange={setShowDeleteDialog}
+                >
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                {t('Delete Book')}
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                {t(
+                                    'Are you sure you want to delete this book? This action cannot be undone.',
+                                )}
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={deleting}>
+                                {t('Cancel')}
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={handleDelete}
+                                disabled={deleting}
+                                className="bg-red-600 hover:bg-red-700"
+                            >
+                                {deleting && (
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                )}
+                                {t('Delete')}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            )}
         </AppCommonLayout>
     );
 }
