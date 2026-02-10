@@ -289,7 +289,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                         );
                                     }
 
-                                     // Show first page + ellipsis
+                                    // Show first page + ellipsis
                                     if (startPage > 1) {
                                         pages.push(
                                             <PaginationItem key="1">
@@ -335,7 +335,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                             );
                                         }
                                         pages.push(
-                                            <PaginationItem key={books.last_page}>
+                                            <PaginationItem
+                                                key={books.last_page}
+                                            >
                                                 <PaginationLink
                                                     href={buildPageUrl(
                                                         books.last_page,

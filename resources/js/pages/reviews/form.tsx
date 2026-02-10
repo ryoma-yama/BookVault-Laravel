@@ -138,9 +138,7 @@ export default function ReviewForm({ book, review }: Props) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="comment">
-                                {t('Your Review')}
-                            </Label>
+                            <Label htmlFor="comment">{t('Your Review')}</Label>
                             <Textarea
                                 id="comment"
                                 value={data.comment}
