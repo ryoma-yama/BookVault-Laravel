@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import AppCommonLayout from '@/layouts/app-common-layout';
 
 interface Book {
     id: number;
@@ -69,14 +70,14 @@ interface Props {
 export default function AdminLoansIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
     const breadcrumbs: BreadcrumbItem[] = [
-            {
-                title: t('Admin'),
-                href: '/admin/loans',
-            },
-            {
-                title: t('Loans'),
-                href: '/admin/loans',
-            },
+        {
+            title: t('Admin'),
+            href: '/admin/loans',
+        },
+        {
+            title: t('Loans'),
+            href: '/admin/loans',
+        },
     ];
 
     const [sorting, setSorting] = useState<SortingState>([
@@ -273,65 +274,59 @@ export default function AdminLoansIndex({ loans }: Props) {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Loans')} />
-
-            <div className="space-y-6 px-4 py-6">
-                <Heading title={t('Loans')} />
-
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => {
-                                        return (
-                                            <TableHead key={header.id}>
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext(),
-                                                      )}
-                                            </TableHead>
-                                        );
-                                    })}
-                                </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        data-state={
-                                            row.getIsSelected() && 'selected'
-                                        }
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext(),
+        <AppCommonLayout title={t('Loans')} breadcrumbs={breadcrumbs}>
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                    header.column
+                                                        .columnDef.header,
+                                                    header.getContext(),
                                                 )}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={columns.length}
-                                        className="h-24 text-center"
-                                    >
-                                        {t('No loans found')}
-                                    </TableCell>
+                                        </TableHead>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && 'selected'
+                                    }
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    {t('No loans found')}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
 
             <AlertDialog
@@ -353,6 +348,6 @@ export default function AdminLoansIndex({ loans }: Props) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </AppLayout>
+        </AppCommonLayout>
     );
 }

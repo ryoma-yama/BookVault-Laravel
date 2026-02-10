@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { Author, Tag } from '@/types/domain';
+import AppCommonLayout from '@/layouts/app-common-layout';
 
 function extractErrorMessage(
     error: unknown,
@@ -189,292 +190,286 @@ export default function AdminBookForm({ book }: Props) {
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={isEditing ? t('Edit Book') : t('Add New Book')} />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <h1 className="text-2xl font-bold">
-                    {isEditing ? t('Edit Book') : t('Add New Book')}
-                </h1>
-                <form onSubmit={submit} className="max-w-2xl space-y-4">
-                    <div>
-                        <Label htmlFor="isbn_13">{t('ISBN-13')}</Label>
-                        <div className="flex gap-2">
+        <AppCommonLayout title={isEditing ? t('Edit Book') : t('Add New Book')} breadcrumbs={breadcrumbs}>
+            <form onSubmit={submit} className="max-w-2xl space-y-4">
+                <div>
+                    <Label htmlFor="isbn_13">{t('ISBN-13')}</Label>
+                    <div className="flex gap-2">
+                        <Input
+                            id="isbn_13"
+                            type="text"
+                            value={data.isbn_13}
+                            onChange={(e) =>
+                                setData('isbn_13', e.target.value)
+                            }
+                            maxLength={13}
+                            required
+                        />
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleSearchByIsbn}
+                            disabled={isSearching || !data.isbn_13}
+                        >
+                            {isSearching
+                                ? t('Searching...')
+                                : t('Search ISBN')}
+                        </Button>
+                        <IsbnScanner
+                            onScan={handleIsbnScan}
+                            buttonVariant="outline"
+                        />
+                    </div>
+                    {errors.isbn_13 && (
+                        <p className="text-sm text-red-500">
+                            {errors.isbn_13}
+                        </p>
+                    )}
+                    {searchError && (
+                        <p className="text-sm text-red-500">
+                            {searchError}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label htmlFor="title">{t('Title')}</Label>
+                    <Input
+                        id="title"
+                        type="text"
+                        value={data.title}
+                        onChange={(e) => setData('title', e.target.value)}
+                        required
+                    />
+                    {errors.title && (
+                        <p className="text-sm text-red-500">
+                            {errors.title}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label htmlFor="publisher">{t('Publisher')}</Label>
+                    <Input
+                        id="publisher"
+                        type="text"
+                        value={data.publisher}
+                        onChange={(e) =>
+                            setData('publisher', e.target.value)
+                        }
+                        required
+                    />
+                    {errors.publisher && (
+                        <p className="text-sm text-red-500">
+                            {errors.publisher}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label htmlFor="published_date">{t('Published')}</Label>
+                    <Input
+                        id="published_date"
+                        type="text"
+                        value={data.published_date}
+                        onChange={(e) =>
+                            setData('published_date', e.target.value)
+                        }
+                        placeholder="YYYY-MM-DD"
+                        required
+                    />
+                    {errors.published_date && (
+                        <p className="text-sm text-red-500">
+                            {errors.published_date}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label htmlFor="description">{t('Description')}</Label>
+                    <Textarea
+                        id="description"
+                        value={data.description}
+                        onChange={(e) =>
+                            setData('description', e.target.value)
+                        }
+                        rows={5}
+                        required
+                    />
+                    {errors.description && (
+                        <p className="text-sm text-red-500">
+                            {errors.description}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <Label htmlFor="image_url">
+                        {t('Cover Image URL')}
+                    </Label>
+                    <Input
+                        id="image_url"
+                        type="text"
+                        value={data.image_url}
+                        onChange={(e) =>
+                            setData('image_url', e.target.value)
+                        }
+                    />
+                    {errors.image_url && (
+                        <p className="text-sm text-red-500">
+                            {errors.image_url}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <div className="mb-2 flex items-center justify-between">
+                        <Label>{t('Authors')}</Label>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleAddAuthor}
+                        >
+                            {t('Add Author')}
+                        </Button>
+                    </div>
+                    {data.authors.map((author, index) => (
+                        <div key={index} className="mb-2 flex gap-2">
                             <Input
-                                id="isbn_13"
                                 type="text"
-                                value={data.isbn_13}
+                                value={author}
                                 onChange={(e) =>
-                                    setData('isbn_13', e.target.value)
+                                    handleAuthorChange(
+                                        index,
+                                        e.target.value,
+                                    )
                                 }
-                                maxLength={13}
-                                required
+                                placeholder={t('Author name')}
                             />
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleSearchByIsbn}
-                                disabled={isSearching || !data.isbn_13}
-                            >
-                                {isSearching
-                                    ? t('Searching...')
-                                    : t('Search ISBN')}
-                            </Button>
-                            <IsbnScanner
-                                onScan={handleIsbnScan}
-                                buttonVariant="outline"
-                            />
-                        </div>
-                        {errors.isbn_13 && (
-                            <p className="text-sm text-red-500">
-                                {errors.isbn_13}
-                            </p>
-                        )}
-                        {searchError && (
-                            <p className="text-sm text-red-500">
-                                {searchError}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="title">{t('Title')}</Label>
-                        <Input
-                            id="title"
-                            type="text"
-                            value={data.title}
-                            onChange={(e) => setData('title', e.target.value)}
-                            required
-                        />
-                        {errors.title && (
-                            <p className="text-sm text-red-500">
-                                {errors.title}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="publisher">{t('Publisher')}</Label>
-                        <Input
-                            id="publisher"
-                            type="text"
-                            value={data.publisher}
-                            onChange={(e) =>
-                                setData('publisher', e.target.value)
-                            }
-                            required
-                        />
-                        {errors.publisher && (
-                            <p className="text-sm text-red-500">
-                                {errors.publisher}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="published_date">{t('Published')}</Label>
-                        <Input
-                            id="published_date"
-                            type="text"
-                            value={data.published_date}
-                            onChange={(e) =>
-                                setData('published_date', e.target.value)
-                            }
-                            placeholder="YYYY-MM-DD"
-                            required
-                        />
-                        {errors.published_date && (
-                            <p className="text-sm text-red-500">
-                                {errors.published_date}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="description">{t('Description')}</Label>
-                        <Textarea
-                            id="description"
-                            value={data.description}
-                            onChange={(e) =>
-                                setData('description', e.target.value)
-                            }
-                            rows={5}
-                            required
-                        />
-                        {errors.description && (
-                            <p className="text-sm text-red-500">
-                                {errors.description}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <Label htmlFor="image_url">
-                            {t('Cover Image URL')}
-                        </Label>
-                        <Input
-                            id="image_url"
-                            type="text"
-                            value={data.image_url}
-                            onChange={(e) =>
-                                setData('image_url', e.target.value)
-                            }
-                        />
-                        {errors.image_url && (
-                            <p className="text-sm text-red-500">
-                                {errors.image_url}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <div className="mb-2 flex items-center justify-between">
-                            <Label>{t('Authors')}</Label>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleAddAuthor}
-                            >
-                                {t('Add Author')}
-                            </Button>
-                        </div>
-                        {data.authors.map((author, index) => (
-                            <div key={index} className="mb-2 flex gap-2">
-                                <Input
-                                    type="text"
-                                    value={author}
-                                    onChange={(e) =>
-                                        handleAuthorChange(
-                                            index,
-                                            e.target.value,
-                                        )
+                            {data.authors.length > 1 && (
+                                <Button
+                                    type="button"
+                                    variant="destructive"
+                                    onClick={() =>
+                                        handleRemoveAuthor(index)
                                     }
-                                    placeholder={t('Author name')}
-                                />
-                                {data.authors.length > 1 && (
-                                    <Button
-                                        type="button"
-                                        variant="destructive"
-                                        onClick={() =>
-                                            handleRemoveAuthor(index)
-                                        }
-                                    >
-                                        {t('Remove')}
-                                    </Button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                                >
+                                    {t('Remove')}
+                                </Button>
+                            )}
+                        </div>
+                    ))}
+                </div>
 
-                    {/* Tags Section */}
+                {/* Tags Section */}
+                <div>
+                    <div className="mb-2 flex items-center justify-between">
+                        <Label>{t('Tags')}</Label>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleAddTag}
+                        >
+                            {t('Add Tag')}
+                        </Button>
+                    </div>
+                    {data.tags.length === 0 && (
+                        <p className="text-sm text-muted-foreground">
+                            {t(
+                                'No tags added yet. Click "Add Tag" to add one.',
+                            )}
+                        </p>
+                    )}
+                    {data.tags.map((tag, index) => (
+                        <div key={index} className="mb-2 flex gap-2">
+                            <Input
+                                type="text"
+                                value={tag}
+                                onChange={(e) =>
+                                    handleTagChange(index, e.target.value)
+                                }
+                                placeholder={t('Tag name')}
+                                maxLength={50}
+                            />
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                onClick={() => handleRemoveTag(index)}
+                            >
+                                {t('Remove')}
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+
+                {/* BookCopies Section - Only show in edit mode */}
+                {isEditing && (
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <Label>{t('Tags')}</Label>
+                            <Label>{t('Book Copies (Inventory)')}</Label>
                             <Button
                                 type="button"
                                 variant="outline"
-                                onClick={handleAddTag}
+                                onClick={handleAddBookCopy}
                             >
-                                {t('Add Tag')}
+                                {t('Add Copy')}
                             </Button>
                         </div>
-                        {data.tags.length === 0 && (
+                        <p className="mb-2 text-sm text-muted-foreground">
+                            {t(
+                                'Manage physical copies of this book. New copies will be acquired today. Removing a copy will mark it as discarded.',
+                            )}
+                        </p>
+                        {data.book_copies.length === 0 && (
                             <p className="text-sm text-muted-foreground">
                                 {t(
-                                    'No tags added yet. Click "Add Tag" to add one.',
+                                    'No active copies. Click "Add Copy" to add one.',
                                 )}
                             </p>
                         )}
-                        {data.tags.map((tag, index) => (
+                        {data.book_copies.map((copy, index) => (
                             <div key={index} className="mb-2 flex gap-2">
                                 <Input
                                     type="text"
-                                    value={tag}
-                                    onChange={(e) =>
-                                        handleTagChange(index, e.target.value)
+                                    value={
+                                        copy.id
+                                            ? t('Copy #:id', {
+                                                id: copy.id,
+                                            })
+                                            : t(
+                                                'New Copy (will be acquired today)',
+                                            )
                                     }
-                                    placeholder={t('Tag name')}
-                                    maxLength={50}
+                                    disabled
+                                    className="flex-1"
                                 />
                                 <Button
                                     type="button"
                                     variant="destructive"
-                                    onClick={() => handleRemoveTag(index)}
+                                    onClick={() =>
+                                        handleRemoveBookCopy(index)
+                                    }
                                 >
-                                    {t('Remove')}
+                                    {copy.id ? t('Discard') : t('Remove')}
                                 </Button>
                             </div>
                         ))}
                     </div>
+                )}
 
-                    {/* BookCopies Section - Only show in edit mode */}
-                    {isEditing && (
-                        <div>
-                            <div className="mb-2 flex items-center justify-between">
-                                <Label>{t('Book Copies (Inventory)')}</Label>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={handleAddBookCopy}
-                                >
-                                    {t('Add Copy')}
-                                </Button>
-                            </div>
-                            <p className="mb-2 text-sm text-muted-foreground">
-                                {t(
-                                    'Manage physical copies of this book. New copies will be acquired today. Removing a copy will mark it as discarded.',
-                                )}
-                            </p>
-                            {data.book_copies.length === 0 && (
-                                <p className="text-sm text-muted-foreground">
-                                    {t(
-                                        'No active copies. Click "Add Copy" to add one.',
-                                    )}
-                                </p>
-                            )}
-                            {data.book_copies.map((copy, index) => (
-                                <div key={index} className="mb-2 flex gap-2">
-                                    <Input
-                                        type="text"
-                                        value={
-                                            copy.id
-                                                ? t('Copy #:id', {
-                                                      id: copy.id,
-                                                  })
-                                                : t(
-                                                      'New Copy (will be acquired today)',
-                                                  )
-                                        }
-                                        disabled
-                                        className="flex-1"
-                                    />
-                                    <Button
-                                        type="button"
-                                        variant="destructive"
-                                        onClick={() =>
-                                            handleRemoveBookCopy(index)
-                                        }
-                                    >
-                                        {copy.id ? t('Discard') : t('Remove')}
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="flex gap-2">
-                        <Button type="submit" disabled={processing}>
-                            {isEditing ? t('Update Book') : t('Create Book')}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => window.history.back()}
-                        >
-                            {t('Cancel')}
-                        </Button>
-                    </div>
-                </form>
-            </div>
-        </AppLayout>
+                <div className="flex gap-2">
+                    <Button type="submit" disabled={processing}>
+                        {isEditing ? t('Update Book') : t('Create Book')}
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => window.history.back()}
+                    >
+                        {t('Cancel')}
+                    </Button>
+                </div>
+            </form>
+        </AppCommonLayout>
     );
 }

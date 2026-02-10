@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { Book } from '@/types/domain';
+import AppCommonLayout from '@/layouts/app-common-layout';
 
 interface PaginatedBooks {
     data: Book[];
@@ -18,7 +19,6 @@ interface Props {
     books: PaginatedBooks;
 }
 
-
 export default function AdminBooksIndex({ books }: Props) {
     const { t } = useLaravelReactI18n();
     const handleDelete = (id: number) => {
@@ -26,90 +26,83 @@ export default function AdminBooksIndex({ books }: Props) {
             router.delete(`/admin/books/${id}`);
         }
     };
-    
+
     const breadcrumbs: BreadcrumbItem[] = [
-            {
-                title: t('Admin'),
-                href: '/admin/books',
-            },
-            {
-                title: t('Books'),
-                href: '/admin/books',
-            },
+        {
+            title: t('Admin'),
+            href: '/admin/books',
+        },
+        {
+            title: t('Books'),
+            href: '/admin/books',
+        },
     ];
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Books')} />
-
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">
-                        {t('Books')}
-                    </h1>
-                    <Link href="/admin/books/create">
-                        <Button>{t('Add New Book')}</Button>
-                    </Link>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="p-2 text-left">{t('Title')}</th>
-                                <th className="p-2 text-left">
-                                    {t('Authors')}
-                                </th>
-                                <th className="p-2 text-left">
-                                    {t('Publisher')}
-                                </th>
-                                <th className="p-2 text-left">
-                                    {t('ISBN-13')}
-                                </th>
-                                <th className="p-2 text-left">
-                                    {t('Actions')}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {books.data.map((book) => (
-                                <tr key={book.id} className="border-b">
-                                    <td className="p-2">{book.title}</td>
-                                    <td className="p-2">
-                                        {book.authors
-                                            .map((a) => a.name)
-                                            .join(', ')}
-                                    </td>
-                                    <td className="p-2">{book.publisher}</td>
-                                    <td className="p-2">{book.isbn_13}</td>
-                                    <td className="p-2">
-                                        <div className="flex gap-2">
-                                            <Link
-                                                href={`/admin/books/${book.id}/edit`}
-                                            >
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                >
-                                                    {t('Edit')}
-                                                </Button>
-                                            </Link>
-                                            <Button
-                                                variant="destructive"
-                                                size="sm"
-                                                onClick={() =>
-                                                    handleDelete(book.id)
-                                                }
-                                            >
-                                                {t('Delete')}
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+        <AppCommonLayout title={t('Books')} breadcrumbs={breadcrumbs}>
+            <div className="flex ">
+                <Link href="/admin/books/create">
+                    <Button>{t('Add New Book')}</Button>
+                </Link>
             </div>
-        </AppLayout>
+            <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                    <thead>
+                        <tr className="border-b">
+                            <th className="p-2 text-left">{t('Title')}</th>
+                            <th className="p-2 text-left">
+                                {t('Authors')}
+                            </th>
+                            <th className="p-2 text-left">
+                                {t('Publisher')}
+                            </th>
+                            <th className="p-2 text-left">
+                                {t('ISBN-13')}
+                            </th>
+                            <th className="p-2 text-left">
+                                {t('Actions')}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {books.data.map((book) => (
+                            <tr key={book.id} className="border-b">
+                                <td className="p-2">{book.title}</td>
+                                <td className="p-2">
+                                    {book.authors
+                                        .map((a) => a.name)
+                                        .join(', ')}
+                                </td>
+                                <td className="p-2">{book.publisher}</td>
+                                <td className="p-2">{book.isbn_13}</td>
+                                <td className="p-2">
+                                    <div className="flex gap-2">
+                                        <Link
+                                            href={`/admin/books/${book.id}/edit`}
+                                        >
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                            >
+                                                {t('Edit')}
+                                            </Button>
+                                        </Link>
+                                        <Button
+                                            variant="destructive"
+                                            size="sm"
+                                            onClick={() =>
+                                                handleDelete(book.id)
+                                            }
+                                        >
+                                            {t('Delete')}
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </AppCommonLayout >
     );
 }
