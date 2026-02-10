@@ -1,4 +1,4 @@
-"use no memo"; // React Compilerの最適化をこのファイルで無効化
+'use no memo'; // React Compilerの最適化をこのファイルで無効化
 import { Head, router } from '@inertiajs/react';
 import {
     type ColumnDef,
@@ -222,8 +222,8 @@ export default function BorrowedIndex({ loans }: Props) {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column.columnDef
-                                                              .header,
+                                                          header.column
+                                                              .columnDef.header,
                                                           header.getContext(),
                                                       )}
                                             </TableHead>
@@ -272,17 +272,13 @@ export default function BorrowedIndex({ loans }: Props) {
             >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            {t('Return Book')}
-                        </AlertDialogTitle>
+                        <AlertDialogTitle>{t('Return Book')}</AlertDialogTitle>
                         <AlertDialogDescription>
                             {t('Are you sure you want to return this book?')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>
-                            {t('Cancel')}
-                        </AlertDialogCancel>
+                        <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
                         <AlertDialogAction onClick={handleReturnConfirm}>
                             {t('Return')}
                         </AlertDialogAction>

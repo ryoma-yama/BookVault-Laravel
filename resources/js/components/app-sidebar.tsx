@@ -5,6 +5,8 @@ import {
     BookOpen,
     ClipboardList,
     Library,
+    MessageSquare,
+    MessagesSquare,
     Users,
 } from 'lucide-react';
 import { LanguageSwitcher } from '@/components/language-switcher';
@@ -20,18 +22,19 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
+import type { NavItem, SharedData } from '@/types';
+import AppLogo from './app-logo';
 import { home } from '@/routes';
 import admin from '@/routes/admin';
 import borrowed from '@/routes/borrowed';
-import type { NavItem, SharedData } from '@/types';
-import AppLogo from './app-logo';
+import reviews from '@/routes/reviews';
 
 export function AppSidebar() {
     const { t } = useLaravelReactI18n();
     const { auth } = usePage<SharedData>().props;
     const { isCurrentUrl } = useCurrentUrl();
 
-    // General user navigation items
+    // General navigation items (for all users)
     const generalNavItems: NavItem[] = [
         {
             title: t('Books'),
@@ -39,13 +42,25 @@ export function AppSidebar() {
             icon: Library,
             isActive: isCurrentUrl(home()),
         },
-        {
-            title: t('Borrowed Books'),
-            href: borrowed.index(),
-            icon: BookCheck,
-            isActive: isCurrentUrl(borrowed.index()),
-        },
     ];
+
+    // User navigation items (only for authenticated users)
+    const userNavItems: NavItem[] = auth.user
+        ? [
+            {
+                title: t('Borrowed Books'),
+                href: borrowed.index(),
+                icon: BookCheck,
+                isActive: isCurrentUrl(borrowed.index()),
+            },
+            {
+                title: t('My Reviews'),
+                href: reviews.index(),
+                icon: MessageSquare,
+                isActive: isCurrentUrl(reviews.index()),
+            },
+        ]
+        : [];
 
     // Admin navigation items
     const adminNavItems: NavItem[] = [
@@ -62,16 +77,22 @@ export function AppSidebar() {
             isActive: isCurrentUrl(admin.books.index()),
         },
         {
-            title: t('User Management'),
-            href: admin.users.index(),
-            icon: Users,
-            isActive: isCurrentUrl(admin.users.index()),
-        },
-        {
             title: t('Loan Management'),
             href: admin.loans.index(),
             icon: ClipboardList,
             isActive: isCurrentUrl(admin.loans.index()),
+        },
+        {
+            title: t('Review Management'),
+            href: admin.reviews.index(),
+            icon: MessagesSquare,
+            isActive: isCurrentUrl(admin.reviews.index()),
+        },
+        {
+            title: t('User Management'),
+            href: admin.users.index(),
+            icon: Users,
+            isActive: isCurrentUrl(admin.users.index()),
         },
     ];
 
@@ -91,6 +112,9 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain label={t('Application')} items={generalNavItems} />
+                {auth.user && userNavItems.length > 0 && (
+                    <NavMain label={t('User')} items={userNavItems} />
+                )}
                 {auth.user?.role === 'admin' && (
                     <NavMain
                         label={t('Administration')}

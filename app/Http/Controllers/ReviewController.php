@@ -15,11 +15,46 @@ class ReviewController extends Controller
     use AuthorizesRequests;
 
     /**
+     * Display a listing of the authenticated user's reviews.
+     */
+    public function index(): Response
+    {
+        $reviews = Review::where('user_id', auth()->id())
+            ->with(['book.authors', 'user'])
+            ->latest()
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'id' => $review->id,
+                    'comment' => $review->comment,
+                    'is_recommended' => $review->is_recommended,
+                    'created_at' => $review->created_at->toIso8601String(),
+                    'book' => [
+                        'id' => $review->book->id,
+                        'title' => $review->book->title,
+                        'authors' => $review->book->authors->map(fn ($author) => [
+                            'id' => $author->id,
+                            'name' => $author->name,
+                        ]),
+                    ],
+                    'user' => [
+                        'id' => $review->user->id,
+                        'name' => $review->user->name,
+                    ],
+                ];
+            });
+
+        return Inertia::render('reviews/index', [
+            'reviews' => $reviews,
+        ]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create(Book $book): Response
     {
-        return Inertia::render('reviews/create', [
+        return Inertia::render('reviews/form', [
             'book' => $book->load('authors'),
         ]);
     }
@@ -49,7 +84,7 @@ class ReviewController extends Controller
     {
         $this->authorize('update', $review);
 
-        return Inertia::render('reviews/edit', [
+        return Inertia::render('reviews/form', [
             'review' => $review->load(['book.authors', 'user']),
         ]);
     }

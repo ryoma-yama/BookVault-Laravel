@@ -10,22 +10,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import type { Author, Tag } from '@/types/domain';
 
-function extractErrorMessage(error: unknown, t: (key: string) => string): string {
+function extractErrorMessage(
+    error: unknown,
+    t: (key: string) => string,
+): string {
     if (error instanceof AxiosError && error.response?.data?.error) {
         return error.response.data.error;
     }
     return t('Failed to fetch book information');
-}
-
-interface Author {
-    id: number;
-    name: string;
-}
-
-interface Tag {
-    id: number;
-    name: string;
 }
 
 interface BookCopy {
@@ -221,7 +215,9 @@ export default function AdminBookForm({ book }: Props) {
                                 onClick={handleSearchByIsbn}
                                 disabled={isSearching || !data.isbn_13}
                             >
-                                {isSearching ? t('Searching...') : t('Search ISBN')}
+                                {isSearching
+                                    ? t('Searching...')
+                                    : t('Search ISBN')}
                             </Button>
                             <IsbnScanner
                                 onScan={handleIsbnScan}
@@ -312,7 +308,9 @@ export default function AdminBookForm({ book }: Props) {
                     </div>
 
                     <div>
-                        <Label htmlFor="image_url">{t('Cover Image URL')}</Label>
+                        <Label htmlFor="image_url">
+                            {t('Cover Image URL')}
+                        </Label>
                         <Input
                             id="image_url"
                             type="text"
@@ -381,7 +379,9 @@ export default function AdminBookForm({ book }: Props) {
                         </div>
                         {data.tags.length === 0 && (
                             <p className="text-sm text-muted-foreground">
-                                {t('No tags added yet. Click "Add Tag" to add one.')}
+                                {t(
+                                    'No tags added yet. Click "Add Tag" to add one.',
+                                )}
                             </p>
                         )}
                         {data.tags.map((tag, index) => (
@@ -420,11 +420,15 @@ export default function AdminBookForm({ book }: Props) {
                                 </Button>
                             </div>
                             <p className="mb-2 text-sm text-muted-foreground">
-                                {t('Manage physical copies of this book. New copies will be acquired today. Removing a copy will mark it as discarded.')}
+                                {t(
+                                    'Manage physical copies of this book. New copies will be acquired today. Removing a copy will mark it as discarded.',
+                                )}
                             </p>
                             {data.book_copies.length === 0 && (
                                 <p className="text-sm text-muted-foreground">
-                                    {t('No active copies. Click "Add Copy" to add one.')}
+                                    {t(
+                                        'No active copies. Click "Add Copy" to add one.',
+                                    )}
                                 </p>
                             )}
                             {data.book_copies.map((copy, index) => (
@@ -433,8 +437,12 @@ export default function AdminBookForm({ book }: Props) {
                                         type="text"
                                         value={
                                             copy.id
-                                                ? t('Copy #:id', { id: copy.id })
-                                                : t('New Copy (will be acquired today)')
+                                                ? t('Copy #:id', {
+                                                      id: copy.id,
+                                                  })
+                                                : t(
+                                                      'New Copy (will be acquired today)',
+                                                  )
                                         }
                                         disabled
                                         className="flex-1"
