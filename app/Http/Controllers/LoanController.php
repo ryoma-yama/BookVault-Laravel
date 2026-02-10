@@ -40,7 +40,7 @@ class LoanController extends Controller
         }
 
         // For Inertia requests, redirect back with success message
-        return back()->with('success', __('Book borrowed successfully!'));
+        return back()->with('success', __('Book borrowed successfully.'));
     }
 
     /**
