@@ -39,7 +39,7 @@ export default function BookShow({ book, reviews, userReview }: Props) {
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Books',
+            title: t('Library'),
             href: '/',
         },
         {

@@ -35,13 +35,13 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
-
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
     const { errors } = usePage().props;
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
+
+    const breadcrumbs: BreadcrumbItem[] = [{ title: t('Library'), href: '/' }];
 
     // Track the last search value that was actually submitted to prevent infinite loops
     const lastSubmittedSearch = useRef(filters.search || '');
@@ -102,10 +102,10 @@ export default function BooksIndex({ books, filters }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Books')} />
+            <Head title={t('Library')} />
 
             <div className="space-y-6 px-4 py-6">
-                <Heading title={t('Books')} />
+                <Heading title={t('Library')} />
 
                 <div className="space-y-4">
                     <div className="flex gap-2">

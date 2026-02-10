@@ -18,16 +18,6 @@ interface Props {
     books: PaginatedBooks;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Admin',
-        href: '/admin/books',
-    },
-    {
-        title: 'Books',
-        href: '/admin/books',
-    },
-];
 
 export default function AdminBooksIndex({ books }: Props) {
     const { t } = useLaravelReactI18n();
@@ -36,15 +26,26 @@ export default function AdminBooksIndex({ books }: Props) {
             router.delete(`/admin/books/${id}`);
         }
     };
+    
+    const breadcrumbs: BreadcrumbItem[] = [
+            {
+                title: t('Admin'),
+                href: '/admin/books',
+            },
+            {
+                title: t('Books'),
+                href: '/admin/books',
+            },
+    ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Book Management')} />
+            <Head title={t('Books')} />
 
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold">
-                        {t('Book Management')}
+                        {t('Books')}
                     </h1>
                     <Link href="/admin/books/create">
                         <Button>{t('Add New Book')}</Button>

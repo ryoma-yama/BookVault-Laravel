@@ -59,9 +59,7 @@ interface Props {
     loans: Loan[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Borrowed Books', href: '/borrowed' },
-];
+
 
 export default function BorrowedIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
@@ -69,7 +67,9 @@ export default function BorrowedIndex({ loans }: Props) {
         { id: 'borrowedDate', desc: true },
     ]);
     const [returnLoanId, setReturnLoanId] = useState<number | null>(null);
-
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: t('Borrowed Books'), href: '/borrowed' },
+    ];
     const handleReturnClick = (loanId: number) => {
         setReturnLoanId(loanId);
     };

@@ -5,6 +5,7 @@ import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, ReviewWithBook, SharedData } from '@/types';
+import Heading from '@/components/heading';
 
 interface Props {
     reviews: ReviewWithBook[];
@@ -16,10 +17,14 @@ export default function AdminReviewIndex({ reviews }: Props) {
     const isAdmin = auth.user?.role === 'admin';
 
     const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: t('Review Management'),
-            href: '/admin/reviews',
-        },
+            {
+                title: t('Admin'),
+                href: '/admin/reviews',
+            },
+            {
+                title: t('Reviews'),
+                href: '/admin/reviews',
+            },
     ];
 
     const handleEdit = (reviewId: number) => {
@@ -28,16 +33,9 @@ export default function AdminReviewIndex({ reviews }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Review Management')} />
+            <Head title={t('Reviews')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4">
-                    <h1 className="text-3xl font-bold">
-                        {t('Review Management')}
-                    </h1>
-                    <p className="text-muted-foreground">
-                        {t('Manage all user reviews')}
-                    </p>
-                </div>
+                <Heading title={t('Reviews')} />
 
                 {reviews.length === 0 ? (
                     <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
