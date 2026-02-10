@@ -237,17 +237,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 {books.last_page > 1 && (
                     <div className="flex flex-col items-center gap-4">
                         <p className="text-sm text-muted-foreground">
-                            {t('Showing :from-:to of :total books', {
-                                from: (
-                                    (books.current_page - 1) * books.per_page +
-                                    1
-                                ).toString(),
-                                to: Math.min(
-                                    books.current_page * books.per_page,
-                                    books.total,
-                                ).toString(),
-                                total: books.total.toString(),
-                            })}
+                            {`${((books.current_page - 1) * books.per_page + 1)} - ${Math.min(books.current_page * books.per_page, books.total)} / ${books.total}`}
                         </p>
                         <Pagination>
                             <PaginationContent>
@@ -274,7 +264,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                     let startPage = Math.max(
                                         1,
                                         books.current_page -
-                                            Math.floor(showPages / 2),
+                                        Math.floor(showPages / 2),
                                     );
                                     let endPage = Math.min(
                                         books.last_page,
