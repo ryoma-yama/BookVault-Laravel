@@ -46,6 +46,15 @@ class BookSeeder extends Seeder
             ],
         ];
 
+        $originalCount = count($books);
+        for ($i = 1; $i <= 100; $i++) {
+            $copy = $books[$i % $originalCount];
+            // 重複エラー回避のためISBNとタイトルを加工
+            $copy['isbn_13'] = (string) (9784000000000 + $i);
+            $copy['title'] = $copy['title'].' No.'.$i;
+            $books[] = $copy;
+        }
+
         foreach ($books as $bookData) {
             $authorNames = $bookData['authors'];
             $tagNames = $bookData['tags'] ?? [];
