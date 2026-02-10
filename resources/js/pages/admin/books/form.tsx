@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import axios, { AxiosError } from 'axios';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import type { FormEventHandler } from 'react';
@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import AppLayout from '@/layouts/app-layout';
+import AppCommonLayout from '@/layouts/app-common-layout';
+
 import type { BreadcrumbItem } from '@/types';
 import type { Author, Tag } from '@/types/domain';
-import AppCommonLayout from '@/layouts/app-common-layout';
 
 function extractErrorMessage(
     error: unknown,
@@ -190,7 +190,10 @@ export default function AdminBookForm({ book }: Props) {
     };
 
     return (
-        <AppCommonLayout title={isEditing ? t('Edit Book') : t('Add New Book')} breadcrumbs={breadcrumbs}>
+        <AppCommonLayout
+            title={isEditing ? t('Edit Book') : t('Add New Book')}
+            breadcrumbs={breadcrumbs}
+        >
             <form onSubmit={submit} className="max-w-2xl space-y-4">
                 <div>
                     <Label htmlFor="isbn_13">{t('ISBN-13')}</Label>
@@ -199,9 +202,7 @@ export default function AdminBookForm({ book }: Props) {
                             id="isbn_13"
                             type="text"
                             value={data.isbn_13}
-                            onChange={(e) =>
-                                setData('isbn_13', e.target.value)
-                            }
+                            onChange={(e) => setData('isbn_13', e.target.value)}
                             maxLength={13}
                             required
                         />
@@ -211,9 +212,7 @@ export default function AdminBookForm({ book }: Props) {
                             onClick={handleSearchByIsbn}
                             disabled={isSearching || !data.isbn_13}
                         >
-                            {isSearching
-                                ? t('Searching...')
-                                : t('Search ISBN')}
+                            {isSearching ? t('Searching...') : t('Search ISBN')}
                         </Button>
                         <IsbnScanner
                             onScan={handleIsbnScan}
@@ -221,14 +220,10 @@ export default function AdminBookForm({ book }: Props) {
                         />
                     </div>
                     {errors.isbn_13 && (
-                        <p className="text-sm text-red-500">
-                            {errors.isbn_13}
-                        </p>
+                        <p className="text-sm text-red-500">{errors.isbn_13}</p>
                     )}
                     {searchError && (
-                        <p className="text-sm text-red-500">
-                            {searchError}
-                        </p>
+                        <p className="text-sm text-red-500">{searchError}</p>
                     )}
                 </div>
 
@@ -242,9 +237,7 @@ export default function AdminBookForm({ book }: Props) {
                         required
                     />
                     {errors.title && (
-                        <p className="text-sm text-red-500">
-                            {errors.title}
-                        </p>
+                        <p className="text-sm text-red-500">{errors.title}</p>
                     )}
                 </div>
 
@@ -254,9 +247,7 @@ export default function AdminBookForm({ book }: Props) {
                         id="publisher"
                         type="text"
                         value={data.publisher}
-                        onChange={(e) =>
-                            setData('publisher', e.target.value)
-                        }
+                        onChange={(e) => setData('publisher', e.target.value)}
                         required
                     />
                     {errors.publisher && (
@@ -290,9 +281,7 @@ export default function AdminBookForm({ book }: Props) {
                     <Textarea
                         id="description"
                         value={data.description}
-                        onChange={(e) =>
-                            setData('description', e.target.value)
-                        }
+                        onChange={(e) => setData('description', e.target.value)}
                         rows={5}
                         required
                     />
@@ -304,16 +293,12 @@ export default function AdminBookForm({ book }: Props) {
                 </div>
 
                 <div>
-                    <Label htmlFor="image_url">
-                        {t('Cover Image URL')}
-                    </Label>
+                    <Label htmlFor="image_url">{t('Cover Image URL')}</Label>
                     <Input
                         id="image_url"
                         type="text"
                         value={data.image_url}
-                        onChange={(e) =>
-                            setData('image_url', e.target.value)
-                        }
+                        onChange={(e) => setData('image_url', e.target.value)}
                     />
                     {errors.image_url && (
                         <p className="text-sm text-red-500">
@@ -339,10 +324,7 @@ export default function AdminBookForm({ book }: Props) {
                                 type="text"
                                 value={author}
                                 onChange={(e) =>
-                                    handleAuthorChange(
-                                        index,
-                                        e.target.value,
-                                    )
+                                    handleAuthorChange(index, e.target.value)
                                 }
                                 placeholder={t('Author name')}
                             />
@@ -350,9 +332,7 @@ export default function AdminBookForm({ book }: Props) {
                                 <Button
                                     type="button"
                                     variant="ghost"
-                                    onClick={() =>
-                                        handleRemoveAuthor(index)
-                                    }
+                                    onClick={() => handleRemoveAuthor(index)}
                                     className="text-red-600 hover:bg-red-50 hover:text-red-700"
                                 >
                                     {t('Remove')}
@@ -436,11 +416,11 @@ export default function AdminBookForm({ book }: Props) {
                                     value={
                                         copy.id
                                             ? t('Copy #:id', {
-                                                id: copy.id,
-                                            })
+                                                  id: copy.id,
+                                              })
                                             : t(
-                                                'New Copy (will be acquired today)',
-                                            )
+                                                  'New Copy (will be acquired today)',
+                                              )
                                     }
                                     disabled
                                     className="flex-1"
@@ -448,9 +428,7 @@ export default function AdminBookForm({ book }: Props) {
                                 <Button
                                     type="button"
                                     variant="ghost"
-                                    onClick={() =>
-                                        handleRemoveBookCopy(index)
-                                    }
+                                    onClick={() => handleRemoveBookCopy(index)}
                                     className="text-red-600 hover:bg-red-50 hover:text-red-700"
                                 >
                                     {copy.id ? t('Discard') : t('Remove')}

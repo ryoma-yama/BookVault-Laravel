@@ -1,5 +1,5 @@
 'use no memo'; // React Compilerの最適化をこのファイルで無効化
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import {
     type ColumnDef,
     flexRender,
@@ -11,7 +11,6 @@ import {
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ArrowUpDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import Heading from '@/components/heading';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -32,9 +31,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem } from '@/types';
 import AppCommonLayout from '@/layouts/app-common-layout';
+
+import type { BreadcrumbItem } from '@/types';
 
 interface Book {
     id: number;
@@ -205,7 +204,6 @@ export default function BorrowedIndex({ loans }: Props) {
 
     return (
         <AppCommonLayout title={t('Borrowed Books')} breadcrumbs={breadcrumbs}>
-
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
@@ -217,10 +215,10 @@ export default function BorrowedIndex({ loans }: Props) {
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
-                                                    header.column
-                                                        .columnDef.header,
-                                                    header.getContext(),
-                                                )}
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
                                         </TableHead>
                                     );
                                 })}

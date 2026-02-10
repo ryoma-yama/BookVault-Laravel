@@ -1,12 +1,11 @@
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Pencil } from 'lucide-react';
 import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, ReviewWithBook } from '@/types';
-import Heading from '@/components/heading';
 import AppCommonLayout from '@/layouts/app-common-layout';
+
+import type { BreadcrumbItem, ReviewWithBook } from '@/types';
 
 interface Props {
     reviews: ReviewWithBook[];
@@ -51,9 +50,7 @@ export default function ReviewIndex({ reviews }: Props) {
                                 </div>
                                 <div className="flex gap-2">
                                     <Button
-                                        onClick={() =>
-                                            handleEdit(review.id)
-                                        }
+                                        onClick={() => handleEdit(review.id)}
                                         variant="outline"
                                         size="sm"
                                     >

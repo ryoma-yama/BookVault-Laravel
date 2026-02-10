@@ -1,12 +1,11 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Pencil } from 'lucide-react';
 import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
-import type { BreadcrumbItem, ReviewWithBook, SharedData } from '@/types';
-import Heading from '@/components/heading';
 import AppCommonLayout from '@/layouts/app-common-layout';
+
+import type { BreadcrumbItem, ReviewWithBook, SharedData } from '@/types';
 
 interface Props {
     reviews: ReviewWithBook[];
@@ -73,7 +72,8 @@ export default function AdminReviewIndex({ reviews }: Props) {
                             <ReviewItem review={review} />
                         </div>
                     ))}
-                </div>)}
+                </div>
+            )}
         </AppCommonLayout>
     );
 }

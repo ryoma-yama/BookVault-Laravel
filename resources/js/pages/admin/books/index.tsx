@@ -1,11 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { Button } from '@/components/ui/button';
-import AppLayout from '@/layouts/app-layout';
+import AppCommonLayout from '@/layouts/app-common-layout';
+
 import type { BreadcrumbItem } from '@/types';
 import type { Book } from '@/types/domain';
-import AppCommonLayout from '@/layouts/app-common-layout';
 
 interface PaginatedBooks {
     data: Book[];
@@ -40,7 +40,7 @@ export default function AdminBooksIndex({ books }: Props) {
 
     return (
         <AppCommonLayout title={t('Books')} breadcrumbs={breadcrumbs}>
-            <div className="flex ">
+            <div className="flex">
                 <Link href="/admin/books/create">
                     <Button>{t('Add New Book')}</Button>
                 </Link>
@@ -50,18 +50,10 @@ export default function AdminBooksIndex({ books }: Props) {
                     <thead>
                         <tr className="border-b">
                             <th className="p-2 text-left">{t('Title')}</th>
-                            <th className="p-2 text-left">
-                                {t('Authors')}
-                            </th>
-                            <th className="p-2 text-left">
-                                {t('Publisher')}
-                            </th>
-                            <th className="p-2 text-left">
-                                {t('ISBN-13')}
-                            </th>
-                            <th className="p-2 text-left">
-                                {t('Actions')}
-                            </th>
+                            <th className="p-2 text-left">{t('Authors')}</th>
+                            <th className="p-2 text-left">{t('Publisher')}</th>
+                            <th className="p-2 text-left">{t('ISBN-13')}</th>
+                            <th className="p-2 text-left">{t('Actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,9 +61,7 @@ export default function AdminBooksIndex({ books }: Props) {
                             <tr key={book.id} className="border-b">
                                 <td className="p-2">{book.title}</td>
                                 <td className="p-2">
-                                    {book.authors
-                                        .map((a) => a.name)
-                                        .join(', ')}
+                                    {book.authors.map((a) => a.name).join(', ')}
                                 </td>
                                 <td className="p-2">{book.publisher}</td>
                                 <td className="p-2">{book.isbn_13}</td>
@@ -80,10 +70,7 @@ export default function AdminBooksIndex({ books }: Props) {
                                         <Link
                                             href={`/admin/books/${book.id}/edit`}
                                         >
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                            >
+                                            <Button variant="outline" size="sm">
                                                 {t('Edit')}
                                             </Button>
                                         </Link>
@@ -103,6 +90,6 @@ export default function AdminBooksIndex({ books }: Props) {
                     </tbody>
                 </table>
             </div>
-        </AppCommonLayout >
+        </AppCommonLayout>
     );
 }
