@@ -66,13 +66,19 @@ interface Props {
     loans: Loan[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Loan Management', href: '/admin/loans' },
-];
-
 export default function AdminLoansIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
+    const breadcrumbs: BreadcrumbItem[] = [
+            {
+                title: t('Admin'),
+                href: '/admin/loans',
+            },
+            {
+                title: t('Loans'),
+                href: '/admin/loans',
+            },
+    ];
+
     const [sorting, setSorting] = useState<SortingState>([
         { id: 'borrowedDate', desc: true },
     ]);
@@ -268,10 +274,10 @@ export default function AdminLoansIndex({ loans }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Loan Management')} />
+            <Head title={t('Loans')} />
 
             <div className="space-y-6 px-4 py-6">
-                <Heading title={t('Loan Management')} />
+                <Heading title={t('Loans')} />
 
                 <div className="rounded-md border">
                     <Table>

@@ -1,12 +1,21 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Heading from '@/components/heading';
 import IsbnScanner from '@/components/isbn-scanner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
 import type { BookListItem } from '@/types/domain';
@@ -26,13 +35,28 @@ interface Props {
     };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
-
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
     const { errors } = usePage().props;
+
+    const breadcrumbs: BreadcrumbItem[] = [{ title: t('Library'), href: '/' }];
+
+    // Track the last search value that was actually submitted to prevent infinite loops
+    const lastSubmittedSearch = useRef(filters.search || '');
+
+    // Initialize search from filters
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
+
+    // Helper function to build pagination URLs
+    const buildPageUrl = (page: number): string => {
+        const params = new URLSearchParams();
+        params.set('page', page.toString());
+        if (search) {
+            params.set('search', search);
+        }
+        return `/?${params.toString()}`;
+    };
 
     // Handle ISBN scan - redirect to dedicated ISBN lookup endpoint
     const handleIsbnScan = (isbn: string) => {
@@ -46,8 +70,10 @@ export default function BooksIndex({ books, filters }: Props) {
         if (errors.isbn) return;
 
         const timeout = setTimeout(() => {
-            if (search !== filters.search) {
+            // Only trigger search if the search value has actually changed from what was last submitted
+            if (search !== lastSubmittedSearch.current) {
                 setIsSearching(true);
+                lastSubmittedSearch.current = search;
                 router.get(
                     '/',
                     {
@@ -63,16 +89,16 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [search, filters.search, errors.isbn]);
+    }, [search, errors.isbn]);
 
     const hasActiveFilters = search;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Books')} />
+            <Head title={t('Library')} />
 
             <div className="space-y-6 px-4 py-6">
-                <Heading title={t('Books')} />
+                <Heading title={t('Library')} />
 
                 <div className="space-y-4">
                     <div className="flex gap-2">
@@ -177,7 +203,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                         {books.data.map((book) => (
                             <Link
                                 key={book.id}
@@ -204,7 +230,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                             )}
                                         </div>
                                         <div className="p-3">
-                                            <h3 className="line-clamp-2 text-sm font-medium">
+                                            <h3 className="line-clamp-3 min-h-[2.5rem] text-sm leading-5 font-medium">
                                                 {book.title}
                                             </h3>
                                         </div>
@@ -216,44 +242,130 @@ export default function BooksIndex({ books, filters }: Props) {
                 )}
 
                 {books.last_page > 1 && (
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-center gap-4">
                         <p className="text-sm text-muted-foreground">
-                            {t('Showing :from-:to of :total books', {
-                                from: (
-                                    (books.current_page - 1) * books.per_page +
-                                    1
-                                ).toString(),
-                                to: Math.min(
-                                    books.current_page * books.per_page,
-                                    books.total,
-                                ).toString(),
-                                total: books.total.toString(),
-                            })}
+                            {`${(books.current_page - 1) * books.per_page + 1} - ${Math.min(books.current_page * books.per_page, books.total)} / ${books.total}`}
                         </p>
-                        <div className="flex gap-2">
-                            {books.current_page > 1 && (
-                                <Link
-                                    href={`/?page=${books.current_page - 1}`}
-                                    preserveState
-                                    preserveScroll
-                                >
-                                    <Button variant="outline">
-                                        {t('Previous')}
-                                    </Button>
-                                </Link>
-                            )}
-                            {books.current_page < books.last_page && (
-                                <Link
-                                    href={`/?page=${books.current_page + 1}`}
-                                    preserveState
-                                    preserveScroll
-                                >
-                                    <Button variant="outline">
-                                        {t('Next')}
-                                    </Button>
-                                </Link>
-                            )}
-                        </div>
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    {books.current_page > 1 ? (
+                                        <PaginationPrevious
+                                            href={buildPageUrl(
+                                                books.current_page - 1,
+                                            )}
+                                        >
+                                            {t('Previous')}
+                                        </PaginationPrevious>
+                                    ) : (
+                                        <PaginationPrevious className="pointer-events-none opacity-50">
+                                            {t('Previous')}
+                                        </PaginationPrevious>
+                                    )}
+                                </PaginationItem>
+
+                                {/* Page numbers */}
+                                {(() => {
+                                    const pages = [];
+                                    const showPages = 5; // Show at most 5 page numbers
+                                    let startPage = Math.max(
+                                        1,
+                                        books.current_page -
+                                            Math.floor(showPages / 2),
+                                    );
+                                    const endPage = Math.min(
+                                        books.last_page,
+                                        startPage + showPages - 1,
+                                    );
+
+                                    // Adjust start if we're near the end
+                                    if (endPage - startPage < showPages - 1) {
+                                        startPage = Math.max(
+                                            1,
+                                            endPage - showPages + 1,
+                                        );
+                                    }
+
+                                    // Show first page + ellipsis
+                                    if (startPage > 1) {
+                                        pages.push(
+                                            <PaginationItem key="1">
+                                                <PaginationLink
+                                                    href={buildPageUrl(1)}
+                                                >
+                                                    1
+                                                </PaginationLink>
+                                            </PaginationItem>,
+                                        );
+                                        if (startPage > 2) {
+                                            pages.push(
+                                                <PaginationItem key="ellipsis-start">
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>,
+                                            );
+                                        }
+                                    }
+
+                                    // Show page numbers
+                                    for (let i = startPage; i <= endPage; i++) {
+                                        pages.push(
+                                            <PaginationItem key={i}>
+                                                <PaginationLink
+                                                    href={buildPageUrl(i)}
+                                                    isActive={
+                                                        i === books.current_page
+                                                    }
+                                                >
+                                                    {i}
+                                                </PaginationLink>
+                                            </PaginationItem>,
+                                        );
+                                    }
+
+                                    // Show ellipsis + last page
+                                    if (endPage < books.last_page) {
+                                        if (endPage < books.last_page - 1) {
+                                            pages.push(
+                                                <PaginationItem key="ellipsis-end">
+                                                    <PaginationEllipsis />
+                                                </PaginationItem>,
+                                            );
+                                        }
+                                        pages.push(
+                                            <PaginationItem
+                                                key={books.last_page}
+                                            >
+                                                <PaginationLink
+                                                    href={buildPageUrl(
+                                                        books.last_page,
+                                                    )}
+                                                >
+                                                    {books.last_page}
+                                                </PaginationLink>
+                                            </PaginationItem>,
+                                        );
+                                    }
+
+                                    return pages;
+                                })()}
+
+                                <PaginationItem>
+                                    {books.current_page < books.last_page ? (
+                                        <PaginationNext
+                                            href={buildPageUrl(
+                                                books.current_page + 1,
+                                            )}
+                                        >
+                                            {t('Next')}
+                                        </PaginationNext>
+                                    ) : (
+                                        <PaginationNext className="pointer-events-none opacity-50">
+                                            {t('Next')}
+                                        </PaginationNext>
+                                    )}
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
                     </div>
                 )}
             </div>

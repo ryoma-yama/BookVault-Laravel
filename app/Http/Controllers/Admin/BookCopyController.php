@@ -8,26 +8,9 @@ use App\Http\Requests\Admin\UpdateBookCopyRequest;
 use App\Models\Book;
 use App\Models\BookCopy;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class BookCopyController extends Controller
 {
-    /**
-     * Display the copies for the specified book.
-     */
-    public function show(Book $book): Response
-    {
-        $copies = $book->copies()
-            ->orderBy('acquired_date', 'desc')
-            ->get();
-
-        return Inertia::render('admin/copies/show', [
-            'book' => $book,
-            'copies' => $copies,
-        ]);
-    }
-
     /**
      * Store a newly created copy in storage.
      */
@@ -39,7 +22,7 @@ class BookCopyController extends Controller
             'discarded_date' => null,
         ]);
 
-        return to_route('admin.copies.show', $book);
+        return to_route('admin.books.edit', $book);
     }
 
     /**
@@ -49,7 +32,7 @@ class BookCopyController extends Controller
     {
         $copy->update($request->validated());
 
-        return to_route('admin.copies.show', $book);
+        return to_route('admin.books.edit', $book);
     }
 
     /**
@@ -59,6 +42,6 @@ class BookCopyController extends Controller
     {
         $copy->delete();
 
-        return to_route('admin.copies.show', $book);
+        return to_route('admin.books.edit', $book);
     }
 }

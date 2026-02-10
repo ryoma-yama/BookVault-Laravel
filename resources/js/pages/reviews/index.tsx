@@ -5,6 +5,7 @@ import ReviewItem from '@/components/review-item';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, ReviewWithBook } from '@/types';
+import Heading from '@/components/heading';
 
 interface Props {
     reviews: ReviewWithBook[];
@@ -28,12 +29,7 @@ export default function ReviewIndex({ reviews }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('My Reviews')} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="mb-4">
-                    <h1 className="text-3xl font-bold">{t('My Reviews')}</h1>
-                    <p className="text-muted-foreground">
-                        {t('Manage your book reviews')}
-                    </p>
-                </div>
+                <Heading title={t('My Reviews')} />
 
                 {reviews.length === 0 ? (
                     <div className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">

@@ -1,10 +1,10 @@
 import { Link, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import {
-    BookCheck,
-    BookOpen,
-    ClipboardList,
+    Book,
+    BookCopy,
     Library,
+    LibraryBig,
     MessageSquare,
     MessagesSquare,
     Users,
@@ -22,12 +22,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import type { NavItem, SharedData } from '@/types';
-import AppLogo from './app-logo';
 import { home } from '@/routes';
 import admin from '@/routes/admin';
 import borrowed from '@/routes/borrowed';
 import reviews from '@/routes/reviews';
+import type { NavItem, SharedData } from '@/types';
+import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { t } = useLaravelReactI18n();
@@ -37,7 +37,7 @@ export function AppSidebar() {
     // General navigation items (for all users)
     const generalNavItems: NavItem[] = [
         {
-            title: t('Books'),
+            title: t('Library'),
             href: home(),
             icon: Library,
             isActive: isCurrentUrl(home()),
@@ -47,19 +47,19 @@ export function AppSidebar() {
     // User navigation items (only for authenticated users)
     const userNavItems: NavItem[] = auth.user
         ? [
-            {
-                title: t('Borrowed Books'),
-                href: borrowed.index(),
-                icon: BookCheck,
-                isActive: isCurrentUrl(borrowed.index()),
-            },
-            {
-                title: t('My Reviews'),
-                href: reviews.index(),
-                icon: MessageSquare,
-                isActive: isCurrentUrl(reviews.index()),
-            },
-        ]
+              {
+                  title: t('Borrowed Books'),
+                  href: borrowed.index(),
+                  icon: Book,
+                  isActive: isCurrentUrl(borrowed.index()),
+              },
+              {
+                  title: t('My Reviews'),
+                  href: reviews.index(),
+                  icon: MessageSquare,
+                  isActive: isCurrentUrl(reviews.index()),
+              },
+          ]
         : [];
 
     // Admin navigation items
@@ -71,19 +71,19 @@ export function AppSidebar() {
         //     isActive: isCurrentUrl(admin.dashboard()),
         // },
         {
-            title: t('Book Management'),
+            title: t('Books'),
             href: admin.books.index(),
-            icon: BookOpen,
+            icon: LibraryBig,
             isActive: isCurrentUrl(admin.books.index()),
         },
         {
-            title: t('Loan Management'),
+            title: t('Loans'),
             href: admin.loans.index(),
-            icon: ClipboardList,
+            icon: BookCopy,
             isActive: isCurrentUrl(admin.loans.index()),
         },
         {
-            title: t('Review Management'),
+            title: t('Reviews'),
             href: admin.reviews.index(),
             icon: MessagesSquare,
             isActive: isCurrentUrl(admin.reviews.index()),

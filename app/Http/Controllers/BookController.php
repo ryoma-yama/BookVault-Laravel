@@ -24,7 +24,7 @@ class BookController extends Controller
                             'authors:id,name',
                         ]);
                 })
-                ->paginate(15)
+                ->paginate(24)
                 ->withQueryString();
         } else {
             // Use traditional query builder when no search query
@@ -37,7 +37,7 @@ class BookController extends Controller
 
             $this->applySorting($query, $request);
 
-            $books = $query->paginate(15)->withQueryString();
+            $books = $query->paginate(24)->withQueryString();
         }
 
         return Inertia::render('books/index', [

@@ -50,11 +50,6 @@ interface Props {
     filters: Filters;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Admin', href: '/admin' },
-    { title: 'Users', href: '/admin/users' },
-];
-
 function getRoleBadgeVariant(role: UserRole): 'default' | 'secondary' {
     return role === 'admin' ? 'default' : 'secondary';
 }
@@ -68,6 +63,17 @@ export default function AdminUsersIndex({ users, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [role, setRole] = useState(filters.role || 'all');
 
+    const breadcrumbs: BreadcrumbItem[] = [
+            {
+                title: t('Admin'),
+                href: '/admin/users',
+            },
+            {
+                title: t('Users'),
+                href: '/admin/users',
+            },
+    ];
+    
     const handleSearch = () => {
         router.get(
             '/admin/users',

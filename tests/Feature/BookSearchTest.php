@@ -293,8 +293,8 @@ test('book list is paginated', function () {
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('books/index')
-            ->has('books.data', 15)
-            ->where('books.per_page', 15)
+            ->has('books.data', 24)
+            ->where('books.per_page', 24)
         );
 });
 
