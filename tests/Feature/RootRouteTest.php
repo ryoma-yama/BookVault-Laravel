@@ -50,7 +50,7 @@ test('root route returns 24 items per page', function () {
     // Create 30 books to test pagination
     for ($i = 1; $i <= 30; $i++) {
         $book = Book::create([
-            'isbn_13' => '978412345678' . str_pad($i, 1, '0', STR_PAD_LEFT),
+            'isbn_13' => '9784123456' . str_pad($i, 2, '0', STR_PAD_LEFT),
             'title' => "Test Book {$i}",
             'publisher' => 'Test Publisher',
             'published_date' => '2024-01-01',
@@ -83,7 +83,7 @@ test('root route page 2 returns items from 25th onwards', function () {
     // Create 30 books to test pagination
     for ($i = 1; $i <= 30; $i++) {
         $book = Book::create([
-            'isbn_13' => '978412345678' . str_pad($i, 1, '0', STR_PAD_LEFT),
+            'isbn_13' => '9784123456' . str_pad($i, 2, '0', STR_PAD_LEFT),
             'title' => "Test Book {$i}",
             'publisher' => 'Test Publisher',
             'published_date' => '2024-01-01',

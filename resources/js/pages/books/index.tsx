@@ -43,6 +43,16 @@ export default function BooksIndex({ books, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
 
+    // Helper function to build pagination URLs
+    const buildPageUrl = (page: number): string => {
+        const params = new URLSearchParams();
+        params.set('page', page.toString());
+        if (filters.search) {
+            params.set('search', filters.search);
+        }
+        return `/?${params.toString()}`;
+    };
+
     // Handle ISBN scan - redirect to dedicated ISBN lookup endpoint
     const handleIsbnScan = (isbn: string) => {
         // Navigate to ISBN lookup endpoint
@@ -244,7 +254,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                 <PaginationItem>
                                     {books.current_page > 1 ? (
                                         <Link
-                                            href={`/?page=${books.current_page - 1}${filters.search ? `&search=${filters.search}` : ''}`}
+                                            href={buildPageUrl(books.current_page - 1)}
                                             preserveState
                                             preserveScroll
                                         >
@@ -282,7 +292,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                         pages.push(
                                             <PaginationItem key="1">
                                                 <Link
-                                                    href={`/?page=1${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    href={buildPageUrl(1)}
                                                     preserveState
                                                     preserveScroll
                                                 >
@@ -304,7 +314,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                         pages.push(
                                             <PaginationItem key={i}>
                                                 <Link
-                                                    href={`/?page=${i}${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    href={buildPageUrl(i)}
                                                     preserveState
                                                     preserveScroll
                                                 >
@@ -330,7 +340,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                         pages.push(
                                             <PaginationItem key={books.last_page}>
                                                 <Link
-                                                    href={`/?page=${books.last_page}${filters.search ? `&search=${filters.search}` : ''}`}
+                                                    href={buildPageUrl(books.last_page)}
                                                     preserveState
                                                     preserveScroll
                                                 >
@@ -348,7 +358,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                 <PaginationItem>
                                     {books.current_page < books.last_page ? (
                                         <Link
-                                            href={`/?page=${books.current_page + 1}${filters.search ? `&search=${filters.search}` : ''}`}
+                                            href={buildPageUrl(books.current_page + 1)}
                                             preserveState
                                             preserveScroll
                                         >
