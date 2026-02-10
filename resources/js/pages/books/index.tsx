@@ -40,10 +40,10 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Books', href: '/' }];
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
     const { errors } = usePage().props;
-    
+
     // Track the last search value that was actually submitted to prevent infinite loops
     const lastSubmittedSearch = useRef(filters.search || '');
-    
+
     // Initialize search from filters
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
