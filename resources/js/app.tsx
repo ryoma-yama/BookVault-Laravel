@@ -1,6 +1,7 @@
 import { createInertiaApp } from '@inertiajs/react';
 import { LaravelReactI18nProvider } from 'laravel-react-i18n';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import '../css/app.css';
 import { initializeTheme } from './hooks/use-appearance';
@@ -19,13 +20,15 @@ createInertiaApp({
         const locale = (props.initialPage.props.locale || 'ja') as string;
 
         root.render(
-            <LaravelReactI18nProvider
-                locale={locale}
-                fallbackLocale={'en'}
-                files={import.meta.glob('/lang/*.json')}
-            >
-                <App {...props} />
-            </LaravelReactI18nProvider>,
+            <StrictMode>
+                <LaravelReactI18nProvider
+                    locale={locale}
+                    fallbackLocale={'en'}
+                    files={import.meta.glob('/lang/*.json')}
+                >
+                    <App {...props} />
+                </LaravelReactI18nProvider>
+            </StrictMode>,
         );
     },
     progress: {
