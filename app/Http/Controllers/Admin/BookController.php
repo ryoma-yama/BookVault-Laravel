@@ -65,7 +65,7 @@ class BookController extends Controller
         $action->execute($request->validated());
 
         return to_route('admin.books.index')
-            ->with('success', 'Book created successfully.');
+            ->with('success', __('Book created successfully.'));
     }
 
     /**
@@ -94,7 +94,7 @@ class BookController extends Controller
         $action->execute($book, $request->validated());
 
         return to_route('admin.books.index')
-            ->with('success', 'Book updated successfully.');
+            ->with('success', __('Book updated successfully.'));
     }
 
     /**
@@ -105,6 +105,6 @@ class BookController extends Controller
         $book->delete();
 
         return to_route('admin.books.index')
-            ->with('success', 'Book deleted successfully.');
+            ->with('success', __('Book deleted successfully.'));
     }
 }

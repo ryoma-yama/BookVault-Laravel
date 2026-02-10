@@ -28,6 +28,6 @@ class PasswordController extends Controller
         ]);
 
         return back()
-            ->with('success', 'Password updated successfully.');
+            ->with('success', __('Password updated successfully.'));
     }
 }

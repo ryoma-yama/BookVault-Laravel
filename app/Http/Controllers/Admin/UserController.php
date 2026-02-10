@@ -50,6 +50,6 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return back()->with('success', 'User role updated successfully.');
+        return back()->with('success', __('User role updated successfully.'));
     }
 }
