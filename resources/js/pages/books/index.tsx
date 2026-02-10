@@ -1,7 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Heading from '@/components/heading';
 import IsbnScanner from '@/components/isbn-scanner';
 import { Button } from '@/components/ui/button';
@@ -43,12 +43,24 @@ export default function BooksIndex({ books, filters }: Props) {
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
 
+    // Track the last search value that was actually submitted to prevent infinite loops
+    const lastSubmittedSearch = useRef(filters.search || '');
+
+    // Sync local search state with server filters when they change (e.g., browser back/forward)
+    useEffect(() => {
+        const serverSearch = filters.search || '';
+        if (serverSearch !== search) {
+            setSearch(serverSearch);
+            lastSubmittedSearch.current = serverSearch;
+        }
+    }, [filters.search]);
+
     // Helper function to build pagination URLs
     const buildPageUrl = (page: number): string => {
         const params = new URLSearchParams();
         params.set('page', page.toString());
-        if (filters.search) {
-            params.set('search', filters.search);
+        if (search) {
+            params.set('search', search);
         }
         return `/?${params.toString()}`;
     };
@@ -65,8 +77,10 @@ export default function BooksIndex({ books, filters }: Props) {
         if (errors.isbn) return;
 
         const timeout = setTimeout(() => {
-            if (search !== filters.search) {
+            // Only trigger search if the search value has actually changed from what was last submitted
+            if (search !== lastSubmittedSearch.current) {
                 setIsSearching(true);
+                lastSubmittedSearch.current = search;
                 router.get(
                     '/',
                     {
@@ -82,7 +96,7 @@ export default function BooksIndex({ books, filters }: Props) {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeout);
-    }, [search, filters.search, errors.isbn]);
+    }, [search, errors.isbn]);
 
     const hasActiveFilters = search;
 
@@ -196,7 +210,7 @@ export default function BooksIndex({ books, filters }: Props) {
                         )}
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                         {books.data.map((book) => (
                             <Link
                                 key={book.id}
@@ -237,7 +251,7 @@ export default function BooksIndex({ books, filters }: Props) {
                 {books.last_page > 1 && (
                     <div className="flex flex-col items-center gap-4">
                         <p className="text-sm text-muted-foreground">
-                            {`${((books.current_page - 1) * books.per_page + 1)} - ${Math.min(books.current_page * books.per_page, books.total)} / ${books.total}`}
+                            {`${(books.current_page - 1) * books.per_page + 1} - ${Math.min(books.current_page * books.per_page, books.total)} / ${books.total}`}
                         </p>
                         <Pagination>
                             <PaginationContent>
@@ -264,7 +278,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                     let startPage = Math.max(
                                         1,
                                         books.current_page -
-                                        Math.floor(showPages / 2),
+                                            Math.floor(showPages / 2),
                                     );
                                     let endPage = Math.min(
                                         books.last_page,
