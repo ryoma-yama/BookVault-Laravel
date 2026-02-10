@@ -22,7 +22,8 @@ class BookCopyController extends Controller
             'discarded_date' => null,
         ]);
 
-        return to_route('admin.books.edit', $book);
+        return to_route('admin.books.edit', $book)
+            ->with('success', 'Book copy added successfully.');
     }
 
     /**
@@ -32,7 +33,8 @@ class BookCopyController extends Controller
     {
         $copy->update($request->validated());
 
-        return to_route('admin.books.edit', $book);
+        return to_route('admin.books.edit', $book)
+            ->with('success', 'Book copy updated successfully.');
     }
 
     /**
@@ -42,6 +44,7 @@ class BookCopyController extends Controller
     {
         $copy->delete();
 
-        return to_route('admin.books.edit', $book);
+        return to_route('admin.books.edit', $book)
+            ->with('success', 'Book copy deleted successfully.');
     }
 }
