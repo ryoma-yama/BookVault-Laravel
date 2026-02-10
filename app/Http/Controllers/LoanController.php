@@ -34,12 +34,13 @@ class LoanController extends Controller
 
         $loan->load(['bookCopy.book', 'user']);
 
-        // For Inertia requests, redirect back
+        // For JSON requests, return the loan data
         if ($request->wantsJson()) {
             return response()->json($loan, 201);
         }
 
-        return back();
+        // For Inertia requests, redirect back with success message
+        return back()->with('success', __('Book borrowed successfully.'));
     }
 
     /**
@@ -80,8 +81,8 @@ class LoanController extends Controller
             return response()->json($loan->fresh()->load(['bookCopy.book', 'user']));
         }
 
-        // For Inertia requests, redirect back
-        return back();
+        // For Inertia requests, redirect back with success message
+        return back()->with('success', __('Book returned successfully.'));
     }
 
     /**

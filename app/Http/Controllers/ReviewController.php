@@ -74,7 +74,7 @@ class ReviewController extends Controller
         ]);
 
         return redirect()->route('books.show', $review->book_id)
-            ->with('success', 'Review posted successfully!');
+            ->with('success', __('Review posted successfully.'));
     }
 
     /**
@@ -99,7 +99,7 @@ class ReviewController extends Controller
         $review->update($request->validated());
 
         return redirect()->route('books.show', $review->book_id)
-            ->with('success', 'Review updated successfully!');
+            ->with('success', __('Review updated successfully.'));
     }
 
     /**
@@ -113,6 +113,6 @@ class ReviewController extends Controller
         $review->delete();
 
         return redirect()->route('books.show', $bookId)
-            ->with('success', 'Review deleted successfully!');
+            ->with('success', __('Review deleted successfully.'));
     }
 }

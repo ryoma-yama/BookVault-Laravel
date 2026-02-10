@@ -2,7 +2,6 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import ReviewItem from '@/components/review-item';
 import {
     AlertDialog,
@@ -69,16 +68,12 @@ export default function BookShow({ book, reviews, userReview }: Props) {
             preserveScroll: true,
             onSuccess: () => {
                 setShowDialog(false);
-                toast.success(t('Book borrowed successfully!'));
                 router.reload({ only: ['book'] });
             },
             onError: (errors) => {
                 setShowDialog(false);
-                const errorMessage =
-                    errors.book_id ||
-                    errors.book_copy_id ||
-                    t('This book is not available for borrowing.');
-                toast.error(errorMessage);
+                // Don't show toast here - let the backend handle error messages
+                // The layout will display flash error messages from the controller
             },
         });
     };
