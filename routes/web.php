@@ -56,7 +56,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
         ->name('api.google-books.search');
 
     // Book copy management
-    Route::get('copies/{book}', [BookCopyController::class, 'show'])->name('copies.show');
     Route::post('copies/{book}', [BookCopyController::class, 'store'])->name('copies.store');
     Route::put('copies/{book}/{copy}', [BookCopyController::class, 'update'])->name('copies.update');
     Route::delete('copies/{book}/{copy}', [BookCopyController::class, 'destroy'])->name('copies.destroy');

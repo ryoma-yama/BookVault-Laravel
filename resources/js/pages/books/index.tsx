@@ -38,22 +38,15 @@ interface Props {
 export default function BooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
     const { errors } = usePage().props;
-    const [search, setSearch] = useState(filters.search || '');
-    const [isSearching, setIsSearching] = useState(false);
 
     const breadcrumbs: BreadcrumbItem[] = [{ title: t('Library'), href: '/' }];
 
     // Track the last search value that was actually submitted to prevent infinite loops
     const lastSubmittedSearch = useRef(filters.search || '');
 
-    // Sync local search state with server filters when they change (e.g., browser back/forward)
-    useEffect(() => {
-        const serverSearch = filters.search || '';
-        if (serverSearch !== search) {
-            setSearch(serverSearch);
-            lastSubmittedSearch.current = serverSearch;
-        }
-    }, [filters.search]);
+    // Initialize search from filters
+    const [search, setSearch] = useState(filters.search || '');
+    const [isSearching, setIsSearching] = useState(false);
 
     // Helper function to build pagination URLs
     const buildPageUrl = (page: number): string => {
@@ -280,7 +273,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                         books.current_page -
                                             Math.floor(showPages / 2),
                                     );
-                                    let endPage = Math.min(
+                                    const endPage = Math.min(
                                         books.last_page,
                                         startPage + showPages - 1,
                                     );

@@ -22,12 +22,12 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useCurrentUrl } from '@/hooks/use-current-url';
-import type { NavItem, SharedData } from '@/types';
-import AppLogo from './app-logo';
 import { home } from '@/routes';
 import admin from '@/routes/admin';
 import borrowed from '@/routes/borrowed';
 import reviews from '@/routes/reviews';
+import type { NavItem, SharedData } from '@/types';
+import AppLogo from './app-logo';
 
 export function AppSidebar() {
     const { t } = useLaravelReactI18n();

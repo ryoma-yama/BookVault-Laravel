@@ -12,21 +12,6 @@ beforeEach(function () {
     $this->withoutVite();
 });
 
-test('authenticated user can view book copies for a book', function () {
-    $book = Book::factory()->create();
-    BookCopy::factory()->count(3)->create(['book_id' => $book->id]);
-
-    $response = $this->actingAs($this->user)
-        ->get(route('admin.copies.show', $book));
-
-    $response->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('admin/copies/show', false)
-            ->has('book')
-            ->has('copies', 3)
-        );
-});
-
 test('authenticated user can create a book copy', function () {
     $book = Book::factory()->create();
 
@@ -35,7 +20,7 @@ test('authenticated user can create a book copy', function () {
             'acquired_date' => '2024-01-15',
         ]);
 
-    $response->assertRedirect(route('admin.copies.show', $book));
+    $response->assertRedirect(route('admin.books.edit', $book));
 
     expect(BookCopy::count())->toBe(1)
         ->and(BookCopy::first()->book_id)->toBe($book->id)
@@ -55,7 +40,7 @@ test('authenticated user can update a book copy', function () {
             'discarded_date' => '2024-06-15',
         ]);
 
-    $response->assertRedirect(route('admin.copies.show', $book));
+    $response->assertRedirect(route('admin.books.edit', $book));
 
     $copy->refresh();
     expect($copy->acquired_date->format('Y-m-d'))->toBe('2024-02-20')
@@ -71,7 +56,7 @@ test('authenticated user can delete a book copy', function () {
     $response = $this->actingAs($this->user)
         ->delete(route('admin.copies.destroy', [$book, $copy]));
 
-    $response->assertRedirect(route('admin.copies.show', $book));
+    $response->assertRedirect(route('admin.books.edit', $book));
 
     expect(BookCopy::count())->toBe(0);
 });
@@ -98,15 +83,6 @@ test('updating a copy requires acquired_date', function () {
         ]);
 
     $response->assertSessionHasErrors(['acquired_date']);
-});
-
-test('guest cannot access book copies', function () {
-    $this->withoutVite();
-    $book = Book::factory()->create();
-
-    $response = $this->get(route('admin.copies.show', $book));
-
-    $response->assertRedirect(route('login'));
 });
 
 test('guest cannot create book copies', function () {
