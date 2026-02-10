@@ -24,13 +24,10 @@ class GoogleBooksService
     {
         $apiKey = config('services.google_books.api_key');
         $useApiKey = $apiKey && $apiKey !== 'your-google-books-api-key';
+        $baseParams = $useApiKey ? ['key' => $apiKey] : [];
 
         // Step 1: Search by ISBN to get the Google Books Volume ID
-        $searchParams = ['q' => "isbn:{$isbn}"];
-        if ($useApiKey) {
-            $searchParams['key'] = $apiKey;
-        }
-
+        $searchParams = array_merge($baseParams, ['q' => "isbn:{$isbn}"]);
         $searchResponse = Http::get(self::API_BASE, $searchParams);
 
         if (! $searchResponse->successful()) {
@@ -46,8 +43,7 @@ class GoogleBooksService
         $googleId = $searchData['items'][0]['id'];
 
         // Step 2: Get detailed volume information
-        $volumeUrl = self::API_BASE."/{$googleId}";
-        $volumeResponse = Http::get($volumeUrl);
+        $volumeResponse = Http::get(self::API_BASE."/{$googleId}", $baseParams);
 
         if (! $volumeResponse->successful()) {
             throw new \Exception("Google Books detail fetch failed: {$volumeResponse->status()}");
