@@ -114,21 +114,6 @@ export default function AdminBooksIndex({ books, filters }: Props) {
         return () => clearTimeout(timeout);
     }, [search]);
 
-    const handleDeleteClick = (bookId: number) => {
-        setDeleteBookId(bookId);
-    };
-
-    const handleDeleteConfirm = () => {
-        if (deleteBookId !== null) {
-            router.delete(`/admin/books/${deleteBookId}`, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setDeleteBookId(null);
-                },
-            });
-        }
-    };
-
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('Admin'),
@@ -406,28 +391,6 @@ export default function AdminBooksIndex({ books, filters }: Props) {
                     </Pagination>
                 </div>
             )}
-
-            <AlertDialog
-                open={deleteBookId !== null}
-                onOpenChange={(open) => !open && setDeleteBookId(null)}
-            >
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            {t('Delete Book')}
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t('Are you sure you want to delete this book?')}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteConfirm}>
-                            {t('Delete')}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </AppCommonLayout>
     );
 }
