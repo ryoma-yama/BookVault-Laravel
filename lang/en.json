@@ -423,5 +423,7 @@
   "Showing :count results": "Showing :count results",
   "Filter by tags...": "Filter by tags...",
   "No tags": "No tags",
-  "Inventory": "Inventory"
+  "Inventory": "Inventory",
+  "Delete Book": "Delete Book",
+  "Are you sure you want to delete this book? This action cannot be undone.": "Are you sure you want to delete this book? This action cannot be undone."
 }

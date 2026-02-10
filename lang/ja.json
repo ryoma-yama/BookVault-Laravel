@@ -423,5 +423,7 @@
   "Showing :count results": ":count件の結果を表示",
   "Filter by tags...": "タグで絞り込み...",
   "No tags": "タグなし",
-  "Inventory": "在庫"
+  "Inventory": "在庫",
+  "Delete Book": "書籍を削除",
+  "Are you sure you want to delete this book? This action cannot be undone.": "この書籍を削除してもよろしいですか？この操作は元に戻せません。"
 }
