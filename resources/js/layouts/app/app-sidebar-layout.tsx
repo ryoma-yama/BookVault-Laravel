@@ -14,14 +14,17 @@ export default function AppSidebarLayout({
 }: AppLayoutProps) {
     const { flash } = usePage<SharedData>().props;
 
+    // Destructure to avoid unnecessary re-renders
+    const { success, error } = flash || {};
+
     useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success);
+        if (success) {
+            toast.success(success);
         }
-        if (flash?.error) {
-            toast.error(flash.error);
+        if (error) {
+            toast.error(error);
         }
-    }, [flash]);
+    }, [success, error]);
 
     return (
         <AppShell variant="sidebar">
