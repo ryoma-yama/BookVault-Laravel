@@ -4,9 +4,11 @@ import {
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react"
+import { Link } from "@inertiajs/react"
+import type { VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
-import { buttonVariants, type Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -37,19 +39,23 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />
 }
 
-type PaginationLinkProps = {
+type PaginationLinkProps = Omit<React.ComponentProps<typeof Link>, "size"> & {
   isActive?: boolean
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  size?: VariantProps<typeof buttonVariants>["size"]
+  className?: string
+}
 
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  preserveScroll = true,
+  preserveState = true,
+  children,
   ...props
 }: PaginationLinkProps) {
   return (
-    <a
+    <Link
       aria-current={isActive ? "page" : undefined}
       data-slot="pagination-link"
       data-active={isActive}
@@ -60,20 +66,25 @@ function PaginationLink({
         }),
         className
       )}
+      preserveScroll={preserveScroll}
+      preserveState={preserveState}
       {...props}
-    />
+    >
+      {children}
+    </Link>
   )
 }
 
 function PaginationPrevious({
   className,
   children,
+  size,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
-      size="default"
+      size={size || "default"}
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
@@ -86,12 +97,13 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   children,
+  size,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
       aria-label="Go to next page"
-      size="default"
+      size={size || "default"}
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
