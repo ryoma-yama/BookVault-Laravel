@@ -1,5 +1,5 @@
 'use no memo'; // React Compilerの最適化をこのファイルで無効化
-import { Head, router } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import {
     type ColumnDef,
     flexRender,
@@ -11,7 +11,6 @@ import {
 import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { ArrowUpDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import Heading from '@/components/heading';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -32,7 +31,8 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
+import AppCommonLayout from '@/layouts/app-common-layout';
+
 import type { BreadcrumbItem } from '@/types';
 
 interface Book {
@@ -58,8 +58,6 @@ interface Loan {
 interface Props {
     loans: Loan[];
 }
-
-
 
 export default function BorrowedIndex({ loans }: Props) {
     const { t } = useLaravelReactI18n();
@@ -205,65 +203,59 @@ export default function BorrowedIndex({ loans }: Props) {
     });
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('Borrowed Books')} />
-
-            <div className="space-y-6 px-4 py-6">
-                <Heading title={t('Borrowed Books')} />
-
-                <div className="rounded-md border">
-                    <Table>
-                        <TableHeader>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => {
-                                        return (
-                                            <TableHead key={header.id}>
-                                                {header.isPlaceholder
-                                                    ? null
-                                                    : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
-                                                          header.getContext(),
-                                                      )}
-                                            </TableHead>
-                                        );
-                                    })}
+        <AppCommonLayout title={t('Borrowed Books')} breadcrumbs={breadcrumbs}>
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    return (
+                                        <TableHead key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext(),
+                                                  )}
+                                        </TableHead>
+                                    );
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={
+                                        row.getIsSelected() && 'selected'
+                                    }
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </TableCell>
+                                    ))}
                                 </TableRow>
-                            ))}
-                        </TableHeader>
-                        <TableBody>
-                            {table.getRowModel().rows?.length ? (
-                                table.getRowModel().rows.map((row) => (
-                                    <TableRow
-                                        key={row.id}
-                                        data-state={
-                                            row.getIsSelected() && 'selected'
-                                        }
-                                    >
-                                        {row.getVisibleCells().map((cell) => (
-                                            <TableCell key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext(),
-                                                )}
-                                            </TableCell>
-                                        ))}
-                                    </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={columns.length}
-                                        className="h-24 text-center"
-                                    >
-                                        {t('No borrowed books')}
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    {t('No borrowed books')}
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
 
             <AlertDialog
@@ -285,6 +277,6 @@ export default function BorrowedIndex({ loans }: Props) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </AppLayout>
+        </AppCommonLayout>
     );
 }
