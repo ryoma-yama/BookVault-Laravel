@@ -223,7 +223,7 @@ export default function BooksIndex({ books, filters }: Props) {
                                             )}
                                         </div>
                                         <div className="p-3">
-                                            <h3 className="min-h-[2.5rem] line-clamp-3 text-sm font-medium leading-5">
+                                            <h3 className="line-clamp-3 min-h-[2.5rem] text-sm leading-5 font-medium">
                                                 {book.title}
                                             </h3>
                                         </div>
@@ -254,7 +254,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                 <PaginationItem>
                                     {books.current_page > 1 ? (
                                         <Link
-                                            href={buildPageUrl(books.current_page - 1)}
+                                            href={buildPageUrl(
+                                                books.current_page - 1,
+                                            )}
                                             preserveState
                                             preserveScroll
                                         >
@@ -275,7 +277,8 @@ export default function BooksIndex({ books, filters }: Props) {
                                     const showPages = 5; // Show at most 5 page numbers
                                     let startPage = Math.max(
                                         1,
-                                        books.current_page - Math.floor(showPages / 2),
+                                        books.current_page -
+                                            Math.floor(showPages / 2),
                                     );
                                     let endPage = Math.min(
                                         books.last_page,
@@ -284,7 +287,10 @@ export default function BooksIndex({ books, filters }: Props) {
 
                                     // Adjust start if we're near the end
                                     if (endPage - startPage < showPages - 1) {
-                                        startPage = Math.max(1, endPage - showPages + 1);
+                                        startPage = Math.max(
+                                            1,
+                                            endPage - showPages + 1,
+                                        );
                                     }
 
                                     // Show first page + ellipsis
@@ -296,7 +302,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                                     preserveState
                                                     preserveScroll
                                                 >
-                                                    <PaginationLink>1</PaginationLink>
+                                                    <PaginationLink>
+                                                        1
+                                                    </PaginationLink>
                                                 </Link>
                                             </PaginationItem>,
                                         );
@@ -319,7 +327,10 @@ export default function BooksIndex({ books, filters }: Props) {
                                                     preserveScroll
                                                 >
                                                     <PaginationLink
-                                                        isActive={i === books.current_page}
+                                                        isActive={
+                                                            i ===
+                                                            books.current_page
+                                                        }
                                                     >
                                                         {i}
                                                     </PaginationLink>
@@ -338,9 +349,13 @@ export default function BooksIndex({ books, filters }: Props) {
                                             );
                                         }
                                         pages.push(
-                                            <PaginationItem key={books.last_page}>
+                                            <PaginationItem
+                                                key={books.last_page}
+                                            >
                                                 <Link
-                                                    href={buildPageUrl(books.last_page)}
+                                                    href={buildPageUrl(
+                                                        books.last_page,
+                                                    )}
                                                     preserveState
                                                     preserveScroll
                                                 >
@@ -358,7 +373,9 @@ export default function BooksIndex({ books, filters }: Props) {
                                 <PaginationItem>
                                     {books.current_page < books.last_page ? (
                                         <Link
-                                            href={buildPageUrl(books.current_page + 1)}
+                                            href={buildPageUrl(
+                                                books.current_page + 1,
+                                            )}
                                             preserveState
                                             preserveScroll
                                         >

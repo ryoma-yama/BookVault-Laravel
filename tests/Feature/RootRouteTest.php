@@ -46,18 +46,18 @@ test('books route should not exist', function () {
 
 test('root route returns 24 items per page', function () {
     $author = Author::create(['name' => 'Test Author']);
-    
+
     // Create 30 books to test pagination
     for ($i = 1; $i <= 30; $i++) {
         $book = Book::create([
-            'isbn_13' => '9784123456' . str_pad($i, 2, '0', STR_PAD_LEFT),
+            'isbn_13' => '9784123456'.str_pad($i, 2, '0', STR_PAD_LEFT),
             'title' => "Test Book {$i}",
             'publisher' => 'Test Publisher',
             'published_date' => '2024-01-01',
             'description' => 'Test Description',
         ]);
         $book->authors()->attach($author);
-        
+
         // Add a valid book copy so the book appears in the list
         \App\Models\BookCopy::factory()->create([
             'book_id' => $book->id,
@@ -79,18 +79,18 @@ test('root route returns 24 items per page', function () {
 
 test('root route page 2 returns items from 25th onwards', function () {
     $author = Author::create(['name' => 'Test Author']);
-    
+
     // Create 30 books to test pagination
     for ($i = 1; $i <= 30; $i++) {
         $book = Book::create([
-            'isbn_13' => '9784123456' . str_pad($i, 2, '0', STR_PAD_LEFT),
+            'isbn_13' => '9784123456'.str_pad($i, 2, '0', STR_PAD_LEFT),
             'title' => "Test Book {$i}",
             'publisher' => 'Test Publisher',
             'published_date' => '2024-01-01',
             'description' => 'Test Description',
         ]);
         $book->authors()->attach($author);
-        
+
         // Add a valid book copy so the book appears in the list
         \App\Models\BookCopy::factory()->create([
             'book_id' => $book->id,
@@ -112,18 +112,18 @@ test('root route page 2 returns items from 25th onwards', function () {
 
 test('root route includes pagination metadata', function () {
     $author = Author::create(['name' => 'Test Author']);
-    
+
     // Create 50 books to test pagination metadata
     for ($i = 1; $i <= 50; $i++) {
         $book = Book::create([
-            'isbn_13' => '978412345678' . str_pad($i, 2, '0', STR_PAD_LEFT),
+            'isbn_13' => '978412345678'.str_pad($i, 2, '0', STR_PAD_LEFT),
             'title' => "Test Book {$i}",
             'publisher' => 'Test Publisher',
             'published_date' => '2024-01-01',
             'description' => 'Test Description',
         ]);
         $book->authors()->attach($author);
-        
+
         // Add a valid book copy so the book appears in the list
         \App\Models\BookCopy::factory()->create([
             'book_id' => $book->id,
