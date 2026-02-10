@@ -36,6 +36,53 @@ test('admin books index displays list of books', function () {
     );
 });
 
+test('admin books index includes tags for each book', function () {
+    $book = Book::create([
+        'isbn_13' => '9784123456789',
+        'title' => 'Test Book',
+        'publisher' => 'Test Publisher',
+        'published_date' => '2024-01-01',
+        'description' => 'Test Description',
+    ]);
+
+    $tag1 = \App\Models\Tag::create(['name' => 'Laravel']);
+    $tag2 = \App\Models\Tag::create(['name' => 'PHP']);
+    $book->tags()->attach([$tag1->id, $tag2->id]);
+
+    $response = actingAs($this->user)->get('/admin/books');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/books/index')
+        ->has('books.data.0.tags', 2)
+        ->where('books.data.0.tags.0.name', 'Laravel')
+        ->where('books.data.0.tags.1.name', 'PHP')
+    );
+});
+
+test('admin books index includes inventory count for each book', function () {
+    $book = Book::create([
+        'isbn_13' => '9784123456789',
+        'title' => 'Test Book',
+        'publisher' => 'Test Publisher',
+        'published_date' => '2024-01-01',
+        'description' => 'Test Description',
+    ]);
+
+    // Create 3 copies, 1 discarded
+    \App\Models\BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
+    \App\Models\BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => null]);
+    \App\Models\BookCopy::factory()->create(['book_id' => $book->id, 'discarded_date' => '2024-01-01']);
+
+    $response = actingAs($this->user)->get('/admin/books');
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('admin/books/index')
+        ->where('books.data.0.copies_count', 2) // Only active copies
+    );
+});
+
 test('admin books create page can be rendered', function () {
     $response = actingAs($this->user)->get('/admin/books/create');
 

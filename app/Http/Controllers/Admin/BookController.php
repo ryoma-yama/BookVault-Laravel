@@ -17,7 +17,10 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::with('authors:id,name')
+        $books = Book::with(['authors:id,name', 'tags:id,name'])
+            ->withCount(['copies as copies_count' => function ($query) {
+                $query->active();
+            }])
             ->latest()
             ->paginate(12);
 
