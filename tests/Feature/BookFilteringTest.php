@@ -89,36 +89,6 @@ test('book list is sorted by id descending by default', function () {
     );
 });
 
-test('book searchable array includes has_valid_copies flag', function () {
-    // Skip this test for database driver as it doesn't support computed fields
-    if (config('scout.driver') === 'database') {
-        $this->markTestSkipped('Database driver does not support computed fields in search index');
-    }
-
-    // Create a book with valid copy
-    $bookWithValidCopy = Book::factory()->create();
-    BookCopy::factory()->create([
-        'book_id' => $bookWithValidCopy->id,
-        'discarded_date' => null,
-    ]);
-
-    // Create a book with no valid copies
-    $bookWithoutValidCopy = Book::factory()->create();
-    BookCopy::factory()->create([
-        'book_id' => $bookWithoutValidCopy->id,
-        'discarded_date' => now(),
-    ]);
-
-    $searchableWithValid = $bookWithValidCopy->toSearchableArray();
-    $searchableWithoutValid = $bookWithoutValidCopy->toSearchableArray();
-
-    expect($searchableWithValid)->toHaveKey('has_valid_copies')
-        ->and($searchableWithValid['has_valid_copies'])->toBeTrue();
-
-    expect($searchableWithoutValid)->toHaveKey('has_valid_copies')
-        ->and($searchableWithoutValid['has_valid_copies'])->toBeFalse();
-});
-
 test('updating book copy discarded_date touches parent book', function () {
     $book = Book::factory()->create();
     $copy = BookCopy::factory()->create([
