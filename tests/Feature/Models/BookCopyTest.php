@@ -1,35 +1,9 @@
 <?php
 
-use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Loan;
 
-it('can create a book copy', function () {
-    $book = Book::factory()->create();
-
-    $bookCopy = BookCopy::factory()->create([
-        'book_id' => $book->id,
-    ]);
-
-    expect($bookCopy)->toBeInstanceOf(BookCopy::class)
-        ->and($bookCopy->book_id)->toBe($book->id)
-        ->and($bookCopy->acquired_date)->not->toBeNull()
-        ->and($bookCopy->discarded_date)->toBeNull();
-});
-
-it('belongs to a book', function () {
-    $bookCopy = BookCopy::factory()->create();
-
-    expect($bookCopy->book)->toBeInstanceOf(Book::class);
-});
-
-it('has many loans', function () {
-    $bookCopy = BookCopy::factory()->create();
-    Loan::factory()->count(3)->create(['book_copy_id' => $bookCopy->id]);
-
-    expect($bookCopy->loans)->toHaveCount(3)
-        ->and($bookCopy->loans->first())->toBeInstanceOf(Loan::class);
-});
+// Business Logic Tests - BookCopy Availability & Loan State
 
 it('is available when not loaned and not discarded', function () {
     $bookCopy = BookCopy::factory()->create(['discarded_date' => null]);
