@@ -85,3 +85,9 @@ List all registered routes in the application:
 ```bash
 php artisan route:list --except-vendor
 ```
+
+Test with coverage report html output:
+
+```bash
+php artisan test --coverage-html coverage
+```
