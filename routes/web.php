@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\BookCopyController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\LoanController as AdminLoanController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\BookController;
@@ -41,7 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Admin routes
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('users', [AdminUserController::class, 'index'])->name('users.index');
     Route::patch('users/{user}', [AdminUserController::class, 'update'])->name('users.update');
 
