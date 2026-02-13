@@ -70,7 +70,7 @@ export default function BookShow({ book, reviews, userReview }: Props) {
                 setShowDialog(false);
                 router.reload({ only: ['book'] });
             },
-            onError: (errors) => {
+            onError: () => {
                 setShowDialog(false);
                 // Don't show toast here - let the backend handle error messages
                 // The layout will display flash error messages from the controller

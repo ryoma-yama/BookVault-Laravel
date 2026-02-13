@@ -4,7 +4,6 @@ import { useLaravelReactI18n } from 'laravel-react-i18n';
 import { useEffect, useRef, useState } from 'react';
 import { PageNumbersPagination } from '@/components/page-numbers-pagination';
 
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,7 +54,6 @@ interface Props {
 
 export default function AdminBooksIndex({ books, filters }: Props) {
     const { t } = useLaravelReactI18n();
-    const [deleteBookId, setDeleteBookId] = useState<number | null>(null);
 
     // Track the last search value that was actually submitted to prevent infinite loops
     const lastSubmittedSearch = useRef(filters.search || '');
@@ -105,7 +103,9 @@ export default function AdminBooksIndex({ books, filters }: Props) {
         <AppCommonLayout title={t('Books')} breadcrumbs={breadcrumbs}>
             <div className="mb-4 flex items-center gap-2">
                 <Input
-                    placeholder={t('Search by title, description, publisher, authors, tags...')}
+                    placeholder={t(
+                        'Search by title, description, publisher, authors, tags...',
+                    )}
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     className="flex-1"
@@ -233,7 +233,9 @@ export default function AdminBooksIndex({ books, filters }: Props) {
                                     className="h-24 text-center"
                                 >
                                     {hasActiveFilters
-                                        ? t('No books found matching your search')
+                                        ? t(
+                                              'No books found matching your search',
+                                          )
                                         : t('No books found')}
                                 </TableCell>
                             </TableRow>

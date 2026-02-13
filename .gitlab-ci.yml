@@ -1,0 +1,62 @@
+cache:
+  paths:
+    - vendor/
+    - node_modules/
+
+stages:
+  - lint
+  - test
+  - build
+  - deploy
+
+# Docker Executor Jobs
+lint_job:
+  stage: lint
+  image: $CI_REGISTRY_IMAGE/ci-base:latest
+  tags:
+    - docker-executor
+  script:
+    - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - npm ci
+    - composer lint
+    - npm run format
+    - npm run lint
+  only:
+    - main
+
+test_job:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/ci-base:latest
+  tags:
+    - docker-executor
+  script:
+    - npm ci
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+    - cp .env.example .env
+    - php artisan key:generate
+    - touch database/database.sqlite
+    - npm run build
+    - ./vendor/bin/pest
+  only:
+    - main
+
+# Shell Executor Jobs
+build-job:
+  stage: build
+  tags:
+    - shell-executor
+  # コミットタグを使ってイメージをビルド、latestタグを付けなおす
+  script:
+    - docker build --target production -t book-vault:${CI_COMMIT_TAG} .
+    - docker tag book-vault:${CI_COMMIT_TAG} book-vault:latest
+  only:
+    - tags
+
+deploy_job:
+  stage: deploy
+  tags:
+    - shell-executor
+  script:
+    - APP_TAG=${CI_COMMIT_TAG} docker compose -f compose.prod.yaml up -d --remove-orphans
+  only:
+    - tags
