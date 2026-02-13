@@ -1,6 +1,3 @@
-image: php:8.5-cli
-
-# 依存関係をキャッシュして高速化
 cache:
   paths:
     - vendor/
@@ -9,15 +6,18 @@ cache:
 stages:
   - lint
   - test
+  - build
+  - deploy
 
+# Docker Executor Jobs
 lint_job:
   stage: lint
-  before_script:
-    - apt-get update && apt-get install -y unzip libsqlite3-dev
-    - curl -sS https://getcomposer.org | php -- --install-dir=/usr/local/bin --filename=composer
+  image: $CI_REGISTRY_IMAGE/ci-base:latest
+  tags:
+    - docker-executor
   script:
     - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-    - npm install
+    - npm ci
     - composer lint
     - npm run format
     - npm run lint
@@ -26,14 +26,11 @@ lint_job:
 
 test_job:
   stage: test
-  services:
-    - name: sqlite:latest # 必要に応じてDBサービスを定義
-  before_script:
-    - apt-get update && apt-get install -y unzip libsqlite3-dev
-    - docker-php-ext-install pdo pdo_sqlite
-    - curl -sS https://getcomposer.org | php -- --install-dir=/usr/local/bin --filename=composer
+  image: $CI_REGISTRY_IMAGE/ci-base:latest
+  tags:
+    - docker-executor
   script:
-    - npm install
+    - npm ci
     - composer install --no-interaction --prefer-dist --optimize-autoloader
     - cp .env.example .env
     - php artisan key:generate
@@ -42,3 +39,24 @@ test_job:
     - ./vendor/bin/pest
   only:
     - main
+
+# Shell Executor Jobs
+build-job:
+  stage: build
+  tags:
+    - shell-executor
+  # コミットタグを使ってイメージをビルド、latestタグを付けなおす
+  script:
+    - docker build --target production -t book-vault:${CI_COMMIT_TAG} .
+    - docker tag book-vault:${CI_COMMIT_TAG} book-vault:latest
+  only:
+    - tags
+
+deploy_job:
+  stage: deploy
+  tags:
+    - shell-executor
+  script:
+    - APP_TAG=${CI_COMMIT_TAG} docker compose up -d --remove-orphans
+  only:
+    - tags

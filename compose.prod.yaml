@@ -4,16 +4,25 @@ services:
         ports:
             - '80:80'
         env_file:
-            - .env
+            - .env.prod
         volumes:
             - db_data:/app/database
         depends_on:
             - meilisearch
+        entrypoint: >
+            /bin/sh -c "
+            touch /app/database/database.sqlite &&
+            php artisan migrate --force &&
+            php artisan scout:import \"App\\Models\\Book\" &&
+            php artisan optimize &&
+            frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
+            "
     meilisearch:
         image: 'getmeili/meilisearch:latest'
+        env_file:
+            - .env.prod
         environment:
             MEILI_NO_ANALYTICS: 'true'
-            MEILI_MASTER_KEY: '${MEILISEARCH_KEY}'
         volumes:
             - 'meili_data:/meili_data'
         healthcheck:
