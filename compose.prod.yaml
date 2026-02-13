@@ -1,8 +1,6 @@
 services:
     app:
-        build:
-            context: .
-            dockerfile: Dockerfile
+        image: book-vault:${APP_TAG:-latest}
         ports:
             - '80:80'
         env_file:

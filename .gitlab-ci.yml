@@ -1,0 +1,44 @@
+image: php:8.5-cli
+
+# 依存関係をキャッシュして高速化
+cache:
+  paths:
+    - vendor/
+    - node_modules/
+
+stages:
+  - lint
+  - test
+
+lint_job:
+  stage: lint
+  before_script:
+    - apt-get update && apt-get install -y unzip libsqlite3-dev
+    - curl -sS https://getcomposer.org | php -- --install-dir=/usr/local/bin --filename=composer
+  script:
+    - composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+    - npm install
+    - composer lint
+    - npm run format
+    - npm run lint
+  only:
+    - main
+
+test_job:
+  stage: test
+  services:
+    - name: sqlite:latest # 必要に応じてDBサービスを定義
+  before_script:
+    - apt-get update && apt-get install -y unzip libsqlite3-dev
+    - docker-php-ext-install pdo pdo_sqlite
+    - curl -sS https://getcomposer.org | php -- --install-dir=/usr/local/bin --filename=composer
+  script:
+    - npm install
+    - composer install --no-interaction --prefer-dist --optimize-autoloader
+    - cp .env.example .env
+    - php artisan key:generate
+    - touch database/database.sqlite
+    - npm run build
+    - ./vendor/bin/pest
+  only:
+    - main
