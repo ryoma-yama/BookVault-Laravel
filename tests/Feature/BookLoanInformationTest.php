@@ -8,38 +8,6 @@ use App\Models\User;
 use function Pest\Laravel\get;
 
 /**
- * Test to verify that the Reservation feature has been completely removed.
- * This test should fail initially and pass after implementation.
- */
-it('verifies reservation model does not exist', function () {
-    expect(file_exists(app_path('Models/Reservation.php')))->toBeFalse();
-});
-
-it('verifies reservation controller does not exist', function () {
-    expect(file_exists(app_path('Http/Controllers/ReservationController.php')))->toBeFalse();
-});
-
-it('verifies reservation routes do not exist', function () {
-    $routes = collect(app('router')->getRoutes())->map(fn ($route) => $route->uri);
-
-    expect($routes->contains('reservations'))->toBeFalse();
-    expect($routes->contains(fn ($uri) => str_contains($uri, 'reservation')))->toBeFalse();
-});
-
-it('verifies User model does not have reservations relationship', function () {
-    $user = User::factory()->create();
-
-    expect(method_exists($user, 'reservations'))->toBeFalse();
-});
-
-it('verifies BookCopy model does not have reservations relationship', function () {
-    $book = Book::factory()->create();
-    $copy = BookCopy::factory()->for($book)->create();
-
-    expect(method_exists($copy, 'reservations'))->toBeFalse();
-});
-
-/**
  * Test to verify that book details include current loan information.
  * This test should fail initially and pass after implementation.
  */

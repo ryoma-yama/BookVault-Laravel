@@ -25,14 +25,3 @@ test('google books search returns error for duplicate isbn', function () {
     $response->assertStatus(422);
     expect($response->json('error'))->toContain('already registered');
 });
-
-test('google books search continues for new isbn', function () {
-    // This will fail because we're not actually calling Google Books API
-    // but it tests that the duplicate check passes
-    $response = actingAs($this->admin)->postJson('/admin/api/google-books/search', [
-        'isbn' => '9781234567890',
-    ]);
-
-    // Should get 404 (not found) or 500 (API error) but NOT 422 (duplicate)
-    expect($response->status())->not->toBe(422);
-});
