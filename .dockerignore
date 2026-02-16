@@ -10,8 +10,6 @@ vendor
 # Environment files
 .env
 .env.*
-!.env.example
-.env.example
 
 # Development files
 .devcontainer
@@ -78,7 +76,6 @@ storage/app/public/*
 # Database
 *.sqlite
 *.sqlite-journal
-database/database.sqlite
 
 # Linting configs
 pint.json
