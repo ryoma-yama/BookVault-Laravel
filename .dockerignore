@@ -17,9 +17,6 @@ vendor
 .prettierrc
 .prettierignore
 eslint.config.js
-tsconfig.json
-vite.config.ts
-components.json
 
 # Documentation
 README.md
