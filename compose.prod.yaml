@@ -4,7 +4,7 @@ services:
         ports:
             - '80:80'
         env_file:
-            - .env.prod
+            - .env.production
         volumes:
             - db_data:/app/database
         depends_on:
@@ -15,12 +15,12 @@ services:
             php artisan migrate --force &&
             php artisan scout:import \"App\\Models\\Book\" &&
             php artisan optimize &&
-            frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
+            frankenphp run
             "
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         env_file:
-            - .env.prod
+            - .env.production
         environment:
             MEILI_NO_ANALYTICS: 'true'
         volumes:

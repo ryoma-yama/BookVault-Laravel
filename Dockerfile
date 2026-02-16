@@ -36,5 +36,7 @@ ENV SERVER_NAME=:80
 # Enable PHP production settings
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+WORKDIR /app
+
 # Copy application from builder stage
 COPY --from=builder /app /app
