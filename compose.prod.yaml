@@ -15,7 +15,7 @@ services:
             php artisan migrate --force &&
             php artisan scout:import \"App\\Models\\Book\" &&
             php artisan optimize &&
-            frankenphp run
+            frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
             "
     meilisearch:
         image: 'getmeili/meilisearch:latest'
