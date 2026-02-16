@@ -1,0 +1,46 @@
+services:
+    app:
+        image: book-vault:${APP_TAG:-latest}
+        ports:
+            - '80:80'
+        env_file:
+            - .env.production
+        volumes:
+            - db_data:/app/database
+        depends_on:
+            - meilisearch
+        entrypoint: >
+            /bin/sh -c "
+            touch /app/database/database.sqlite &&
+            php artisan migrate --force &&
+            php artisan scout:import \"App\\Models\\Book\" &&
+            php artisan optimize &&
+            frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
+            "
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
+    meilisearch:
+        image: 'getmeili/meilisearch:latest'
+        env_file:
+            - .env.production
+        environment:
+            MEILI_NO_ANALYTICS: 'true'
+        volumes:
+            - 'meili_data:/meili_data'
+        healthcheck:
+            test:
+                - CMD
+                - wget
+                - '--no-verbose'
+                - '--spider'
+                - 'http://127.0.0.1:7700/health'
+            retries: 3
+            timeout: 5s
+
+volumes:
+    db_data:
+    meili_data:
+        driver: local

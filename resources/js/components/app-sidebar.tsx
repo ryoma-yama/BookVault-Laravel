@@ -111,13 +111,13 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain label={t('Application')} items={generalNavItems} />
+                <NavMain label={t('Explore')} items={generalNavItems} />
                 {auth.user && userNavItems.length > 0 && (
-                    <NavMain label={t('User')} items={userNavItems} />
+                    <NavMain label={t('My Page')} items={userNavItems} />
                 )}
                 {auth.user?.role === 'admin' && (
                     <NavMain
-                        label={t('Administration')}
+                        label={t('System')}
                         items={adminNavItems}
                     />
                 )}

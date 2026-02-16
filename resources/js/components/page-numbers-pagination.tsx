@@ -128,7 +128,9 @@ export function PageNumbersPagination({
 
                     <PaginationItem>
                         {currentPage < lastPage ? (
-                            <PaginationNext href={buildPageUrl(currentPage + 1)}>
+                            <PaginationNext
+                                href={buildPageUrl(currentPage + 1)}
+                            >
                                 {t('Next')}
                             </PaginationNext>
                         ) : (
