@@ -17,6 +17,11 @@ services:
             php artisan optimize &&
             frankenphp run --config /etc/frankenphp/Caddyfile --adapter caddyfile
             "
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"
+                max-file: "3"
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         env_file:
